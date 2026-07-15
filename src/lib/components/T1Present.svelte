@@ -17,66 +17,93 @@
 
 	const questions = $derived(orderedDeepDive(questionSeed));
 
-	type Step =
-		| { kind: 'q'; mode: 'scouting' | 'bound'; qi: number }
+	type OpenStep =
+		| { kind: 'q'; qi: number; mode: 'scouting' | 'bound' }
 		| { kind: 'shadow' };
 
-	const steps = $derived.by((): Step[] => [
-		...questions.map((_, qi) => ({ kind: 'q' as const, mode: 'scouting' as const, qi })),
-		...questions.map((_, qi) => ({ kind: 'q' as const, mode: 'bound' as const, qi })),
-		{ kind: 'shadow' }
-	]);
-
-	function firstOpenStep(): number {
-		for (let i = 0; i < steps.length; i++) {
-			const s = steps[i];
-			if (s.kind === 'q') {
-				const q = questions[s.qi];
-				if (present[s.mode][q.id] === undefined) return i;
-			} else {
-				return i;
+	function firstOpen(): OpenStep {
+		for (let qi = 0; qi < questions.length; qi++) {
+			const q = questions[qi];
+			if (present.scouting[q.id] === undefined) {
+				return { kind: 'q', qi, mode: 'scouting' };
+			}
+			if (present.bound[q.id] === undefined) {
+				return { kind: 'q', qi, mode: 'bound' };
 			}
 		}
-		return steps.length - 1;
+		return { kind: 'shadow' };
 	}
 
-	let stepIndex = $state(0);
+	let questionIndex = $state(0);
+	let mode = $state<'scouting' | 'bound'>('scouting');
+	let showShadow = $state(false);
 	let locked = $state(false);
 	let started = $state(false);
 
 	$effect(() => {
 		if (!started) {
-			stepIndex = firstOpenStep();
+			const open = firstOpen();
+			if (open.kind === 'shadow') {
+				showShadow = true;
+			} else {
+				questionIndex = open.qi;
+				mode = open.mode;
+			}
 			started = true;
 		}
 	});
 
-	const step = $derived(steps[stepIndex]);
-	const totalQ = $derived(questions.length * 2);
+	const q = $derived(questions[questionIndex]);
+	const canBack = $derived(showShadow || questionIndex > 0);
 	const stepLabel = $derived(
-		step.kind === 'q'
-			? `Question ${step.qi + 1 + (step.mode === 'bound' ? questions.length : 0)} of ${totalQ}`
-			: `Wrap-up · Bound`
+		showShadow
+			? 'Wrap-up · Bound'
+			: `Question ${questionIndex + 1} of ${questions.length} · ${mode === 'scouting' ? 'Scouting' : 'Bound'}`
 	);
 
-	function goNext() {
-		if (stepIndex >= steps.length - 1) return;
-		stepIndex += 1;
+	function onModeChange(next: 'scouting' | 'bound') {
+		if (locked || showShadow) return;
+		mode = next;
+	}
+
+	function goBack() {
+		if (locked || !canBack) return;
 		locked = false;
+		if (showShadow) {
+			showShadow = false;
+			questionIndex = questions.length - 1;
+			mode = 'scouting';
+			return;
+		}
+		if (questionIndex > 0) {
+			questionIndex -= 1;
+			mode = 'scouting';
+		}
 	}
 
 	function onAnswer(v: LikertValue) {
-		if (locked || step.kind !== 'q') return;
+		if (locked || showShadow) return;
 		locked = true;
-		const q = questions[step.qi];
-		setPresentAnswer(step.mode, q.id, v);
+		setPresentAnswer(mode, q.id, v);
 		afterSelect(() => {
-			goNext();
+			if (mode === 'scouting') {
+				mode = 'bound';
+				locked = false;
+				return;
+			}
+
+			if (questionIndex >= questions.length - 1) {
+				showShadow = true;
+			} else {
+				questionIndex += 1;
+				mode = 'scouting';
+			}
+			locked = false;
 		});
 	}
 
 	function onShadow(value: boolean) {
-		if (locked || step.kind !== 'shadow') return;
+		if (locked || !showShadow) return;
 		locked = true;
 		setPresentShadow(value);
 		afterSelect(() => {
@@ -85,20 +112,23 @@
 	}
 </script>
 
-{#if step.kind === 'q'}
-	{@const q = questions[step.qi]}
+{#if !showShadow}
 	<QuestionShell
 		title="Present"
 		phaseBlurb={PHASE_BLURBS.t1}
 		{stepLabel}
-		mode={step.mode}
-		modePrompt={MODE_PROMPTS[step.mode]}
-		animKey={`${step.mode}-${q.id}`}
+		{mode}
+		modeSlider
+		modeSliderDisabled={locked}
+		onModeChange={onModeChange}
+		onBack={canBack ? goBack : undefined}
+		backDisabled={locked}
+		animKey={q.id}
 	>
 		<LikertQuestion
-			id={`t1-${step.mode}-${q.id}`}
+			id={`t1-${mode}-${q.id}`}
 			text={q.text}
-			value={present[step.mode][q.id]}
+			value={present[mode][q.id]}
 			disabled={locked}
 			onchange={onAnswer}
 		/>
@@ -110,6 +140,8 @@
 		{stepLabel}
 		mode="bound"
 		modePrompt={MODE_PROMPTS.bound}
+		onBack={goBack}
+		backDisabled={locked}
 		animKey="shadow"
 	>
 		<div class="choice">

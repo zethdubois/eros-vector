@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { computeRouting } from './routing';
+import type { SectionId } from './surveyNav';
 import { newQuestionSeed } from './shuffle';
 import type { Answers, DualModeAnswers, Era, LikertValue, Phase, SurveyState } from './types';
 
@@ -236,6 +237,52 @@ export function skipPastEras() {
 		pauseEraId: null,
 		phase: 't1'
 	}));
+}
+
+/** Jump to a survey section from breadcrumbs or results actions. */
+export function navigateToSection(section: SectionId) {
+	mutate((s) => {
+		switch (section) {
+			case 'intake':
+				return { ...s, phase: 'intake', pauseEraId: null };
+			case 't0': {
+				if (!s.routing?.t0) return s;
+				let eras = s.eras;
+				if (eras.length === 0) {
+					eras = [
+						{
+							id: newEraId(),
+							name: '',
+							scouting: {},
+							bound: {},
+							shadow: false
+						}
+					];
+				}
+				return { ...s, eras, phase: 't0', pauseEraId: null };
+			}
+			case 't1':
+				return { ...s, phase: 't1', pauseEraId: null };
+			case 't2':
+				return { ...s, phase: 't2', pauseEraId: null };
+			case 't3': {
+				if (!s.routing?.t3 || s.routing.finalForm) return s;
+				const horizon =
+					s.horizonIncluded === true && s.horizon && Object.keys(s.horizon).length > 0
+						? s.horizon
+						: {};
+				return {
+					...s,
+					horizonIncluded: true,
+					horizon,
+					phase: 't3',
+					pauseEraId: null
+				};
+			}
+			default:
+				return s;
+		}
+	});
 }
 
 /** @deprecated Use finishPhase / continueFromPause instead. */

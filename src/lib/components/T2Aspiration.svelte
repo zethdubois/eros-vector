@@ -38,6 +38,13 @@
 	});
 
 	const q = $derived(questions[stepIndex]);
+	const canBack = $derived(stepIndex > 0);
+
+	function goBack() {
+		if (locked || !canBack) return;
+		stepIndex -= 1;
+		locked = false;
+	}
 
 	function onAnswer(v: LikertValue) {
 		if (locked) return;
@@ -60,6 +67,8 @@
 	stepLabel={`Question ${stepIndex + 1} of ${questions.length}`}
 	mode="bound"
 	modePrompt={MODE_PROMPTS.bound}
+	onBack={canBack ? goBack : undefined}
+	backDisabled={locked}
 	animKey={q.id}
 >
 	<LikertQuestion

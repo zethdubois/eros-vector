@@ -47,12 +47,7 @@
   </header>
 
   {#if ready}
-    <ProgressBar
-      phase={$survey.phase}
-      routing={$survey.routing}
-      horizonIncluded={$survey.horizonIncluded}
-      eraCount={$survey.eras.length}
-    />
+    <ProgressBar state={$survey} />
 
     <div class="phase">
       {#if $survey.phase === "intake"}
@@ -72,7 +67,7 @@
           finalForm={$survey.routing?.finalForm ?? false}
           questionSeed={$survey.questionSeed}
         />
-      {:else if $survey.phase === "t3" && $survey.horizonIncluded}
+      {:else if $survey.phase === "t3" && $survey.horizonIncluded !== false}
         <T3Horizon
           horizon={$survey.horizon ?? {}}
           questionSeed={$survey.questionSeed}

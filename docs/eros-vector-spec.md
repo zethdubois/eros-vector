@@ -64,7 +64,7 @@ Users operate differently when single vs. pair-bonded. The survey captures this 
 To ensure monogamous users can accurately answer the X and Z axes in Bound mode, questions must be framed around **Orientation/Desire** rather than **Current Behavior**.
 
 - _Scouting Prompt:_ "Answer based on how you operate and what you seek when single/unbound."
-- _Bound Prompt:_ "Answer based on your ideal pair-bond structure and boundaries, even if you are currently single."
+- _Bound Prompt:_ "Answer based on your ideal bond structure and boundaries, even if you are currently single."
 
 ## 5. Survey Flow & UI Logic
 

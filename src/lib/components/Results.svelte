@@ -1,17 +1,32 @@
 <script lang="ts">
 	import { buildResultSections } from '$lib/results';
-	import { resetSurvey, type SurveyState } from '$lib/store';
+	import { navigateToSection, resetSurvey, type SurveyState } from '$lib/store';
+	import { canAddHorizon, canAddPastEras } from '$lib/surveyNav';
 
-	let { state }: { state: SurveyState } = $props();
+	let { state: surveyState }: { state: SurveyState } = $props();
 
-	const sections = $derived(buildResultSections(state));
+	const sections = $derived(buildResultSections(surveyState));
+	const showAddPast = $derived(canAddPastEras(surveyState));
+	const showAddHorizon = $derived(canAddHorizon(surveyState));
+
+	let expanded = $state<Record<string, boolean>>({});
+
+	function passKey(sectionId: string, mode: string) {
+		return `${sectionId}:${mode}`;
+	}
+
+	function togglePass(sectionId: string, mode: string) {
+		const key = passKey(sectionId, mode);
+		expanded = { ...expanded, [key]: !expanded[key] };
+	}
 </script>
 
 <section class="results">
 	<header class="intro">
 		<h2>Your vector</h2>
 		<p class="lede">
-			Plain-language labels for each time layer and operating mode. 3D visualization comes next.
+			Your archetype for each time layer and operating mode. Tap a card to read the full
+			description.
 		</p>
 	</header>
 
@@ -27,20 +42,50 @@
 
 				<div class="passes">
 					{#each section.passes as pass (pass.mode)}
-						<div class="pass" class:scouting={pass.mode === 'scouting'} class:bound={pass.mode === 'bound'}>
+						{@const key = passKey(section.id, pass.mode)}
+						{@const open = !!expanded[key]}
+						<button
+							type="button"
+							class="pass"
+							class:scouting={pass.mode === 'scouting'}
+							class:bound={pass.mode === 'bound'}
+							class:open
+							aria-expanded={open}
+							onclick={() => togglePass(section.id, pass.mode)}
+						>
 							<div class="pass-meta">
 								<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
 								{#if pass.shadow}
 									<span class="shadow">Shadow</span>
 								{/if}
+								<span class="hint">{open ? 'Hide' : 'Read more'}</span>
 							</div>
-							<p class="profile">{pass.profileLabel}</p>
-						</div>
+							<p class="profile">{pass.archetype.name}</p>
+							<p class="tagline">{pass.archetype.tagline}</p>
+							{#if open}
+								<p class="description">{pass.archetype.description}</p>
+							{/if}
+						</button>
 					{/each}
 				</div>
 			</article>
 		{/each}
 	</div>
+
+	{#if showAddPast || showAddHorizon}
+		<div class="extras">
+			{#if showAddPast}
+				<button type="button" class="extra" onclick={() => navigateToSection('t0')}>
+					Add past era
+				</button>
+			{/if}
+			{#if showAddHorizon}
+				<button type="button" class="extra" onclick={() => navigateToSection('t3')}>
+					Add Horizon to mapping
+				</button>
+			{/if}
+		</div>
+	{/if}
 
 	<button
 		type="button"
@@ -105,10 +150,23 @@
 	}
 
 	.pass {
+		display: block;
+		width: 100%;
+		text-align: left;
 		padding: 0.9rem 1rem;
 		border-radius: 10px;
 		border: 1px solid var(--border);
 		background: var(--bg);
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+	}
+
+	.pass:hover {
+		border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 	}
 
 	.pass.scouting {
@@ -117,6 +175,10 @@
 
 	.pass.bound {
 		border-left: 3px solid var(--bound);
+	}
+
+	.pass.open {
+		background: color-mix(in srgb, var(--accent) 4%, var(--bg));
 	}
 
 	.pass-meta {
@@ -132,6 +194,15 @@
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: var(--muted);
+	}
+
+	.hint {
+		margin-left: auto;
+		font-size: 0.72rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--accent);
 	}
 
 	.shadow {
@@ -151,6 +222,44 @@
 		font-size: clamp(1.2rem, 2.5vw, 1.45rem);
 		font-weight: 600;
 		line-height: 1.35;
+	}
+
+	.tagline {
+		margin: 0.35rem 0 0;
+		font-size: 0.85rem;
+		font-weight: 500;
+		font-style: italic;
+		color: var(--muted);
+	}
+
+	.description {
+		margin: 0.75rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--text);
+		max-width: 40rem;
+	}
+
+	.extras {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.extra {
+		padding: 0.65rem 1.15rem;
+		border: 1px solid var(--accent);
+		border-radius: 8px;
+		background: var(--accent-soft);
+		color: var(--accent);
+		font-size: 0.95rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.extra:hover {
+		background: color-mix(in srgb, var(--accent) 12%, var(--surface));
 	}
 
 	.restart {

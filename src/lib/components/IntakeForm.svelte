@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { validateIntake } from '$lib/routing';
-	import { submitIntake } from '$lib/store';
+	import { submitIntake, survey } from '$lib/store';
 
 	let chronAge = $state<number | null>(null);
 	let awakeAge = $state<number | null>(null);
 	let error = $state<string | null>(null);
+
+	$effect(() => {
+		if ($survey.intake) {
+			chronAge = $survey.intake.chronAge;
+			awakeAge = $survey.intake.awakeAge;
+		}
+	});
 
 	function onSubmit(e: Event) {
 		e.preventDefault();

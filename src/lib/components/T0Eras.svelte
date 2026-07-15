@@ -117,6 +117,14 @@
 		locked = false;
 	}
 
+	function goBack() {
+		if (locked || stepIndex <= 0) return;
+		stepIndex -= 1;
+		locked = false;
+	}
+
+	const canBack = $derived(stepIndex > 0);
+
 	function submitName() {
 		if (locked || step.kind !== 'name' || !era) return;
 		const name = nameDraft.trim();
@@ -174,6 +182,8 @@
 		title="Past eras"
 		phaseBlurb={PHASE_BLURBS.t0}
 		{stepLabel}
+		onBack={canBack ? goBack : undefined}
+		backDisabled={locked}
 		animKey={`name-${era.id}`}
 	>
 		<div class="name-step">
@@ -217,6 +227,8 @@
 		{stepLabel}
 		mode={step.mode}
 		modePrompt={MODE_PROMPTS[step.mode]}
+		onBack={canBack ? goBack : undefined}
+		backDisabled={locked}
 		animKey={`${era.id}-${step.mode}-${q.id}`}
 	>
 		<div class="likert-stack">
@@ -239,6 +251,8 @@
 		{stepLabel}
 		mode="bound"
 		modePrompt={MODE_PROMPTS.bound}
+		onBack={canBack ? goBack : undefined}
+		backDisabled={locked}
 		animKey={`shadow-${era.id}`}
 	>
 		{#if era.name}
@@ -257,7 +271,14 @@
 		</div>
 	</QuestionShell>
 {:else if step.kind === 'gate'}
-	<QuestionShell title="Past eras" phaseBlurb={PHASE_BLURBS.t0} {stepLabel} animKey="gate">
+	<QuestionShell
+		title="Past eras"
+		phaseBlurb={PHASE_BLURBS.t0}
+		{stepLabel}
+		onBack={canBack ? goBack : undefined}
+		backDisabled={locked}
+		animKey="gate"
+	>
 		<div class="gate">
 			<p class="prompt">Want to map another past era? (up to 4)</p>
 			<div class="btns">

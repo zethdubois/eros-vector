@@ -1,11 +1,11 @@
 <script lang="ts">
-import {
-	continueFromPause,
-	includeHorizon,
-	skipHorizon,
-	type SurveyState
-} from '$lib/store';
-import { buildBillboardLines, buildPartialResultSections, type ResultPass } from '$lib/results';
+	import {
+		continueFromPause,
+		includeHorizon,
+		skipHorizon,
+		type SurveyState
+	} from '$lib/store';
+	import { buildBillboardLines, buildPartialResultSections } from '$lib/results';
 
 	let { state }: { state: SurveyState } = $props();
 
@@ -30,10 +30,6 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 				return 'Continue';
 		}
 	});
-
-	function formatPass(pass: ResultPass): string {
-		return pass.profileLabel;
-	}
 </script>
 
 <section class="billboard">
@@ -44,14 +40,22 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 			</p>
 			<div class="labels">
 				{#each line.passes as pass (pass.mode)}
-					<div class="label-row" class:scouting={pass.mode === 'scouting'} class:bound={pass.mode === 'bound'}>
-						{#if line.passes.length > 1}
-							<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
-						{/if}
-						<span class="profile">{formatPass(pass)}</span>
-						{#if pass.shadow}
-							<span class="shadow">Shadow</span>
-						{/if}
+					<div
+						class="label-row"
+						class:scouting={pass.mode === 'scouting'}
+						class:bound={pass.mode === 'bound'}
+					>
+						<div class="label-head">
+							{#if line.passes.length > 1}
+								<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
+							{/if}
+							{#if pass.shadow}
+								<span class="shadow">Shadow</span>
+							{/if}
+						</div>
+						<p class="profile">{pass.archetype.name}</p>
+						<p class="tagline">{pass.archetype.tagline}</p>
+						<p class="description">{pass.archetype.description}</p>
 					</div>
 				{/each}
 			</div>
@@ -70,7 +74,7 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 								{#if section.passes.length > 1}
 									<span class="mini-mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}:</span>
 								{/if}
-								{pass.profileLabel}
+								{pass.archetype.name}
 							</p>
 						{/each}
 					</article>
@@ -122,15 +126,15 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 	.labels {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 0.85rem;
 	}
 
 	.label-row {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0.5rem 0.75rem;
-		padding: 0.85rem 1rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.35rem;
+		padding: 1rem 1.1rem;
 		border-radius: 10px;
 		border: 1px solid var(--border);
 		background: var(--bg);
@@ -144,6 +148,13 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 		border-left: 3px solid var(--bound);
 	}
 
+	.label-head {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.15rem;
+	}
+
 	.mode {
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -153,10 +164,27 @@ import { buildBillboardLines, buildPartialResultSections, type ResultPass } from
 	}
 
 	.profile {
+		margin: 0;
 		font-family: 'Fraunces', Georgia, serif;
 		font-size: clamp(1.25rem, 2.8vw, 1.55rem);
 		font-weight: 600;
 		line-height: 1.3;
+	}
+
+	.tagline {
+		margin: 0;
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: var(--muted);
+		font-style: italic;
+	}
+
+	.description {
+		margin: 0.55rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--text);
+		max-width: 40rem;
 	}
 
 	.shadow {

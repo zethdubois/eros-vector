@@ -1,4 +1,4 @@
-import { coordinateLabel } from './labels';
+import { resolveArchetype, type Archetype } from './labels';
 import { deepDiveQuestions, quickVibeQuestions } from './questions';
 import { scoreAnswers } from './scoring';
 import type { Answers, Coordinates, Question, SurveyState } from './types';
@@ -8,6 +8,7 @@ export type ResultMode = 'scouting' | 'bound';
 export type ResultPass = {
 	mode: ResultMode;
 	profileLabel: string;
+	archetype: Archetype;
 	coordinates: Coordinates;
 	shadow?: boolean;
 };
@@ -32,9 +33,11 @@ function toPass(
 	shadow?: boolean
 ): ResultPass {
 	const coordinates = scoreAnswers(answers, questions);
+	const archetype = resolveArchetype(coordinates);
 	return {
 		mode,
-		profileLabel: coordinateLabel(coordinates),
+		profileLabel: archetype.name,
+		archetype,
 		coordinates,
 		shadow
 	};

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import type { Snippet } from 'svelte';
+	import ModeSlider from './ModeSlider.svelte';
 
 	let {
 		title,
@@ -8,6 +9,11 @@
 		stepLabel,
 		mode,
 		modePrompt,
+		modeSlider = false,
+		modeSliderDisabled = false,
+		onModeChange,
+		onBack,
+		backDisabled = false,
 		animKey,
 		children
 	}: {
@@ -16,6 +22,11 @@
 		stepLabel: string;
 		mode?: 'scouting' | 'bound' | null;
 		modePrompt?: string;
+		modeSlider?: boolean;
+		modeSliderDisabled?: boolean;
+		onModeChange?: (mode: 'scouting' | 'bound') => void;
+		onBack?: () => void;
+		backDisabled?: boolean;
 		animKey: string | number;
 		children: Snippet;
 	} = $props();
@@ -31,10 +42,23 @@
 
 	<div class="body">
 		<div class="question-block">
-			<p class="step-label">{stepLabel}</p>
+			<div class="step-row">
+				<p class="step-label">{stepLabel}</p>
+				{#if onBack}
+					<button type="button" class="back" disabled={backDisabled} onclick={onBack}>
+						← Back
+					</button>
+				{/if}
+			</div>
 
-			<div class="canvas">
-				{#if mode && modePrompt}
+			<div
+				class="canvas"
+				class:mode-scouting={modeSlider && mode === 'scouting'}
+				class:mode-bound={modeSlider && mode === 'bound'}
+			>
+				{#if modeSlider && mode}
+					<ModeSlider {mode} disabled={modeSliderDisabled} onchange={onModeChange} />
+				{:else if mode && modePrompt}
 					<p class="mode" class:scouting={mode === 'scouting'} class:bound={mode === 'bound'}>
 						<span class="mode-name">{mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
 						{modePrompt}
@@ -101,16 +125,63 @@
 		width: 100%;
 	}
 
+	.step-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 0.85rem;
+	}
+
 	.step-label {
-		margin: 0 0 0.85rem;
+		margin: 0;
 		font-size: 0.95rem;
 		color: var(--muted);
+	}
+
+	.back {
+		flex-shrink: 0;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: var(--surface);
+		color: var(--text);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.back:hover:not(:disabled) {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.back:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
 	}
 
 	.canvas {
 		display: flex;
 		flex-direction: column;
 		min-height: clamp(20rem, 42vh, 26rem);
+		border-radius: 14px;
+		transition:
+			background 0.35s ease,
+			padding 0.2s ease;
+	}
+
+	.canvas.mode-scouting,
+	.canvas.mode-bound {
+		padding: 1.1rem 1.15rem 1.25rem;
+	}
+
+	.canvas.mode-scouting {
+		background: color-mix(in srgb, var(--scouting) 5%, transparent);
+	}
+
+	.canvas.mode-bound {
+		background: color-mix(in srgb, var(--bound) 6%, transparent);
 	}
 
 	.mode,
@@ -118,6 +189,10 @@
 		flex-shrink: 0;
 		min-height: 4.75rem;
 		margin: 0 0 2.5rem;
+	}
+
+	:global(.mode-slider) {
+		margin-bottom: 2.5rem;
 	}
 
 	.mode {

@@ -86,9 +86,9 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 0.3rem;
-		flex: 1 1 5rem;
-		min-width: 5rem;
-		padding: 0.85rem 0.5rem;
+		flex: 1 1 0;
+		min-width: 7.28rem;
+		padding: 0.85rem 0.73rem;
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		cursor: pointer;
@@ -123,5 +123,9 @@
 		font-size: 1.25rem;
 		font-weight: 600;
 		color: var(--text);
+	}
+
+	.label {
+		white-space: nowrap;
 	}
 </style>
