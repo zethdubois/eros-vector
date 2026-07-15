@@ -60,7 +60,7 @@
             </li>
             <li>
               <span class="axis-glyph" data-axis="x" aria-hidden="true"></span>
-              <strong>Erotic ↔ Depth</strong>
+              <strong>Eroticism ↔ Depth</strong>
               <small>What draws you to others</small>
             </li>
             <li>

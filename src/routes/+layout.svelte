@@ -8,7 +8,7 @@
 	<title>Eros Vector</title>
 	<meta
 		name="description"
-		content="A 4D relationship mapping tool. Plot your trajectory across Structure, Erotic, and Intent — plus Time."
+		content="A 4D relationship mapping tool. Plot your trajectory across Structure, Eroticism, and Intent — plus Time."
 	/>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
