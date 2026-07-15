@@ -27,31 +27,51 @@
 		{#if phaseBlurb}
 			<p class="phase-blurb">{phaseBlurb}</p>
 		{/if}
-		<p class="step-label">{stepLabel}</p>
-		{#if mode && modePrompt}
-			<p class="mode" class:scouting={mode === 'scouting'} class:bound={mode === 'bound'}>
-				<span class="mode-name">{mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
-				{modePrompt}
-			</p>
-		{/if}
 	</header>
 
-	<div class="stage">
-		{#key animKey}
-			<div
-				class="pane"
-				in:fly={{ x: 28, duration: 320, opacity: 0 }}
-				out:fly={{ x: -22, duration: 200, opacity: 0 }}
-			>
-				{@render children()}
+	<div class="body">
+		<div class="question-block">
+			<p class="step-label">{stepLabel}</p>
+
+			<div class="canvas">
+				{#if mode && modePrompt}
+					<p class="mode" class:scouting={mode === 'scouting'} class:bound={mode === 'bound'}>
+						<span class="mode-name">{mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
+						{modePrompt}
+					</p>
+				{:else}
+					<div class="mode-spacer" aria-hidden="true"></div>
+				{/if}
+
+				<div class="stage">
+					{#key animKey}
+						<div
+							class="pane"
+							in:fly={{ x: 28, duration: 320, opacity: 0 }}
+							out:fly={{ x: -22, duration: 200, opacity: 0 }}
+						>
+							{@render children()}
+						</div>
+					{/key}
+				</div>
 			</div>
-		{/key}
+		</div>
 	</div>
 </section>
 
 <style>
 	.shell {
+		width: 100%;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.head {
+		flex-shrink: 0;
 		margin-top: 0.25rem;
+		margin-bottom: 1.25rem;
 	}
 
 	.head h2 {
@@ -61,21 +81,46 @@
 	}
 
 	.phase-blurb {
-		margin: 0 0 0.35rem;
+		margin: 0;
 		font-size: 0.95rem;
 		color: var(--text);
 		line-height: 1.45;
 		max-width: 36rem;
 	}
 
+	.body {
+		flex: 1;
+		display: grid;
+		grid-template-rows: 1fr auto 2fr;
+		min-height: 0;
+		width: 100%;
+	}
+
+	.question-block {
+		grid-row: 2;
+		width: 100%;
+	}
+
 	.step-label {
 		margin: 0 0 0.85rem;
-		font-size: 0.85rem;
+		font-size: 0.95rem;
 		color: var(--muted);
 	}
 
+	.canvas {
+		display: flex;
+		flex-direction: column;
+		min-height: clamp(20rem, 42vh, 26rem);
+	}
+
+	.mode,
+	.mode-spacer {
+		flex-shrink: 0;
+		min-height: 4.75rem;
+		margin: 0;
+	}
+
 	.mode {
-		margin: 0 0 1.25rem;
 		padding: 0.75rem 0.9rem;
 		border-left: 3px solid var(--accent);
 		border-radius: 0 8px 8px 0;
@@ -101,13 +146,30 @@
 	}
 
 	.stage {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 		position: relative;
-		min-height: 14rem;
-		display: grid;
 	}
 
 	.pane {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 		width: 100%;
-		grid-area: 1 / 1;
+	}
+
+	.pane :global(.likert) {
+		flex: 1;
+		min-height: 0;
+	}
+
+	.pane :global(.likert-stack) {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 	}
 </style>

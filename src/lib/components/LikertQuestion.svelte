@@ -19,8 +19,10 @@
 	const options: LikertValue[] = [1, 2, 3, 4, 5];
 </script>
 
-<fieldset class="likert" class:disabled>
-	<legend class="prompt">{text}</legend>
+<fieldset class="likert" class:disabled aria-labelledby="{id}-prompt">
+	<div class="prompt-zone">
+		<p id="{id}-prompt" class="prompt">{text}</p>
+	</div>
 	<div class="options" role="radiogroup" aria-disabled={disabled}>
 		{#each options as opt}
 			<label class="opt" class:selected={value === opt}>
@@ -44,6 +46,10 @@
 		border: none;
 		padding: 0;
 		margin: 0;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
 	}
 
 	.likert.disabled {
@@ -51,18 +57,27 @@
 		pointer-events: none;
 	}
 
+	.prompt-zone {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		min-height: 0;
+		padding-bottom: 1.5rem;
+	}
+
 	.prompt {
-		font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+		margin: 0;
+		font-size: clamp(1.2rem, 2.4vw, 1.4rem);
 		font-weight: 500;
 		line-height: 1.5;
-		margin-bottom: 1.25rem;
-		padding: 0;
 		max-width: 40rem;
 	}
 
 	.options {
+		flex-shrink: 0;
 		display: flex;
 		flex-wrap: wrap;
+		align-items: flex-start;
 		gap: 0.6rem;
 	}
 
@@ -78,7 +93,7 @@
 		border-radius: 8px;
 		cursor: pointer;
 		background: var(--surface);
-		font-size: 0.72rem;
+		font-size: 0.82rem;
 		text-align: center;
 		color: var(--muted);
 		transition:

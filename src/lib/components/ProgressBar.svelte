@@ -43,7 +43,8 @@
 
 <style>
 	.progress {
-		margin-bottom: 2rem;
+		flex-shrink: 0;
+		margin-bottom: 1.5rem;
 	}
 
 	ol {

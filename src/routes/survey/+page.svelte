@@ -7,7 +7,7 @@
   import T1Present from "$lib/components/T1Present.svelte";
   import T2Aspiration from "$lib/components/T2Aspiration.svelte";
   import T3Horizon from "$lib/components/T3Horizon.svelte";
-  import ResultsStub from "$lib/components/ResultsStub.svelte";
+  import Results from "$lib/components/Results.svelte";
 
   let ready = $state(false);
 
@@ -48,38 +48,43 @@
   {#if ready}
     <ProgressBar phase={$survey.phase} routing={$survey.routing} />
 
-    {#if $survey.phase === "intake"}
-      <IntakeForm />
-    {:else if $survey.phase === "t0"}
-      <T0Eras eras={$survey.eras} questionSeed={$survey.questionSeed} />
-    {:else if $survey.phase === "t1"}
-      <T1Present
-        present={$survey.present}
-        questionSeed={$survey.questionSeed}
-      />
-    {:else if $survey.phase === "t2"}
-      <T2Aspiration
-        aspiration={$survey.aspiration}
-        finalForm={$survey.routing?.finalForm ?? false}
-        questionSeed={$survey.questionSeed}
-      />
-    {:else if $survey.phase === "t3" && $survey.horizon}
-      <T3Horizon
-        horizon={$survey.horizon}
-        questionSeed={$survey.questionSeed}
-      />
-    {:else if $survey.phase === "results"}
-      <ResultsStub state={$survey} />
-    {/if}
+    <div class="phase">
+      {#if $survey.phase === "intake"}
+        <IntakeForm />
+      {:else if $survey.phase === "t0"}
+        <T0Eras eras={$survey.eras} questionSeed={$survey.questionSeed} />
+      {:else if $survey.phase === "t1"}
+        <T1Present
+          present={$survey.present}
+          questionSeed={$survey.questionSeed}
+        />
+      {:else if $survey.phase === "t2"}
+        <T2Aspiration
+          aspiration={$survey.aspiration}
+          finalForm={$survey.routing?.finalForm ?? false}
+          questionSeed={$survey.questionSeed}
+        />
+      {:else if $survey.phase === "t3" && $survey.horizon}
+        <T3Horizon
+          horizon={$survey.horizon}
+          questionSeed={$survey.questionSeed}
+        />
+      {:else if $survey.phase === "results"}
+        <Results state={$survey} />
+      {/if}
+    </div>
   {/if}
 </main>
 
 <style>
   main {
+    display: flex;
+    flex-direction: column;
     max-width: 44rem;
     margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
-    min-height: 100vh;
+    padding: 2rem 1.25rem 2rem;
+    min-height: 100dvh;
+    box-sizing: border-box;
     background: radial-gradient(
         ellipse 80% 50% at 10% -10%,
         #e8efe9 0%,
@@ -89,7 +94,16 @@
       var(--bg);
   }
 
+  .phase {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+  }
+
   .brand {
+    flex-shrink: 0;
     margin-bottom: 1.5rem;
   }
 

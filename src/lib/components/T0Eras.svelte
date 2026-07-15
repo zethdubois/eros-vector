@@ -195,16 +195,18 @@
 		modePrompt={MODE_PROMPTS[step.mode]}
 		animKey={`${era.id}-${step.mode}-${q.id}`}
 	>
-		{#if era.name}
-			<p class="era-chip">{era.name}</p>
-		{/if}
-		<LikertQuestion
-			id={`${era.id}-${step.mode}-${q.id}`}
-			text={q.text}
-			value={era[step.mode][q.id]}
-			disabled={locked}
-			onchange={onAnswer}
-		/>
+		<div class="likert-stack">
+			{#if era.name}
+				<p class="era-chip">{era.name}</p>
+			{/if}
+			<LikertQuestion
+				id={`${era.id}-${step.mode}-${q.id}`}
+				text={q.text}
+				value={era[step.mode][q.id]}
+				disabled={locked}
+				onchange={onAnswer}
+			/>
+		</div>
 	</QuestionShell>
 {:else if step.kind === 'shadow' && era}
 	<QuestionShell
@@ -267,7 +269,8 @@
 
 	.era-chip {
 		display: inline-block;
-		margin: 0 0 0.85rem;
+		flex-shrink: 0;
+		margin: 0 0 0.5rem;
 		padding: 0.25rem 0.65rem;
 		border-radius: 6px;
 		background: var(--accent-soft);
@@ -276,10 +279,22 @@
 		font-weight: 600;
 	}
 
+	.likert-stack {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.likert-stack :global(.likert) {
+		flex: 1;
+		min-height: 0;
+	}
+
 	.choice .prompt,
 	.gate .prompt {
 		margin: 0 0 1.25rem;
-		font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+		font-size: clamp(1.2rem, 2.4vw, 1.4rem);
 		font-weight: 500;
 		line-height: 1.5;
 		max-width: 36rem;

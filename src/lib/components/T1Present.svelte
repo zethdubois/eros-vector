@@ -137,7 +137,7 @@
 <style>
 	.choice .prompt {
 		margin: 0 0 1.25rem;
-		font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+		font-size: clamp(1.2rem, 2.4vw, 1.4rem);
 		font-weight: 500;
 		line-height: 1.5;
 		max-width: 36rem;
