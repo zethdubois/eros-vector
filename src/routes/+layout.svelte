@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import SaveKeyPanel from '$lib/components/SaveKeyPanel.svelte';
 
 	let { children } = $props();
 </script>
@@ -19,3 +20,5 @@
 </svelte:head>
 
 {@render children()}
+
+<SaveKeyPanel />

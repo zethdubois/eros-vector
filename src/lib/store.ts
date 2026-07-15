@@ -1,4 +1,5 @@
 import { get, writable } from 'svelte/store';
+import { decodeSaveKeyPayload, encodeSaveKeyPayload } from './saveKey';
 import { computeRouting } from './routing';
 import type { SectionId } from './surveyNav';
 import { newQuestionSeed } from './shuffle';
@@ -150,6 +151,31 @@ export function resetSurvey() {
 	const initial = createInitialState();
 	survey.set(initial);
 	writeStorage(initial);
+}
+
+/** Encode current survey state as a portable private key. */
+export function exportSurveyKey(state?: SurveyState): string {
+	return encodeSaveKeyPayload(JSON.stringify(state ?? get(survey)));
+}
+
+export type ImportSurveyKeyResult =
+	| { ok: true; phase: Phase }
+	| { ok: false; error: string };
+
+/** Restore survey state from a portable private key. */
+export function importSurveyKey(key: string): ImportSurveyKeyResult {
+	const trimmed = key.trim();
+	if (!trimmed) return { ok: false, error: 'Paste a save key first.' };
+
+	const json = decodeSaveKeyPayload(trimmed);
+	if (!json) return { ok: false, error: 'Invalid save key — check that you copied the full string.' };
+
+	const parsed = parseStoredState(json);
+	if (!parsed) return { ok: false, error: 'Invalid save key — check that you copied the full string.' };
+
+	survey.set(parsed);
+	writeStorage(parsed);
+	return { ok: true, phase: parsed.phase };
 }
 
 export function submitIntake(chronAge: number, awakeAge: number) {
