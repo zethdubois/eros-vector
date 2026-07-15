@@ -1,0 +1,36 @@
+:root {
+	--bg: #f7f5f2;
+	--surface: #ffffff;
+	--text: #1c1a17;
+	--muted: #6b6560;
+	--border: #d9d3cb;
+	--accent: #2a5f4f;
+	--accent-soft: #e4efe9;
+	--scouting: #3d6b8c;
+	--bound: #8a4f2b;
+	--danger: #a33b3b;
+	font-family: 'Segoe UI', system-ui, sans-serif;
+	line-height: 1.5;
+	color: var(--text);
+	background: var(--bg);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background:
+		radial-gradient(ellipse 80% 50% at 10% -10%, #e8efe9 0%, transparent 55%),
+		radial-gradient(ellipse 60% 40% at 100% 0%, #efe8e0 0%, transparent 50%),
+		var(--bg);
+}
+
+button,
+input {
+	font: inherit;
+}
