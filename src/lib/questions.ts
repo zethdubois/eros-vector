@@ -10,18 +10,19 @@ export const quickVibeQuestions: Question[] = [
 	{
 		id: 'qv-x',
 		axis: 'x',
-		text: 'My primary drive for exploring connections outside my core structure is the pursuit of sexual variety and erotic energy, rather than seeking deep, romantic emotional bonds.'
+		text: 'I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.'
 	},
 	{
 		id: 'qv-z',
 		axis: 'z',
-		text: 'I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who the people are and what the situation requires.'
+		text: 'I prefer my relationships to operate with explicitly negotiated rules and boundaries (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.'
 	}
 ];
 
 /**
  * Deep Dive Core Engine — used for T1, T2, T3.
- * All phrased so 5 = strongest pull to positive pole.
+ * Phrased for Orientation/Desire (5 = strongest pull to positive pole)
+ * so they work for Scouting and Bound, including strict monogamy.
  */
 export const deepDiveQuestions: Question[] = [
 	// Y-Axis (Structure +Y vs Autonomy -Y)
@@ -54,17 +55,17 @@ export const deepDiveQuestions: Question[] = [
 	{
 		id: 'dd-x1',
 		axis: 'x',
-		text: 'My primary drive for exploring connections outside my core structure is the pursuit of sexual variety and erotic energy, rather than seeking deep, romantic emotional bonds.'
+		text: 'I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.'
 	},
 	{
 		id: 'dd-x2',
 		axis: 'x',
-		text: 'I view outside sexual play primarily as a recreational activity and a fun enhancement to life, rather than a path to building deeply intertwined emotional lives.'
+		text: 'I view sexual play with others primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.'
 	},
 	{
 		id: 'dd-x3',
 		axis: 'x',
-		text: 'I am drawn to the idea of "moresome" or group energy primarily for the physical/erotic thrill, rather than for the emotional intimacy of a chosen family.'
+		text: 'I am drawn to the idea of group or "moresome" energy primarily for the physical/erotic thrill, rather than for the emotional intimacy of a chosen family.'
 	},
 	{
 		id: 'dd-x4',
@@ -80,27 +81,27 @@ export const deepDiveQuestions: Question[] = [
 	{
 		id: 'dd-z1',
 		axis: 'z',
-		text: 'I prefer to find connections through intentional design (apps, lifestyle events, specific quests) rather than letting them erupt organically from permissive social circles.'
+		text: 'I prefer to find and manage connections through intentional design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.'
 	},
 	{
 		id: 'dd-z2',
 		axis: 'z',
-		text: 'I prefer to rely on explicitly negotiated rules and boundaries before playing, rather than fluid, unspoken social vibes.'
+		text: 'I prefer to rely on explicitly negotiated rules and boundaries regarding outside interactions (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.'
 	},
 	{
 		id: 'dd-z3',
 		axis: 'z',
-		text: 'I believe non-monogamy works best as a structured, scheduled activity, rather than something that spontaneously happens when the vibe is right.'
+		text: 'I believe relational structures work best as a scheduled, defined activity, rather than something that spontaneously happens when the vibe is right.'
 	},
 	{
 		id: 'dd-z4',
 		axis: 'z',
-		text: 'I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner), rather than letting them organically evolve far beyond their starting point.'
+		text: 'I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner; a monogamous bond stays monogamous), rather than letting them organically evolve far beyond their starting point.'
 	},
 	{
 		id: 'dd-z5',
 		axis: 'z',
-		text: 'I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who the people are and what the situation requires.'
+		text: 'I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who we meet and what the situation requires.'
 	}
 ];
 
@@ -111,3 +112,18 @@ export const LIKERT_LABELS: Record<number, string> = {
 	4: 'Agree',
 	5: 'Strongly Agree'
 };
+
+/** Spec §4 — frame answers as Orientation/Desire, not current behavior. */
+export const MODE_PROMPTS = {
+	scouting: 'Answer based on how you operate and what you seek when single/unbound.',
+	bound: 'Answer based on your ideal pair-bond structure and boundaries, even if you are currently single.'
+} as const;
+
+/** One-line context for each time layer — shown under the T label. */
+export const PHASE_BLURBS = {
+	t0: 'Named chapters of your relational past — one era at a time.',
+	t1: 'Where you are now in your relational life.',
+	t2: 'The pair-bond structure you want to build toward.',
+	t3: 'Where you imagine yourself long-term.',
+	finalForm: 'Your long-range relational architecture — aspiration and horizon together.'
+} as const;

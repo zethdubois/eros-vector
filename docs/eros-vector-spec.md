@@ -16,9 +16,9 @@ The tool maps users on three bipolar axes. Scoring is based on a 5-point Likert 
   - _High -Y:_ Solo Poly, Relationship Anarchy, strict independence.
 - **X-Axis: Hedonism (+X) vs. Emotional Depth (-X)**
   - _High +X:_ Recreational Play, Swinging, casual sexual variety.
-  - _High -X:_ Egalitarian Poly, Pragmatic Polycule, chosen family.
+  - _High -X:_ Egalitarian Poly, Pragmatic Polycule, chosen family, strict monogamy.
 - **Z-Axis: Intentional (+Z) vs. Organic (-Z)**
-  - _High +Z:_ App-driven, explicit rules, scheduled quests, lifestyle clubs.
+  - _High +Z:_ App-driven, explicit rules, scheduled quests, lifestyle clubs, strict monogamous boundaries.
   - _High -Z:_ Permissive tribes, spontaneous eruption, pragmatic evolution.
 
 **Scoring Math:**
@@ -60,6 +60,12 @@ Users operate differently when single vs. pair-bonded. The survey captures this 
 - **T0 & T1:** User answers questions TWICE per era/present (Once for Scouting, Once for Bound).
 - **T2 & T3:** User answers questions ONCE (Aspirational architecture is inherently Bound).
 
+**Crucial Survey Prompting Logic:**
+To ensure monogamous users can accurately answer the X and Z axes in Bound mode, questions must be framed around **Orientation/Desire** rather than **Current Behavior**.
+
+- _Scouting Prompt:_ "Answer based on how you operate and what you seek when single/unbound."
+- _Bound Prompt:_ "Answer based on your ideal pair-bond structure and boundaries, even if you are currently single."
+
 ## 5. Survey Flow & UI Logic
 
 ### Phase 1: Intake
@@ -96,12 +102,12 @@ Collect `chron_age` and `awake_age`. Calculate routing.
 ### Quick Vibe Check (Used for T0 Eras)
 
 - **Y-Check:** I envision my ideal life having a central "home base" partner or anchor, rather than keeping my living and financial life entirely my own.
-- **X-Check:** My primary drive for exploring connections outside my core structure is the pursuit of sexual variety and erotic energy, rather than seeking deep, romantic emotional bonds.
-- **Z-Check:** I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who the people are and what the situation requires.
+- **X-Check:** I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.
+- **Z-Check:** I prefer my relationships to operate with explicitly negotiated rules and boundaries (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.
 
 ### Deep Dive Core Engine (Used for T1, T2, T3)
 
-_(All phrased so 5 = Strongest pull to Positive Pole)_
+_(All phrased so 5 = Strongest pull to Positive Pole. Phrased to capture Orientation/Desire so they work for both Scouting and Bound modes, including strict monogamy.)_
 
 **Y-Axis (Structure +Y vs Autonomy -Y)**
 
@@ -113,19 +119,19 @@ _(All phrased so 5 = Strongest pull to Positive Pole)_
 
 **X-Axis (Hedonism +X vs Emotional Depth -X)**
 
-1. My primary drive for exploring connections outside my core structure is the pursuit of sexual variety and erotic energy, rather than seeking deep, romantic emotional bonds.
-2. I view outside sexual play primarily as a recreational activity and a fun enhancement to life, rather than a path to building deeply intertwined emotional lives.
-3. I am drawn to the idea of "moresome" or group energy primarily for the physical/erotic thrill, rather than for the emotional intimacy of a chosen family.
+1. I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.
+2. I view sexual play with others primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.
+3. I am drawn to the idea of group or "moresome" energy primarily for the physical/erotic thrill, rather than for the emotional intimacy of a chosen family.
 4. I believe relationships are best when they serve the purpose of mutual pleasure and play, rather than needing to serve the practical realities of life (co-parenting, shared resources).
 5. I imagine I would be more fulfilled by a wide variety of casual/playful sexual connections than by a few deeply emotionally integrated ones.
 
 **Z-Axis (Intentional +Z vs Organic -Z)**
 
-1. I prefer to find connections through intentional design (apps, lifestyle events, specific quests) rather than letting them erupt organically from permissive social circles.
-2. I prefer to rely on explicitly negotiated rules and boundaries before playing, rather than fluid, unspoken social vibes.
-3. I believe non-monogamy works best as a structured, scheduled activity, rather than something that spontaneously happens when the vibe is right.
-4. I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner), rather than letting them organically evolve far beyond their starting point.
-5. I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who the people are and what the situation requires.
+1. I prefer to find and manage connections through intentional design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.
+2. I prefer to rely on explicitly negotiated rules and boundaries regarding outside interactions (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.
+3. I believe relational structures work best as a scheduled, defined activity, rather than something that spontaneously happens when the vibe is right.
+4. I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner; a monogamous bond stays monogamous), rather than letting them organically evolve far beyond their starting point.
+5. I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who we meet and what the situation requires.
 
 ## 7. Data Visualization Spec (The Output)
 

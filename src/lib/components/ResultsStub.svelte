@@ -126,7 +126,9 @@
 		</tbody>
 	</table>
 
-	<button type="button" onclick={resetSurvey}>Start over</button>
+	<button type="button" onclick={() => {
+		if (confirm('Clear all survey progress and start over?')) resetSurvey();
+	}}>Restart</button>
 </section>
 
 <style>

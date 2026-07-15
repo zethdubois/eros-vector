@@ -48,6 +48,8 @@ export type DualModeAnswers = {
 };
 
 export type SurveyState = {
+	/** Session PRNG seed — locks question order across T0–T3 for this run. */
+	questionSeed: number;
 	intake: Intake | null;
 	routing: Routing | null;
 	eras: Era[];

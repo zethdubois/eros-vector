@@ -1,78 +1,68 @@
 <script lang="ts">
 	import LikertQuestion from './LikertQuestion.svelte';
-	import { deepDiveQuestions } from '$lib/questions';
-	import { isComplete } from '$lib/scoring';
+	import QuestionShell from './QuestionShell.svelte';
+	import { MODE_PROMPTS, PHASE_BLURBS } from '$lib/questions';
+	import { orderedDeepDive } from '$lib/shuffle';
+	import { afterSelect } from '$lib/surveyAdvance';
 	import { advanceFrom, setHorizonAnswer } from '$lib/store';
 	import type { Answers, LikertValue } from '$lib/types';
 
-	let { horizon }: { horizon: Answers } = $props();
+	let {
+		horizon,
+		questionSeed
+	}: {
+		horizon: Answers;
+		questionSeed: number;
+	} = $props();
 
-	const canContinue = $derived(isComplete(horizon, deepDiveQuestions));
+	const questions = $derived(orderedDeepDive(questionSeed));
 
-	function continueT3() {
-		if (!canContinue) return;
-		advanceFrom('t3');
+	function firstOpen(): number {
+		const i = questions.findIndex((q) => horizon[q.id] === undefined);
+		return i === -1 ? questions.length - 1 : i;
+	}
+
+	let stepIndex = $state(0);
+	let locked = $state(false);
+	let started = $state(false);
+
+	$effect(() => {
+		if (!started) {
+			stepIndex = firstOpen();
+			started = true;
+		}
+	});
+
+	const q = $derived(questions[stepIndex]);
+
+	function onAnswer(v: LikertValue) {
+		if (locked) return;
+		locked = true;
+		setHorizonAnswer(q.id, v);
+		afterSelect(() => {
+			if (stepIndex >= questions.length - 1) {
+				advanceFrom('t3');
+				return;
+			}
+			stepIndex += 1;
+			locked = false;
+		});
 	}
 </script>
 
-<section class="t3">
-	<h2>T3 — Horizon (Deep Dive)</h2>
-	<p class="lede">
-		Fifteen core questions on your long-range relational horizon (Bound framing).
-	</p>
-	<p class="mode-note">Bound Mode — horizon architecture is inherently Bound.</p>
-
-	{#each deepDiveQuestions as q, i}
-		<p class="qnum">Question {i + 1} of {deepDiveQuestions.length}</p>
-		<LikertQuestion
-			id={`t3-${q.id}`}
-			text={q.text}
-			value={horizon[q.id]}
-			onchange={(v: LikertValue) => setHorizonAnswer(q.id, v)}
-		/>
-	{/each}
-
-	<button type="button" disabled={!canContinue} onclick={continueT3}>See results</button>
-</section>
-
-<style>
-	.t3 h2 {
-		margin: 0 0 0.5rem;
-	}
-
-	.lede {
-		color: var(--muted);
-		margin: 0 0 0.75rem;
-		max-width: 40rem;
-	}
-
-	.mode-note {
-		font-size: 0.9rem;
-		font-weight: 600;
-		color: var(--bound);
-		margin: 0 0 1.5rem;
-	}
-
-	.qnum {
-		margin: 0 0 0.35rem;
-		font-size: 0.8rem;
-		color: var(--muted);
-	}
-
-	button {
-		margin-top: 1rem;
-		padding: 0.65rem 1.25rem;
-		border: none;
-		border-radius: 6px;
-		background: var(--accent);
-		color: #fff;
-		font-size: 1rem;
-		font-weight: 600;
-		cursor: pointer;
-	}
-
-	button:disabled {
-		opacity: 0.45;
-		cursor: not-allowed;
-	}
-</style>
+<QuestionShell
+	title="T3 — Horizon"
+	phaseBlurb={PHASE_BLURBS.t3}
+	stepLabel={`Question ${stepIndex + 1} of ${questions.length}`}
+	mode="bound"
+	modePrompt={MODE_PROMPTS.bound}
+	animKey={q.id}
+>
+	<LikertQuestion
+		id={`t3-${q.id}`}
+		text={q.text}
+		value={horizon[q.id]}
+		disabled={locked}
+		onchange={onAnswer}
+	/>
+</QuestionShell>

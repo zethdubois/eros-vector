@@ -1,5 +1,4 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
 	import './layout.css';
 
 	let { children } = $props();
@@ -7,8 +6,16 @@
 
 <svelte:head>
 	<title>Eros Vector</title>
-	<meta name="description" content="A 4D relationship mapping tool" />
-	<link rel="icon" href={favicon} />
+	<meta
+		name="description"
+		content="A 4D relationship mapping tool. Plot your trajectory across Structure, Hedonism, and Intent — plus Time."
+	/>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 
 {@render children()}

@@ -1,0 +1,113 @@
+<script lang="ts">
+	import { fly } from 'svelte/transition';
+	import type { Snippet } from 'svelte';
+
+	let {
+		title,
+		phaseBlurb,
+		stepLabel,
+		mode,
+		modePrompt,
+		animKey,
+		children
+	}: {
+		title: string;
+		phaseBlurb?: string;
+		stepLabel: string;
+		mode?: 'scouting' | 'bound' | null;
+		modePrompt?: string;
+		animKey: string | number;
+		children: Snippet;
+	} = $props();
+</script>
+
+<section class="shell">
+	<header class="head">
+		<h2>{title}</h2>
+		{#if phaseBlurb}
+			<p class="phase-blurb">{phaseBlurb}</p>
+		{/if}
+		<p class="step-label">{stepLabel}</p>
+		{#if mode && modePrompt}
+			<p class="mode" class:scouting={mode === 'scouting'} class:bound={mode === 'bound'}>
+				<span class="mode-name">{mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
+				{modePrompt}
+			</p>
+		{/if}
+	</header>
+
+	<div class="stage">
+		{#key animKey}
+			<div
+				class="pane"
+				in:fly={{ x: 28, duration: 320, opacity: 0 }}
+				out:fly={{ x: -22, duration: 200, opacity: 0 }}
+			>
+				{@render children()}
+			</div>
+		{/key}
+	</div>
+</section>
+
+<style>
+	.shell {
+		margin-top: 0.25rem;
+	}
+
+	.head h2 {
+		margin: 0 0 0.35rem;
+		font-family: 'Fraunces', Georgia, serif;
+		font-size: clamp(1.35rem, 3vw, 1.65rem);
+	}
+
+	.phase-blurb {
+		margin: 0 0 0.35rem;
+		font-size: 0.95rem;
+		color: var(--text);
+		line-height: 1.45;
+		max-width: 36rem;
+	}
+
+	.step-label {
+		margin: 0 0 0.85rem;
+		font-size: 0.85rem;
+		color: var(--muted);
+	}
+
+	.mode {
+		margin: 0 0 1.25rem;
+		padding: 0.75rem 0.9rem;
+		border-left: 3px solid var(--accent);
+		border-radius: 0 8px 8px 0;
+		background: var(--surface);
+		font-size: 0.92rem;
+		color: var(--muted);
+		line-height: 1.45;
+	}
+
+	.mode.scouting {
+		border-left-color: var(--scouting);
+	}
+
+	.mode.bound {
+		border-left-color: var(--bound);
+	}
+
+	.mode-name {
+		display: block;
+		font-weight: 600;
+		color: var(--text);
+		margin-bottom: 0.2rem;
+	}
+
+	.stage {
+		position: relative;
+		min-height: 14rem;
+		display: grid;
+	}
+
+	.pane {
+		width: 100%;
+		grid-area: 1 / 1;
+	}
+</style>

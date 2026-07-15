@@ -6,20 +6,22 @@
 		id,
 		text,
 		value = undefined,
+		disabled = false,
 		onchange
 	}: {
 		id: string;
 		text: string;
 		value?: LikertValue;
+		disabled?: boolean;
 		onchange: (v: LikertValue) => void;
 	} = $props();
 
 	const options: LikertValue[] = [1, 2, 3, 4, 5];
 </script>
 
-<fieldset class="likert">
+<fieldset class="likert" class:disabled>
 	<legend class="prompt">{text}</legend>
-	<div class="options" role="radiogroup">
+	<div class="options" role="radiogroup" aria-disabled={disabled}>
 		{#each options as opt}
 			<label class="opt" class:selected={value === opt}>
 				<input
@@ -27,6 +29,7 @@
 					name={id}
 					value={opt}
 					checked={value === opt}
+					{disabled}
 					onchange={() => onchange(opt)}
 				/>
 				<span class="num">{opt}</span>
@@ -40,42 +43,53 @@
 	.likert {
 		border: none;
 		padding: 0;
-		margin: 0 0 1.25rem;
+		margin: 0;
+	}
+
+	.likert.disabled {
+		opacity: 0.7;
+		pointer-events: none;
 	}
 
 	.prompt {
-		font-size: 1.05rem;
+		font-size: clamp(1.1rem, 2.4vw, 1.3rem);
 		font-weight: 500;
-		line-height: 1.45;
-		margin-bottom: 0.75rem;
+		line-height: 1.5;
+		margin-bottom: 1.25rem;
 		padding: 0;
+		max-width: 40rem;
 	}
 
 	.options {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 0.6rem;
 	}
 
 	.opt {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.25rem;
-		flex: 1 1 4.5rem;
-		min-width: 4.5rem;
-		padding: 0.6rem 0.4rem;
+		gap: 0.3rem;
+		flex: 1 1 5rem;
+		min-width: 5rem;
+		padding: 0.85rem 0.5rem;
 		border: 1px solid var(--border);
-		border-radius: 6px;
+		border-radius: 8px;
 		cursor: pointer;
 		background: var(--surface);
-		font-size: 0.7rem;
+		font-size: 0.72rem;
 		text-align: center;
 		color: var(--muted);
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease,
+			transform 0.15s ease;
 	}
 
 	.opt:hover {
 		border-color: var(--accent);
+		transform: translateY(-1px);
 	}
 
 	.opt.selected {
@@ -91,7 +105,7 @@
 	}
 
 	.num {
-		font-size: 1.1rem;
+		font-size: 1.25rem;
 		font-weight: 600;
 		color: var(--text);
 	}

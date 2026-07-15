@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { MODE_PROMPTS } from '$lib/questions';
+
 	let {
 		mode,
 		children
@@ -8,11 +10,7 @@
 	} = $props();
 
 	const title = $derived(mode === 'scouting' ? 'Scouting Mode' : 'Bound Mode');
-	const subtitle = $derived(
-		mode === 'scouting'
-			? 'Unbound, single, casually dating, seeking — your search pattern.'
-			: 'Pair-bonded, heightened commitment — your architecture.'
-	);
+	const subtitle = $derived(MODE_PROMPTS[mode]);
 </script>
 
 <section class="mode" class:bound={mode === 'bound'} class:scouting={mode === 'scouting'}>
