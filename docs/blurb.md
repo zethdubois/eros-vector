@@ -3,7 +3,7 @@
 The Eros Vector is a 4D relationship mapping tool. Instead of a static label, we plot your orientation across three spatial axes:
 
 - **Structure vs. Autonomy** (How you organize)
-- **Hedonism vs. Depth** (Why you connect)
+- **Erotic vs. Depth** (Why you connect)
 - **Intentional vs. Organic** (How it happens)
 
 **Dual-Mode Mapping:** You operate differently when single. We map both your "Scouting" pattern (unbound) and your "Bound" architecture (pair-bonded)—accurately capturing monogamy, non-monogamy, and casual dating without the BS.

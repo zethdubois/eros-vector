@@ -14,8 +14,8 @@ The tool maps users on three bipolar axes. Scoring is based on a 5-point Likert 
 - **Y-Axis: Structure (+Y) vs. Autonomy (-Y)**
   - _High +Y:_ Hierarchical Anchor, Monogamish, merged logistics.
   - _High -Y:_ Solo Poly, Relationship Anarchy, strict independence.
-- **X-Axis: Hedonism (+X) vs. Emotional Depth (-X)**
-  - _High +X:_ Recreational Play, Swinging, casual sexual variety.
+- **X-Axis: Erotic Drive (+X) vs. Emotional Depth (-X)**
+  - _High +X:_ Recreational play, swinging, casual sexual variety — erotic drive outward.
   - _High -X:_ Egalitarian Poly, Pragmatic Polycule, chosen family, strict monogamy.
 - **Z-Axis: Intentional (+Z) vs. Organic (-Z)**
   - _High +Z:_ App-driven, explicit rules, scheduled quests, lifestyle clubs, strict monogamous boundaries.
@@ -117,7 +117,7 @@ _(All phrased so 5 = Strongest pull to Positive Pole. Phrased to capture Orienta
 4. I envision my ideal relationship architecture having a central, prioritized partnership, with other connections playing more peripheral roles.
 5. I see the "couple" as the fundamental unit of my relational life, rather than the "individual."
 
-**X-Axis (Hedonism +X vs Emotional Depth -X)**
+**X-Axis (Erotic Drive +X vs Emotional Depth -X)**
 
 1. I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.
 2. I view sexual play with others primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.
@@ -157,4 +157,4 @@ Render a 3D interactive cube (using Three.js, Babylon.js, or similar).
 - **Friction Gap:** Highlight the distance between T1 (Present) and T2 (Aspiration) with a dashed line. Large distance = high dissatisfaction/desire for change.
 
 **Diagnostic Readout (Text):**
-Generate a text summary based on coordinates. E.g., "You are currently an Anchored Team Player, but your Aspiration vector points toward Tribal Hedonism. You are seeking more organic, playful emergence."
+Generate a text summary based on coordinates. E.g., "You are currently an Anchored Team Player, but your Aspiration vector points toward Tribal Erotic. You are seeking more organic, playful emergence."
