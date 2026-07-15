@@ -117,7 +117,7 @@
 	.mode-spacer {
 		flex-shrink: 0;
 		min-height: 4.75rem;
-		margin: 0;
+		margin: 0 0 2.5rem;
 	}
 
 	.mode {

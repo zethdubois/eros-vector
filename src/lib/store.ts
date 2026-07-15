@@ -5,7 +5,18 @@ import type { Answers, DualModeAnswers, Era, LikertValue, Phase, SurveyState } f
 
 export const STORAGE_KEY = 'eros-vector-survey';
 
-const PHASES: Phase[] = ['intake', 't0', 't1', 't2', 't3', 'results'];
+const PHASES: Phase[] = [
+	'intake',
+	't0',
+	'pause-t0',
+	't1',
+	'pause-t1',
+	't2',
+	'pause-t2',
+	't3',
+	'pause-t3',
+	'complete'
+];
 
 function emptyDual(): DualModeAnswers {
 	return { scouting: {}, bound: {}, shadow: false };
@@ -20,6 +31,8 @@ export function createInitialState(): SurveyState {
 		present: emptyDual(),
 		aspiration: {},
 		horizon: null,
+		horizonIncluded: null,
+		pauseEraId: null,
 		phase: 'intake'
 	};
 }
@@ -30,6 +43,14 @@ function newEraId(): string {
 
 function isPhase(value: unknown): value is Phase {
 	return typeof value === 'string' && (PHASES as string[]).includes(value);
+}
+
+function normalizeHorizon(data: Partial<SurveyState>, base: SurveyState): Answers | null {
+	if (data.horizon === null || data.horizon === undefined) return null;
+	if (typeof data.horizon !== 'object') return null;
+	const keys = Object.keys(data.horizon);
+	if (keys.length === 0 && data.horizonIncluded !== true) return null;
+	return data.horizon as Answers;
 }
 
 export function parseStoredState(raw: string): SurveyState | null {
@@ -43,6 +64,12 @@ export function parseStoredState(raw: string): SurveyState | null {
 				? data.questionSeed >>> 0
 				: base.questionSeed;
 
+		// Migrate legacy `results` phase
+		const phase: Phase = (data.phase as string) === 'results' ? 'complete' : data.phase;
+
+		const horizonIncluded =
+			typeof data.horizonIncluded === 'boolean' ? data.horizonIncluded : base.horizonIncluded;
+
 		return {
 			...base,
 			...data,
@@ -53,8 +80,10 @@ export function parseStoredState(raw: string): SurveyState | null {
 			},
 			eras: Array.isArray(data.eras) ? data.eras : [],
 			aspiration: data.aspiration ?? {},
-			horizon: data.horizon === undefined ? base.horizon : data.horizon,
-			phase: data.phase
+			horizon: normalizeHorizon(data, base),
+			horizonIncluded,
+			pauseEraId: typeof data.pauseEraId === 'string' ? data.pauseEraId : null,
+			phase
 		};
 	} catch {
 		return null;
@@ -106,7 +135,7 @@ export function hydrateSurvey(): Phase {
 	const stored = readStorage();
 	if (stored) {
 		survey.set(stored);
-		writeStorage(stored); // persist backfilled questionSeed if missing from older saves
+		writeStorage(stored);
 		return stored.phase;
 	}
 	const initial = createInitialState();
@@ -139,7 +168,9 @@ export function submitIntake(chronAge: number, awakeAge: number) {
 					}
 				]
 			: [],
-		horizon: routing.finalForm ? null : {},
+		horizon: null,
+		horizonIncluded: null,
+		pauseEraId: null,
 		phase: routing.t0 ? 't0' : 't1'
 	}));
 }
@@ -148,19 +179,71 @@ export function setPhase(phase: Phase) {
 	mutate((s) => ({ ...s, phase }));
 }
 
-export function advanceFrom(phase: Phase) {
+/** Show the billboard after completing a survey section. */
+export function finishPhase(phase: 't0' | 't1' | 't2' | 't3', eraId?: string) {
 	mutate((s) => {
-		const r = s.routing;
-		if (!r) return s;
-
-		let next: Phase = 'results';
-		if (phase === 't0') next = 't1';
-		else if (phase === 't1') next = 't2';
-		else if (phase === 't2') next = r.finalForm ? 'results' : 't3';
-		else if (phase === 't3') next = 'results';
-
-		return { ...s, phase: next };
+		if (phase === 't0') {
+			return { ...s, phase: 'pause-t0', pauseEraId: eraId ?? null };
+		}
+		if (phase === 't1') return { ...s, phase: 'pause-t1', pauseEraId: null };
+		if (phase === 't2') return { ...s, phase: 'pause-t2', pauseEraId: null };
+		if (phase === 't3') return { ...s, phase: 'pause-t3', pauseEraId: null };
+		return s;
 	});
+}
+
+/** Continue from a standard phase billboard into the next section. */
+export function continueFromPause() {
+	mutate((s) => {
+		switch (s.phase) {
+			case 'pause-t0':
+				return { ...s, phase: 't0', pauseEraId: null };
+			case 'pause-t1':
+				return { ...s, phase: 't2', pauseEraId: null };
+			case 'pause-t2':
+				return { ...s, phase: 'complete', pauseEraId: null };
+			case 'pause-t3':
+				return { ...s, phase: 'complete', pauseEraId: null };
+			default:
+				return s;
+		}
+	});
+}
+
+export function includeHorizon() {
+	mutate((s) => ({
+		...s,
+		horizonIncluded: true,
+		horizon: {},
+		phase: 't3'
+	}));
+}
+
+export function skipHorizon() {
+	mutate((s) => ({
+		...s,
+		horizonIncluded: false,
+		horizon: null,
+		phase: 'complete'
+	}));
+}
+
+/** Skip Past eras entirely and continue to Present. */
+export function skipPastEras() {
+	mutate((s) => ({
+		...s,
+		eras: [],
+		pauseEraId: null,
+		phase: 't1'
+	}));
+}
+
+/** @deprecated Use finishPhase / continueFromPause instead. */
+export function advanceFrom(phase: Phase) {
+	if (phase === 't0') finishPhase('t0');
+	else if (phase === 't1') finishPhase('t1');
+	else if (phase === 't2') finishPhase('t2');
+	else if (phase === 't3') finishPhase('t3');
 }
 
 export function addEra() {

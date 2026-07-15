@@ -7,6 +7,7 @@
   import T1Present from "$lib/components/T1Present.svelte";
   import T2Aspiration from "$lib/components/T2Aspiration.svelte";
   import T3Horizon from "$lib/components/T3Horizon.svelte";
+  import PhaseBillboard from "$lib/components/PhaseBillboard.svelte";
   import Results from "$lib/components/Results.svelte";
 
   let ready = $state(false);
@@ -46,13 +47,20 @@
   </header>
 
   {#if ready}
-    <ProgressBar phase={$survey.phase} routing={$survey.routing} />
+    <ProgressBar
+      phase={$survey.phase}
+      routing={$survey.routing}
+      horizonIncluded={$survey.horizonIncluded}
+      eraCount={$survey.eras.length}
+    />
 
     <div class="phase">
       {#if $survey.phase === "intake"}
         <IntakeForm />
       {:else if $survey.phase === "t0"}
         <T0Eras eras={$survey.eras} questionSeed={$survey.questionSeed} />
+      {:else if $survey.phase === "pause-t0" || $survey.phase === "pause-t1" || $survey.phase === "pause-t2" || $survey.phase === "pause-t3"}
+        <PhaseBillboard state={$survey} />
       {:else if $survey.phase === "t1"}
         <T1Present
           present={$survey.present}
@@ -64,12 +72,12 @@
           finalForm={$survey.routing?.finalForm ?? false}
           questionSeed={$survey.questionSeed}
         />
-      {:else if $survey.phase === "t3" && $survey.horizon}
+      {:else if $survey.phase === "t3" && $survey.horizonIncluded}
         <T3Horizon
-          horizon={$survey.horizon}
+          horizon={$survey.horizon ?? {}}
           questionSeed={$survey.questionSeed}
         />
-      {:else if $survey.phase === "results"}
+      {:else if $survey.phase === "complete"}
         <Results state={$survey} />
       {/if}
     </div>

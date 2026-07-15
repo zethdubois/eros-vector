@@ -4,7 +4,7 @@
 	import { MODE_PROMPTS, PHASE_BLURBS } from '$lib/questions';
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
-	import { advanceFrom, setHorizonAnswer } from '$lib/store';
+	import { finishPhase, setHorizonAnswer } from '$lib/store';
 	import type { Answers, LikertValue } from '$lib/types';
 
 	let {
@@ -41,7 +41,7 @@
 		setHorizonAnswer(q.id, v);
 		afterSelect(() => {
 			if (stepIndex >= questions.length - 1) {
-				advanceFrom('t3');
+				finishPhase('t3');
 				return;
 			}
 			stepIndex += 1;
@@ -51,7 +51,7 @@
 </script>
 
 <QuestionShell
-	title="T3 — Horizon"
+	title="Horizon"
 	phaseBlurb={PHASE_BLURBS.t3}
 	stepLabel={`Question ${stepIndex + 1} of ${questions.length}`}
 	mode="bound"

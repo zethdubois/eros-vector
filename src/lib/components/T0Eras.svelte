@@ -6,9 +6,11 @@
 	import { afterSelect } from '$lib/surveyAdvance';
 	import {
 		addEra,
-		advanceFrom,
+		finishPhase,
 		setEraAnswer,
 		setEraShadow,
+		setPhase,
+		skipPastEras,
 		updateEraName,
 		type Era
 	} from '$lib/store';
@@ -110,10 +112,7 @@
 	});
 
 	function goNext() {
-		if (stepIndex >= steps.length - 1) {
-			advanceFrom('t0');
-			return;
-		}
+		if (stepIndex >= steps.length - 1) return;
 		stepIndex += 1;
 		locked = false;
 	}
@@ -144,14 +143,14 @@
 		locked = true;
 		setEraShadow(era.id, value);
 		afterSelect(() => {
-			goNext();
+			finishPhase('t0', era.id);
 		});
 	}
 
 	function finishEras() {
 		if (locked) return;
 		locked = true;
-		advanceFrom('t0');
+		setPhase('t1');
 	}
 
 	function addAnotherEra() {
@@ -160,16 +159,34 @@
 		pendingNewEra = true;
 		addEra();
 	}
+
+	function skipPast() {
+		if (locked || step.kind !== 'name' || step.eraIndex !== 0) return;
+		locked = true;
+		skipPastEras();
+	}
+
+	const showPastAdvice = $derived(step.kind === 'name' && step.eraIndex === 0);
 </script>
 
 {#if step.kind === 'name' && era}
 	<QuestionShell
-		title="T0 — Past eras"
+		title="Past eras"
 		phaseBlurb={PHASE_BLURBS.t0}
 		{stepLabel}
 		animKey={`name-${era.id}`}
 	>
 		<div class="name-step">
+			{#if showPastAdvice}
+				<aside class="advice">
+					<p>
+						Not everyone has a past era to map — and some of our older (dirty sluts) have had a
+						richly storied past with many. If this is your first time through the survey, we
+						recommend adding at most one era. You can always come back later to fill in more and
+						map a complete story.
+					</p>
+				</aside>
+			{/if}
 			<label>
 				<span>Name this era of your relational life</span>
 				<input
@@ -180,15 +197,22 @@
 					onkeydown={(e) => e.key === 'Enter' && submitName()}
 				/>
 			</label>
-			<button type="button" disabled={locked || !nameDraft.trim()} onclick={submitName}
-				>Continue</button
-			>
+			<div class="btns">
+				<button type="button" disabled={locked || !nameDraft.trim()} onclick={submitName}
+					>Continue</button
+				>
+				{#if showPastAdvice}
+					<button type="button" class="secondary" disabled={locked} onclick={skipPast}
+						>Skip past eras</button
+					>
+				{/if}
+			</div>
 		</div>
 	</QuestionShell>
 {:else if step.kind === 'q' && era}
 	{@const q = questions[step.qi]}
 	<QuestionShell
-		title="T0 — Past eras"
+		title="Past eras"
 		phaseBlurb={PHASE_BLURBS.t0}
 		{stepLabel}
 		mode={step.mode}
@@ -210,7 +234,7 @@
 	</QuestionShell>
 {:else if step.kind === 'shadow' && era}
 	<QuestionShell
-		title="T0 — Past eras"
+		title="Past eras"
 		phaseBlurb={PHASE_BLURBS.t0}
 		{stepLabel}
 		mode="bound"
@@ -233,7 +257,7 @@
 		</div>
 	</QuestionShell>
 {:else if step.kind === 'gate'}
-	<QuestionShell title="T0 — Past eras" phaseBlurb={PHASE_BLURBS.t0} {stepLabel} animKey="gate">
+	<QuestionShell title="Past eras" phaseBlurb={PHASE_BLURBS.t0} {stepLabel} animKey="gate">
 		<div class="gate">
 			<p class="prompt">Want to map another past era? (up to 4)</p>
 			<div class="btns">
@@ -255,6 +279,22 @@
 		gap: 0.45rem;
 		margin-bottom: 1.25rem;
 		font-size: 0.95rem;
+	}
+
+	.advice {
+		margin: 0 0 1.35rem;
+		padding: 0.85rem 1rem;
+		border-left: 3px solid var(--accent);
+		border-radius: 0 8px 8px 0;
+		background: var(--surface);
+		max-width: 38rem;
+	}
+
+	.advice p {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--muted);
 	}
 
 	input[type='text'] {

@@ -1,5 +1,5 @@
 import { coordinateLabel } from './labels';
-import { deepDiveQuestions, PHASE_BLURBS, quickVibeQuestions } from './questions';
+import { deepDiveQuestions, quickVibeQuestions } from './questions';
 import { scoreAnswers } from './scoring';
 import type { Answers, Coordinates, Question, SurveyState } from './types';
 
@@ -19,6 +19,12 @@ export type ResultSection = {
 	passes: ResultPass[];
 };
 
+export type BillboardLine = {
+	phaseName: string;
+	verb: 'were' | 'are' | 'will be';
+	passes: ResultPass[];
+};
+
 function toPass(
 	mode: ResultMode,
 	answers: Answers,
@@ -34,6 +40,59 @@ function toPass(
 	};
 }
 
+function eraBillboardLine(state: SurveyState, eraId: string): BillboardLine | null {
+	const era = state.eras.find((e) => e.id === eraId);
+	if (!era) return null;
+	return {
+		phaseName: era.name.trim() || 'Untitled era',
+		verb: 'were',
+		passes: [
+			toPass('scouting', era.scouting, quickVibeQuestions),
+			toPass('bound', era.bound, quickVibeQuestions, era.shadow)
+		]
+	};
+}
+
+export function buildBillboardLines(state: SurveyState): BillboardLine[] {
+	switch (state.phase) {
+		case 'pause-t0': {
+			if (!state.pauseEraId) return [];
+			const line = eraBillboardLine(state, state.pauseEraId);
+			return line ? [line] : [];
+		}
+		case 'pause-t1':
+			return [
+				{
+					phaseName: 'Present',
+					verb: 'are',
+					passes: [
+						toPass('scouting', state.present.scouting, deepDiveQuestions),
+						toPass('bound', state.present.bound, deepDiveQuestions, state.present.shadow)
+					]
+				}
+			];
+		case 'pause-t2':
+			return [
+				{
+					phaseName: state.routing?.finalForm ? 'Final Form' : 'Aspiration',
+					verb: 'are',
+					passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
+				}
+			];
+		case 'pause-t3':
+			if (!state.horizon) return [];
+			return [
+				{
+					phaseName: 'Horizon',
+					verb: 'will be',
+					passes: [toPass('bound', state.horizon, deepDiveQuestions)]
+				}
+			];
+		default:
+			return [];
+	}
+}
+
 /** Build labeled result passes grouped by time layer. */
 export function buildResultSections(state: SurveyState): ResultSection[] {
 	const sections: ResultSection[] = [];
@@ -41,7 +100,7 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 	for (const era of state.eras) {
 		sections.push({
 			id: `t0-${era.id}`,
-			phaseLabel: 'T0 — Past eras',
+			phaseLabel: 'Past eras',
 			context: era.name || 'Untitled era',
 			passes: [
 				toPass('scouting', era.scouting, quickVibeQuestions),
@@ -52,8 +111,8 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 
 	sections.push({
 		id: 't1',
-		phaseLabel: 'T1 — Present',
-		context: PHASE_BLURBS.t1,
+		phaseLabel: 'Present',
+		context: 'Where you are now in your relational life.',
 		passes: [
 			toPass('scouting', state.present.scouting, deepDiveQuestions),
 			toPass('bound', state.present.bound, deepDiveQuestions, state.present.shadow)
@@ -64,26 +123,31 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 		sections.push({
 			id: 'final-form',
 			phaseLabel: 'Final Form',
-			context: PHASE_BLURBS.finalForm,
+			context: 'Your long-range relational architecture — aspiration and horizon together.',
 			passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
 		});
 	} else {
 		sections.push({
 			id: 't2',
-			phaseLabel: 'T2 — Aspiration',
-			context: PHASE_BLURBS.t2,
+			phaseLabel: 'Aspiration',
+			context: 'The pair-bond structure you want to build toward.',
 			passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
 		});
 
-		if (state.horizon) {
+		if (state.horizonIncluded === true && state.horizon) {
 			sections.push({
 				id: 't3',
-				phaseLabel: 'T3 — Horizon',
-				context: PHASE_BLURBS.t3,
+				phaseLabel: 'Horizon',
+				context: 'Where you imagine yourself long-term.',
 				passes: [toPass('bound', state.horizon, deepDiveQuestions)]
 			});
 		}
 	}
 
 	return sections;
+}
+
+/** Sections through aspiration — used before optional horizon. */
+export function buildPartialResultSections(state: SurveyState): ResultSection[] {
+	return buildResultSections({ ...state, horizonIncluded: false, horizon: null });
 }

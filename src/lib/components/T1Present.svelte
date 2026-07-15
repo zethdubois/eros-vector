@@ -4,12 +4,7 @@
 	import { MODE_PROMPTS, PHASE_BLURBS } from '$lib/questions';
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
-	import {
-		advanceFrom,
-		setPresentAnswer,
-		setPresentShadow,
-		type DualModeAnswers
-	} from '$lib/store';
+	import { finishPhase, setPresentAnswer, setPresentShadow, type DualModeAnswers } from '$lib/store';
 	import type { LikertValue } from '$lib/types';
 
 	let {
@@ -65,10 +60,7 @@
 	);
 
 	function goNext() {
-		if (stepIndex >= steps.length - 1) {
-			advanceFrom('t1');
-			return;
-		}
+		if (stepIndex >= steps.length - 1) return;
 		stepIndex += 1;
 		locked = false;
 	}
@@ -88,7 +80,7 @@
 		locked = true;
 		setPresentShadow(value);
 		afterSelect(() => {
-			advanceFrom('t1');
+			finishPhase('t1');
 		});
 	}
 </script>
@@ -96,7 +88,7 @@
 {#if step.kind === 'q'}
 	{@const q = questions[step.qi]}
 	<QuestionShell
-		title="T1 — Present"
+		title="Present"
 		phaseBlurb={PHASE_BLURBS.t1}
 		{stepLabel}
 		mode={step.mode}
@@ -113,7 +105,7 @@
 	</QuestionShell>
 {:else}
 	<QuestionShell
-		title="T1 — Present"
+		title="Present"
 		phaseBlurb={PHASE_BLURBS.t1}
 		{stepLabel}
 		mode="bound"
