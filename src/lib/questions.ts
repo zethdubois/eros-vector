@@ -51,7 +51,7 @@ export const deepDiveQuestions: Question[] = [
     axis: "y",
     text: 'I see the "couple" as the fundamental unit of my relational life, rather than the "individual."',
   },
-  // X-Axis (Erotic Drive +X vs Emotional Depth -X)
+  // X-Axis (Eroticism +X vs Emotional Depth -X)
   {
     id: "dd-x1",
     axis: "x",

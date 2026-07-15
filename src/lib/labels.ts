@@ -15,7 +15,7 @@ export const ARCHETYPES: Archetype[] = [
 	{
 		id: 'anchored-play-couple',
 		name: 'The Anchored Play Couple',
-		tagline: 'Structure + Erotic + Intentional',
+		tagline: 'Structure + Eroticism + Intentional',
 		description:
 			'You are fundamentally a couple-centric person who views non-monogamy as a recreational team sport. Your anchor relationship is your absolute priority and provides your core security, but you actively seek out sexual variety and erotic energy to augment that bond. You prefer to design your play intentionally—using lifestyle apps, seeking out specific scenarios, or attending clubs together. Your architecture has a clear blueprint, and play is a scheduled, exciting addition to your structured life.',
 		signs: { y: '+', x: '+', z: '+' }
@@ -23,7 +23,7 @@ export const ARCHETYPES: Archetype[] = [
 	{
 		id: 'tribal-erotic',
 		name: 'The Tribal Erotic',
-		tagline: 'Structure + Erotic + Organic',
+		tagline: 'Structure + Eroticism + Organic',
 		description:
 			'You have a deep, prioritized "home base" anchor, but you thrive on sexual variety and playful energy that erupts naturally from your social ecosystem. You don\'t want to hunt for play on apps or schedule it like a meeting; you want to immerse yourself in a permissive, non-judgmental tribe where flirtation and group energy can spontaneously combust. Your anchor keeps you grounded, but the organic flow of the room dictates the play.',
 		signs: { y: '+', x: '+', z: '-' }
@@ -47,7 +47,7 @@ export const ARCHETYPES: Archetype[] = [
 	{
 		id: 'solo-player',
 		name: 'The Solo Player',
-		tagline: 'Autonomy + Erotic + Intentional',
+		tagline: 'Autonomy + Eroticism + Intentional',
 		description:
 			'You are your own primary. You have no desire to merge your life or logistics with a partner, but you have a high erotic drive for sexual variety and play. You are highly intentional about how you get your needs met—using apps, going to specific events, or setting up clear, casual arrangements. You want the fun and the thrill without the emotional heavy lifting or the logistical entanglement of a merged life.',
 		signs: { y: '-', x: '+', z: '+' }
@@ -55,7 +55,7 @@ export const ARCHETYPES: Archetype[] = [
 	{
 		id: 'free-agent',
 		name: 'The Free Agent',
-		tagline: 'Autonomy + Erotic + Organic',
+		tagline: 'Autonomy + Eroticism + Organic',
 		description:
 			'You are fiercely independent and deeply drawn to sexual play, but you refuse to schedule or structure your erotic life. You thrive in permissive social circles where casual, spontaneous connections simply erupt when the vibe is right. You don\'t want to manage a roster or negotiate a blueprint; you want to flow through social spaces, enjoying the physical and erotic energy of the moment without any logistical strings attached.',
 		signs: { y: '-', x: '+', z: '-' }
