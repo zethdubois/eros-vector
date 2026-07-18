@@ -21,12 +21,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Backstage: readonly or developer (not viewer-only)
 	if (pathname === '/backstage' || pathname.startsWith('/backstage/')) {
-		if (!role) {
-			const next = encodeURIComponent(safeNextPath(pathname));
-			redirect(303, `/access?next=${next}`);
-		}
 		if (!hasAtLeast(role, 'readonly')) {
-			redirect(303, '/');
+			const next = encodeURIComponent(safeNextPath(pathname));
+			redirect(303, `/access?next=${next}&upgrade=backstage`);
 		}
 		return resolve(event);
 	}

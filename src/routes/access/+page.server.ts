@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	accessConfigured,
 	clearAccessCookie,
+	hasAtLeast,
 	loginAllowed,
 	recordLoginFailure,
 	roleForPassword,
@@ -12,12 +13,16 @@ import {
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const next = safeNextPath(url.searchParams.get('next'));
-	if (locals.accessRole) {
+	const upgradingBackstage =
+		next.startsWith('/backstage') && !hasAtLeast(locals.accessRole, 'readonly');
+
+	if (locals.accessRole && !upgradingBackstage) {
 		redirect(303, next === '/access' ? '/' : next);
 	}
 	return {
 		configured: accessConfigured(),
-		next
+		next,
+		upgradingBackstage
 	};
 };
 
@@ -41,6 +46,13 @@ export const actions: Actions = {
 		if (!role) {
 			recordLoginFailure(ip);
 			return fail(401, { error: 'Invalid password.', next });
+		}
+		if (next.startsWith('/backstage') && !hasAtLeast(role, 'readonly')) {
+			recordLoginFailure(ip);
+			return fail(403, {
+				error: 'That password only unlocks the public survey. Enter a backstage password.',
+				next
+			});
 		}
 
 		setAccessCookie(cookies, role);

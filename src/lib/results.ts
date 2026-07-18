@@ -1,5 +1,4 @@
 import { resolveArchetype, type Archetype } from './labels';
-import { deepDiveQuestions, quickVibeQuestions } from './questions';
 import { scoreAnswers } from './scoring';
 import type { Answers, Coordinates, Question, SurveyState } from './types';
 
@@ -26,6 +25,11 @@ export type BillboardLine = {
 	passes: ResultPass[];
 };
 
+export type QuestionBanks = {
+	quickVibe: Question[];
+	deepDive: Question[];
+};
+
 function toPass(
 	mode: ResultMode,
 	answers: Answers,
@@ -43,24 +47,28 @@ function toPass(
 	};
 }
 
-function eraBillboardLine(state: SurveyState, eraId: string): BillboardLine | null {
+function eraBillboardLine(
+	state: SurveyState,
+	eraId: string,
+	banks: QuestionBanks
+): BillboardLine | null {
 	const era = state.eras.find((e) => e.id === eraId);
 	if (!era) return null;
 	return {
 		phaseName: era.name.trim() || 'Untitled era',
 		verb: 'were',
 		passes: [
-			toPass('scouting', era.scouting, quickVibeQuestions),
-			toPass('bound', era.bound, quickVibeQuestions, era.shadow)
+			toPass('scouting', era.scouting, banks.quickVibe),
+			toPass('bound', era.bound, banks.quickVibe, era.shadow)
 		]
 	};
 }
 
-export function buildBillboardLines(state: SurveyState): BillboardLine[] {
+export function buildBillboardLines(state: SurveyState, banks: QuestionBanks): BillboardLine[] {
 	switch (state.phase) {
 		case 'pause-t0': {
 			if (!state.pauseEraId) return [];
-			const line = eraBillboardLine(state, state.pauseEraId);
+			const line = eraBillboardLine(state, state.pauseEraId, banks);
 			return line ? [line] : [];
 		}
 		case 'pause-t1':
@@ -69,8 +77,8 @@ export function buildBillboardLines(state: SurveyState): BillboardLine[] {
 					phaseName: 'Present',
 					verb: 'are',
 					passes: [
-						toPass('scouting', state.present.scouting, deepDiveQuestions),
-						toPass('bound', state.present.bound, deepDiveQuestions, state.present.shadow)
+						toPass('scouting', state.present.scouting, banks.deepDive),
+						toPass('bound', state.present.bound, banks.deepDive, state.present.shadow)
 					]
 				}
 			];
@@ -79,7 +87,7 @@ export function buildBillboardLines(state: SurveyState): BillboardLine[] {
 				{
 					phaseName: state.routing?.finalForm ? 'Final Form' : 'Aspiration',
 					verb: 'are',
-					passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
+					passes: [toPass('bound', state.aspiration, banks.deepDive)]
 				}
 			];
 		case 'pause-t3':
@@ -88,7 +96,7 @@ export function buildBillboardLines(state: SurveyState): BillboardLine[] {
 				{
 					phaseName: 'Horizon',
 					verb: 'will be',
-					passes: [toPass('bound', state.horizon, deepDiveQuestions)]
+					passes: [toPass('bound', state.horizon, banks.deepDive)]
 				}
 			];
 		default:
@@ -97,7 +105,7 @@ export function buildBillboardLines(state: SurveyState): BillboardLine[] {
 }
 
 /** Build labeled result passes grouped by time layer. */
-export function buildResultSections(state: SurveyState): ResultSection[] {
+export function buildResultSections(state: SurveyState, banks: QuestionBanks): ResultSection[] {
 	const sections: ResultSection[] = [];
 
 	for (const era of state.eras) {
@@ -106,8 +114,8 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 			phaseLabel: 'Past eras',
 			context: era.name || 'Untitled era',
 			passes: [
-				toPass('scouting', era.scouting, quickVibeQuestions),
-				toPass('bound', era.bound, quickVibeQuestions, era.shadow)
+				toPass('scouting', era.scouting, banks.quickVibe),
+				toPass('bound', era.bound, banks.quickVibe, era.shadow)
 			]
 		});
 	}
@@ -117,8 +125,8 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 		phaseLabel: 'Present',
 		context: 'Where you are now in your relational life.',
 		passes: [
-			toPass('scouting', state.present.scouting, deepDiveQuestions),
-			toPass('bound', state.present.bound, deepDiveQuestions, state.present.shadow)
+			toPass('scouting', state.present.scouting, banks.deepDive),
+			toPass('bound', state.present.bound, banks.deepDive, state.present.shadow)
 		]
 	});
 
@@ -127,14 +135,14 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 			id: 'final-form',
 			phaseLabel: 'Final Form',
 			context: 'Your long-range relational architecture — aspiration and horizon together.',
-			passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
+			passes: [toPass('bound', state.aspiration, banks.deepDive)]
 		});
 	} else {
 		sections.push({
 			id: 't2',
 			phaseLabel: 'Aspiration',
 			context: 'The pair-bond structure you want to build toward.',
-			passes: [toPass('bound', state.aspiration, deepDiveQuestions)]
+			passes: [toPass('bound', state.aspiration, banks.deepDive)]
 		});
 
 		if (state.horizonIncluded === true && state.horizon) {
@@ -142,7 +150,7 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 				id: 't3',
 				phaseLabel: 'Horizon',
 				context: 'Where you imagine yourself long-term.',
-				passes: [toPass('bound', state.horizon, deepDiveQuestions)]
+				passes: [toPass('bound', state.horizon, banks.deepDive)]
 			});
 		}
 	}
@@ -151,6 +159,9 @@ export function buildResultSections(state: SurveyState): ResultSection[] {
 }
 
 /** Sections through aspiration — used before optional horizon. */
-export function buildPartialResultSections(state: SurveyState): ResultSection[] {
-	return buildResultSections({ ...state, horizonIncluded: false, horizon: null });
+export function buildPartialResultSections(
+	state: SurveyState,
+	banks: QuestionBanks
+): ResultSection[] {
+	return buildResultSections({ ...state, horizonIncluded: false, horizon: null }, banks);
 }

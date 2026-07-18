@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { buildResultSections } from '$lib/results';
+	import { buildResultSections, type QuestionBanks } from '$lib/results';
 	import { navigateToSection, resetSurvey, type SurveyState } from '$lib/store';
 	import { canAddHorizon, canAddPastEras } from '$lib/surveyNav';
 
-	let { state: surveyState }: { state: SurveyState } = $props();
+	let {
+		state: surveyState,
+		banks
+	}: {
+		state: SurveyState;
+		banks: QuestionBanks;
+	} = $props();
 
-	const sections = $derived(buildResultSections(surveyState));
+	const sections = $derived(buildResultSections(surveyState, banks));
 	const showAddPast = $derived(canAddPastEras(surveyState));
 	const showAddHorizon = $derived(canAddHorizon(surveyState));
 

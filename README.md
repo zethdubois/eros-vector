@@ -41,9 +41,64 @@ Survey progress persists in the browser via `localStorage` (`eros-vector-survey`
 
 The app is password-gated. Copy [`.env.example`](.env.example) to `.env` and set:
 
+- `PUBLIC_BETA_MODE=true` — beta labels/flow; set `false` for public-release behavior
 - `ACCESS_PASSWORD_VIEWER` — public app only (`/`, `/survey`, …)
 - `ACCESS_PASSWORD_READONLY` — public app **plus** `/backstage` (peek tools)
 - `ACCESS_PASSWORD_DEVELOPER` — public app **plus** `/backstage` (full tools, including reset)
 - `ACCESS_COOKIE_SECRET` — long random string for signing the session cookie
+- `DATABASE_URL` — PostgreSQL connection string for the survey question catalog
 
 Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`) and the access env vars above.
+
+## Database (survey questions)
+
+Scored survey questions live in PostgreSQL (`survey_axes`, `survey_questions`), managed with Drizzle:
+
+```sh
+# Generate a migration after editing the Drizzle schema (does not touch a database)
+pnpm db:generate
+
+# Local database writes
+pnpm db:migrate
+pnpm db:seed
+
+# Production database writes (explicit acknowledgement required)
+pnpm db:migrate:prod
+pnpm db:seed:prod
+```
+
+All commands use `DATABASE_URL`. Remote database writes are blocked by the non-`:prod`
+commands; this prevents an accidental production migration or seed. The seed is idempotent,
+but it updates live question wording and ordering, so review changes before running it.
+
+### Railway production workflow
+
+The deployed app uses Railway's private `DATABASE_URL` (`postgres.railway.internal`), which
+resolves **only inside Railway's network** and avoids public egress fees. Because of this,
+`railway run` does not work for migrations: it injects the service variables but executes on
+your local machine, where the private host cannot be resolved. Run the database commands
+inside Railway instead.
+
+**Recommended — pre-deploy step (runs automatically on every deploy):** In the Railway app
+service, open Settings, find the Deploy section, and set the pre-deploy command to:
+
+```sh
+pnpm db:migrate:prod && pnpm db:seed:prod
+```
+
+This runs after build and before the new version serves traffic, on the private network, so
+migrations are always applied before dependent code goes live. The seed is idempotent.
+
+**One-off — SSH into the deployed service** (after this branch is deployed):
+
+```sh
+railway ssh -- sh -lc 'pnpm db:migrate:prod && pnpm db:seed:prod'
+```
+
+`tsx` is a runtime dependency so these commands work inside the Railway image (where
+devDependencies may be pruned). The application fails with a clear `503` if the question
+catalog is unavailable or incomplete.
+
+**Local access (optional):** to run these from your own machine, point `DATABASE_URL` at
+Railway's public Postgres proxy URL (Postgres service → Connect → Public Network). This
+incurs egress fees, so prefer the pre-deploy step for routine use.

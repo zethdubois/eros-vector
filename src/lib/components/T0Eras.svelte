@@ -18,13 +18,15 @@
 
 	let {
 		eras,
-		questionSeed
+		questionSeed,
+		questions: bank
 	}: {
 		eras: Era[];
 		questionSeed: number;
+		questions: Question[];
 	} = $props();
 
-	const questions = $derived(orderedQuickVibe(questionSeed));
+	const questions = $derived(orderedQuickVibe(bank, questionSeed));
 
 	type Step =
 		| { kind: 'name'; eraIndex: number }

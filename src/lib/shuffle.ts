@@ -1,4 +1,3 @@
-import { deepDiveQuestions, quickVibeQuestions } from './questions';
 import type { Question } from './types';
 
 /** Mulberry32 — deterministic PRNG from a 32-bit seed. */
@@ -36,11 +35,11 @@ export function shuffleWithSeed<T>(items: readonly T[], seed: number): T[] {
 }
 
 /** Session order for Deep Dive (T1/T2/T3) — same sequence every T. */
-export function orderedDeepDive(seed: number): Question[] {
-	return shuffleWithSeed(deepDiveQuestions, seed);
+export function orderedDeepDive(questions: readonly Question[], seed: number): Question[] {
+	return shuffleWithSeed(questions, seed);
 }
 
 /** Session order for Quick Vibe (T0) — derived from same seed, separate stream. */
-export function orderedQuickVibe(seed: number): Question[] {
-	return shuffleWithSeed(quickVibeQuestions, seed ^ 0x9e3779b9);
+export function orderedQuickVibe(questions: readonly Question[], seed: number): Question[] {
+	return shuffleWithSeed(questions, seed ^ 0x9e3779b9);
 }

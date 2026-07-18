@@ -10,6 +10,8 @@
   import PhaseBillboard from "$lib/components/PhaseBillboard.svelte";
   import Results from "$lib/components/Results.svelte";
 
+  let { data } = $props();
+
   let ready = $state(false);
 
   onMount(() => {
@@ -53,27 +55,34 @@
       {#if $survey.phase === "intake"}
         <IntakeForm />
       {:else if $survey.phase === "t0"}
-        <T0Eras eras={$survey.eras} questionSeed={$survey.questionSeed} />
+        <T0Eras
+          eras={$survey.eras}
+          questionSeed={$survey.questionSeed}
+          questions={data.banks.quickVibe}
+        />
       {:else if $survey.phase === "pause-t0" || $survey.phase === "pause-t1" || $survey.phase === "pause-t2" || $survey.phase === "pause-t3"}
-        <PhaseBillboard state={$survey} />
+        <PhaseBillboard state={$survey} banks={data.banks} />
       {:else if $survey.phase === "t1"}
         <T1Present
           present={$survey.present}
           questionSeed={$survey.questionSeed}
+          questions={data.banks.deepDive}
         />
       {:else if $survey.phase === "t2"}
         <T2Aspiration
           aspiration={$survey.aspiration}
           finalForm={$survey.routing?.finalForm ?? false}
           questionSeed={$survey.questionSeed}
+          questions={data.banks.deepDive}
         />
       {:else if $survey.phase === "t3" && $survey.horizonIncluded !== false}
         <T3Horizon
           horizon={$survey.horizon ?? {}}
           questionSeed={$survey.questionSeed}
+          questions={data.banks.deepDive}
         />
       {:else if $survey.phase === "complete"}
-        <Results state={$survey} />
+        <Results state={$survey} banks={data.banks} />
       {/if}
     </div>
   {/if}

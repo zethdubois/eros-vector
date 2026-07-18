@@ -5,17 +5,19 @@
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setHorizonAnswer } from '$lib/store';
-	import type { Answers, LikertValue } from '$lib/types';
+	import type { Answers, LikertValue, Question } from '$lib/types';
 
 	let {
 		horizon,
-		questionSeed
+		questionSeed,
+		questions: bank
 	}: {
 		horizon: Answers;
 		questionSeed: number;
+		questions: Question[];
 	} = $props();
 
-	const questions = $derived(orderedDeepDive(questionSeed));
+	const questions = $derived(orderedDeepDive(bank, questionSeed));
 
 	function firstOpen(): number {
 		const i = questions.findIndex((q) => horizon[q.id] === undefined);

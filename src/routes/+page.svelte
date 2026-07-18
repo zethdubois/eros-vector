@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { betaMode } from "$lib/appMode";
   import { survey, hydrateSurvey } from "$lib/store";
 
   let ready = $state(false);
@@ -12,7 +13,15 @@
   const hasProgress = $derived(
     ready && ($survey.phase !== "intake" || $survey.intake !== null),
   );
-  const ctaLabel = $derived(hasProgress ? "Continue mapping" : "Begin mapping");
+  const ctaLabel = $derived(
+    hasProgress
+      ? betaMode
+        ? "Continue beta survey"
+        : "Continue mapping"
+      : betaMode
+        ? "Contribute to beta survey"
+        : "Begin mapping",
+  );
 
   function scrollToOverview() {
     document.getElementById("overview")?.scrollIntoView({ behavior: "smooth" });
@@ -44,8 +53,8 @@
   <section id="overview" class="overview" aria-labelledby="overview-heading">
     <h2 id="overview-heading">How It Works</h2>
     <p class="lede">
-      Answer a detailed survey, then find your home on the map. Watch how that
-      place shifts across your life.
+      Answer a detailed survey to undersand how you navigate your relational
+      desires throughout your life.
     </p>
 
     <div class="flow-wrap">

@@ -5,19 +5,21 @@
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setAspirationAnswer } from '$lib/store';
-	import type { Answers, LikertValue } from '$lib/types';
+	import type { Answers, LikertValue, Question } from '$lib/types';
 
 	let {
 		aspiration,
 		finalForm,
-		questionSeed
+		questionSeed,
+		questions: bank
 	}: {
 		aspiration: Answers;
 		finalForm: boolean;
 		questionSeed: number;
+		questions: Question[];
 	} = $props();
 
-	const questions = $derived(orderedDeepDive(questionSeed));
+	const questions = $derived(orderedDeepDive(bank, questionSeed));
 	const title = $derived(finalForm ? 'Final Form' : 'Aspiration');
 	const phaseBlurb = $derived(finalForm ? PHASE_BLURBS.finalForm : PHASE_BLURBS.t2);
 

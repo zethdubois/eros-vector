@@ -2,10 +2,17 @@
 	import { page } from '$app/state';
 	import './layout.css';
 	import SaveKeyPanel from '$lib/components/SaveKeyPanel.svelte';
+	import type { LayoutData } from './$types';
 
-	let { children } = $props();
+	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
 
 	const showSaveKey = $derived(!page.url.pathname.startsWith('/access'));
+	const showBackstageLink = $derived(
+		data.canAccessBackstage &&
+			!page.url.pathname.startsWith('/backstage') &&
+			!page.url.pathname.startsWith('/access')
+	);
+	const onDarkSplash = $derived(page.url.pathname === '/');
 </script>
 
 <svelte:head>
@@ -22,8 +29,38 @@
 	/>
 </svelte:head>
 
+{#if showBackstageLink}
+	<a class="backstage-link" class:on-dark={onDarkSplash} href="/backstage">backstage</a>
+{/if}
+
 {@render children()}
 
 {#if showSaveKey}
 	<SaveKeyPanel />
 {/if}
+
+<style>
+	.backstage-link {
+		position: fixed;
+		top: 1rem;
+		left: 1rem;
+		z-index: 40;
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: var(--muted);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	.backstage-link:hover {
+		color: var(--accent);
+	}
+
+	.backstage-link.on-dark {
+		color: color-mix(in srgb, var(--cream) 72%, transparent);
+	}
+
+	.backstage-link.on-dark:hover {
+		color: var(--cream);
+	}
+</style>

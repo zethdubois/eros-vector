@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { betaMode } from '$lib/appMode';
 	import {
 		exportSurveyKey,
 		hydrateSurvey,
@@ -72,6 +73,8 @@
 		<h2>Survey debug</h2>
 		{#if ready}
 			<dl class="facts">
+				<dt>App mode</dt>
+				<dd><code>{betaMode ? 'beta' : 'release'}</code></dd>
 				<dt>Phase</dt>
 				<dd><code>{phase}</code></dd>
 				<dt>Question seed</dt>

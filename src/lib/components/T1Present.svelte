@@ -5,17 +5,19 @@
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setPresentAnswer, setPresentShadow, type DualModeAnswers } from '$lib/store';
-	import type { LikertValue } from '$lib/types';
+	import type { LikertValue, Question } from '$lib/types';
 
 	let {
 		present,
-		questionSeed
+		questionSeed,
+		questions: bank
 	}: {
 		present: DualModeAnswers;
 		questionSeed: number;
+		questions: Question[];
 	} = $props();
 
-	const questions = $derived(orderedDeepDive(questionSeed));
+	const questions = $derived(orderedDeepDive(bank, questionSeed));
 
 	type OpenStep =
 		| { kind: 'q'; qi: number; mode: 'scouting' | 'bound' }

@@ -5,16 +5,26 @@
 		skipHorizon,
 		type SurveyState
 	} from '$lib/store';
-	import { buildBillboardLines, buildPartialResultSections } from '$lib/results';
+	import {
+		buildBillboardLines,
+		buildPartialResultSections,
+		type QuestionBanks
+	} from '$lib/results';
 
-	let { state }: { state: SurveyState } = $props();
+	let {
+		state,
+		banks
+	}: {
+		state: SurveyState;
+		banks: QuestionBanks;
+	} = $props();
 
-	const lines = $derived(buildBillboardLines(state));
+	const lines = $derived(buildBillboardLines(state, banks));
 	const showHorizonChoice = $derived(
 		state.phase === 'pause-t2' && state.routing?.t3 && !state.routing.finalForm
 	);
 	const partialSections = $derived(
-		showHorizonChoice ? buildPartialResultSections(state) : []
+		showHorizonChoice ? buildPartialResultSections(state, banks) : []
 	);
 	const continueLabel = $derived.by(() => {
 		switch (state.phase) {
