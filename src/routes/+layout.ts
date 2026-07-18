@@ -1,2 +1,1 @@
-/** Entire app is client-stateful (localStorage survey). */
-export const ssr = false;
+/** Pages opt into client-only rendering where needed; /access uses SSR for form actions. */

@@ -50,14 +50,21 @@
 <style>
 	.mode-slider {
 		flex-shrink: 0;
-		margin: 0 0 2.5rem;
-		padding: 0.85rem 0.95rem 0.95rem;
+		margin: 0 0 1.25rem;
+		padding: 0.75rem 0.7rem 0.85rem;
 		border-radius: 12px;
 		border: 2px solid transparent;
 		transition:
 			background 0.35s ease,
 			border-color 0.35s ease,
 			box-shadow 0.35s ease;
+	}
+
+	@media (min-width: 700px) {
+		.mode-slider {
+			margin: 0 0 2.5rem;
+			padding: 0.85rem 0.95rem 0.95rem;
+		}
 	}
 
 	.mode-slider.scouting {
@@ -111,7 +118,8 @@
 	.seg {
 		position: relative;
 		z-index: 1;
-		padding: 0.55rem 0.75rem;
+		padding: 0.65rem 0.75rem;
+		min-height: 2.5rem;
 		border: none;
 		border-radius: 999px;
 		background: transparent;

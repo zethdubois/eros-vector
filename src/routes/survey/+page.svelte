@@ -85,7 +85,8 @@
     flex-direction: column;
     max-width: 44rem;
     margin: 0 auto;
-    padding: 2rem 1.25rem 2rem;
+    padding: 3.75rem 1rem 2rem;
+    min-height: 100vh;
     min-height: 100dvh;
     box-sizing: border-box;
     background: radial-gradient(
@@ -95,6 +96,12 @@
       ),
       radial-gradient(ellipse 60% 40% at 100% 0%, #efe8e0 0%, transparent 50%),
       var(--bg);
+  }
+
+  @media (min-width: 700px) {
+    main {
+      padding: 2rem 1.25rem 2rem;
+    }
   }
 
   .phase {
@@ -107,34 +114,63 @@
 
   .brand {
     flex-shrink: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .brand-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.75rem;
+    /* Clear fixed Key button (top-right) */
+    padding-right: 4.25rem;
+  }
+
+  @media (min-width: 700px) {
+    .brand-row {
+      padding-right: 11.5rem;
+      gap: 1rem;
+    }
   }
 
   .home {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
     text-decoration: none;
     color: inherit;
+    min-width: 0;
   }
 
   .home img {
     border-radius: 50%;
     flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+  }
+
+  @media (min-width: 700px) {
+    .home {
+      gap: 0.75rem;
+    }
+
+    .home img {
+      width: 40px;
+      height: 40px;
+    }
   }
 
   .brand h1 {
     margin: 0;
     font-family: "Fraunces", Georgia, serif;
-    font-size: 1.75rem;
+    font-size: 1.45rem;
     letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 700px) {
+    .brand h1 {
+      font-size: 1.75rem;
+    }
   }
 
   .tagline {
@@ -145,7 +181,8 @@
 
   .restart {
     flex-shrink: 0;
-    padding: 0.45rem 0.85rem;
+    padding: 0.45rem 0.75rem;
+    min-height: 2.5rem;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--surface);

@@ -7,13 +7,21 @@
 	let open = $state(false);
 	let mode = $state<'save' | 'restore'>('save');
 	let inputKey = $state('');
+	let tipOpen = $state(false);
 	let notice = $state<{ kind: 'ok' | 'err'; text: string } | null>(null);
 
 	const saveKey = $derived(exportSurveyKey($survey));
 
 	function toggle() {
 		open = !open;
-		if (open) notice = null;
+		if (open) {
+			notice = null;
+			tipOpen = false;
+		}
+	}
+
+	function toggleTip() {
+		tipOpen = !tipOpen;
 	}
 
 	async function copyKey() {
@@ -48,7 +56,8 @@
 		aria-controls="save-key-panel"
 		onclick={toggle}
 	>
-		{open ? 'Close key' : 'Save / restore key'}
+		<span class="toggle-short">{open ? 'Close' : 'Key'}</span>
+		<span class="toggle-full">{open ? 'Close key' : 'Save / restore key'}</span>
 	</button>
 
 	{#if open}
@@ -82,8 +91,23 @@
 
 			<p class="privacy">
 				<span class="info-wrap">
-					<button type="button" class="info" aria-describedby="save-key-tip">ⓘ</button>
-					<span id="save-key-tip" class="tip" role="tooltip">{SAVE_KEY_TOOLTIP}</span>
+					<button
+						type="button"
+						class="info"
+						aria-expanded={tipOpen}
+						aria-describedby="save-key-tip"
+						onclick={toggleTip}
+					>
+						ⓘ
+					</button>
+					<span
+						id="save-key-tip"
+						class="tip"
+						class:visible={tipOpen}
+						role="tooltip"
+					>
+						{SAVE_KEY_TOOLTIP}
+					</span>
 				</span>
 				<span class="privacy-short">Private key — nothing stored on our servers.</span>
 			</p>
@@ -91,7 +115,8 @@
 			{#if mode === 'save'}
 				<label class="field">
 					<span class="label">Your private key</span>
-					<textarea readonly rows={4} value={saveKey} onclick={(e) => e.currentTarget.select()}></textarea>
+					<textarea readonly rows={4} value={saveKey} onclick={(e) => e.currentTarget.select()}
+					></textarea>
 				</label>
 				<button type="button" class="action" onclick={copyKey}>Copy key</button>
 			{:else}
@@ -114,18 +139,27 @@
 <style>
 	.save-key-root {
 		position: fixed;
-		top: 1rem;
-		right: 1rem;
+		top: 0.75rem;
+		right: 0.75rem;
 		z-index: 40;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
 		gap: 0.5rem;
-		max-width: min(22rem, calc(100vw - 2rem));
+		max-width: min(22rem, calc(100vw - 1.5rem));
+	}
+
+	@media (min-width: 700px) {
+		.save-key-root {
+			top: 1rem;
+			right: 1rem;
+			max-width: min(22rem, calc(100vw - 2rem));
+		}
 	}
 
 	.toggle {
 		padding: 0.5rem 0.85rem;
+		min-height: 2.5rem;
 		border: 1px solid var(--border);
 		border-radius: 999px;
 		background: var(--surface);
@@ -139,6 +173,20 @@
 	.toggle:hover {
 		border-color: var(--accent);
 		color: var(--accent);
+	}
+
+	.toggle-full {
+		display: none;
+	}
+
+	@media (min-width: 700px) {
+		.toggle-short {
+			display: none;
+		}
+
+		.toggle-full {
+			display: inline;
+		}
 	}
 
 	.panel {
@@ -162,6 +210,7 @@
 
 	.switch button {
 		padding: 0.4rem 0.5rem;
+		min-height: 2.25rem;
 		border: none;
 		border-radius: 6px;
 		background: transparent;
@@ -196,8 +245,8 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 1.1rem;
-		height: 1.1rem;
+		width: 1.75rem;
+		height: 1.75rem;
 		padding: 0;
 		border: none;
 		background: transparent;
@@ -212,7 +261,7 @@
 		right: 0;
 		top: calc(100% + 0.35rem);
 		width: max-content;
-		max-width: 16rem;
+		max-width: min(16rem, calc(100vw - 3rem));
 		padding: 0.45rem 0.55rem;
 		border-radius: 6px;
 		background: var(--navy);
@@ -225,13 +274,22 @@
 		z-index: 1;
 	}
 
-	.info-wrap:hover .tip,
+	.tip.visible,
 	.info-wrap:focus-within .tip {
 		opacity: 1;
+		pointer-events: auto;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.info-wrap:hover .tip {
+			opacity: 1;
+			pointer-events: auto;
+		}
 	}
 
 	.privacy-short {
 		flex: 1;
+		padding-top: 0.3rem;
 	}
 
 	.field {
@@ -268,7 +326,8 @@
 
 	.action {
 		width: 100%;
-		padding: 0.45rem 0.75rem;
+		padding: 0.55rem 0.75rem;
+		min-height: 2.5rem;
 		border: 1px solid var(--accent);
 		border-radius: 6px;
 		background: var(--accent);

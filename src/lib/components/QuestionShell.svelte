@@ -164,7 +164,7 @@
 	.canvas {
 		display: flex;
 		flex-direction: column;
-		min-height: clamp(20rem, 42vh, 26rem);
+		min-height: clamp(16rem, 38dvh, 26rem);
 		border-radius: 14px;
 		transition:
 			background 0.35s ease,
@@ -173,7 +173,14 @@
 
 	.canvas.mode-scouting,
 	.canvas.mode-bound {
-		padding: 1.1rem 1.15rem 1.25rem;
+		padding: 0.85rem 0.75rem 1rem;
+	}
+
+	@media (min-width: 700px) {
+		.canvas.mode-scouting,
+		.canvas.mode-bound {
+			padding: 1.1rem 1.15rem 1.25rem;
+		}
 	}
 
 	.canvas.mode-scouting {
@@ -187,12 +194,24 @@
 	.mode,
 	.mode-spacer {
 		flex-shrink: 0;
-		min-height: 4.75rem;
-		margin: 0 0 2.5rem;
+		min-height: 3.5rem;
+		margin: 0 0 1.25rem;
 	}
 
 	:global(.mode-slider) {
-		margin-bottom: 2.5rem;
+		margin-bottom: 1.25rem;
+	}
+
+	@media (min-width: 700px) {
+		.mode,
+		.mode-spacer {
+			min-height: 4.75rem;
+			margin: 0 0 2.5rem;
+		}
+
+		:global(.mode-slider) {
+			margin-bottom: 2.5rem;
+		}
 	}
 
 	.mode {

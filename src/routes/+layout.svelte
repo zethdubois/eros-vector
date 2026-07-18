@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import './layout.css';
 	import SaveKeyPanel from '$lib/components/SaveKeyPanel.svelte';
 
 	let { children } = $props();
+
+	const showSaveKey = $derived(!page.url.pathname.startsWith('/access'));
 </script>
 
 <svelte:head>
@@ -21,4 +24,6 @@
 
 {@render children()}
 
-<SaveKeyPanel />
+{#if showSaveKey}
+	<SaveKeyPanel />
+{/if}

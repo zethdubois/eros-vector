@@ -30,7 +30,7 @@
     />
     <p class="brand">Eros Vector</p>
     <h1>
-      You aren't a label.<br /><br />Map your Relational Trajectory.
+      <br />Map your Relational Trajectory.
     </h1>
     {#if ready}
       <a class="cta" href="/survey">{ctaLabel}</a>
@@ -214,6 +214,7 @@
 <style>
   .splash {
     min-height: 100vh;
+    min-height: 100dvh;
     color: var(--cream);
     background: radial-gradient(
         ellipse 70% 55% at 50% -5%,
@@ -230,14 +231,21 @@
 
   .hero {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 3rem 1.5rem 5.5rem;
+    padding: 4.5rem 1.25rem 5.5rem;
     gap: 0.85rem;
     position: relative;
+  }
+
+  @media (min-width: 700px) {
+    .hero {
+      padding: 3rem 1.5rem 5.5rem;
+    }
   }
 
   .mark {
@@ -296,8 +304,10 @@
   .scroll-cue {
     position: absolute;
     bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -357,19 +367,70 @@
   }
 
   .flow-wrap {
-    overflow-x: auto;
-    padding: 0.5rem clamp(1rem, 3vw, 2rem) 1.5rem;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
+    padding: 0.5rem 0 1.5rem;
   }
 
   .flow {
     display: flex;
+    flex-direction: column;
     align-items: stretch;
     gap: 0;
-    width: max-content;
-    min-width: min(100%, 72rem);
+    width: 100%;
+    max-width: min(72rem, 92vw);
     margin: 0 auto;
+    padding: 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .stage {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border: 1px solid rgba(249, 246, 229, 0.14);
+    border-radius: 12px;
+    background: rgba(249, 246, 229, 0.04);
+  }
+
+  .connector {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    width: 2rem;
+    padding: 0.45rem 0;
+    align-self: center;
+    transform: rotate(90deg);
+  }
+
+  @media (min-width: 700px) {
+    .flow-wrap {
+      overflow-x: auto;
+      padding: 0.5rem clamp(1rem, 3vw, 2rem) 1.5rem;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .flow {
+      flex-direction: row;
+      width: max-content;
+      max-width: none;
+      min-width: min(100%, 72rem);
+      padding: 0;
+    }
+
+    .stage {
+      flex: 1 1 clamp(16rem, 26vw, 22rem);
+      width: auto;
+      min-width: clamp(16rem, 50vw, 20rem);
+      scroll-snap-align: start;
+    }
+
+    .connector {
+      flex: 0 0 clamp(1.5rem, 3vw, 2.75rem);
+      width: auto;
+      padding: 0 0.15rem;
+      transform: none;
+    }
   }
 
   @media (min-width: 1100px) {
@@ -378,16 +439,6 @@
       max-width: 72rem;
       justify-content: space-between;
     }
-  }
-
-  .stage {
-    flex: 1 1 clamp(16rem, 26vw, 22rem);
-    min-width: clamp(16rem, 70vw, 20rem);
-    padding: clamp(1.25rem, 2.5vw, 1.75rem);
-    border: 1px solid rgba(249, 246, 229, 0.14);
-    border-radius: 12px;
-    background: rgba(249, 246, 229, 0.04);
-    scroll-snap-align: start;
   }
 
   .stage-label {
@@ -405,14 +456,6 @@
     font-size: clamp(0.9rem, 1.6vw, 1.05rem);
     color: color-mix(in srgb, var(--cream) 65%, transparent);
     text-align: center;
-  }
-
-  .connector {
-    display: flex;
-    align-items: center;
-    flex: 0 0 clamp(1.5rem, 3vw, 2.75rem);
-    padding: 0 0.15rem;
-    align-self: center;
   }
 
   .connector .line {
@@ -607,7 +650,13 @@
   }
 
   .time-stage {
-    min-width: clamp(16rem, 70vw, 20rem);
+    min-width: 0;
+  }
+
+  @media (min-width: 700px) {
+    .time-stage {
+      min-width: clamp(16rem, 50vw, 20rem);
+    }
   }
 
   .modes-panel {

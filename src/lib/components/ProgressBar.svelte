@@ -129,16 +129,38 @@
 <style>
 	.progress {
 		flex-shrink: 0;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1.25rem;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.progress::-webkit-scrollbar {
+		display: none;
 	}
 
 	ol {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1rem;
+		flex-wrap: nowrap;
+		gap: 0.5rem 0.85rem;
 		list-style: none;
 		padding: 0;
 		margin: 0;
+		width: max-content;
+		min-width: 100%;
+	}
+
+	@media (min-width: 700px) {
+		.progress {
+			overflow-x: visible;
+		}
+
+		ol {
+			flex-wrap: wrap;
+			width: auto;
+			min-width: 0;
+			gap: 0.5rem 1rem;
+		}
 	}
 
 	li {

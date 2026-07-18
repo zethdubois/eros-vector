@@ -67,7 +67,7 @@
 
 	.prompt {
 		margin: 0;
-		font-size: clamp(1.2rem, 2.4vw, 1.4rem);
+		font-size: clamp(1.05rem, 2.4vw, 1.4rem);
 		font-weight: 500;
 		line-height: 1.5;
 		max-width: 40rem;
@@ -76,9 +76,15 @@
 	.options {
 		flex-shrink: 0;
 		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-start;
-		gap: 0.6rem;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		gap: 0.35rem;
+	}
+
+	@media (min-width: 480px) {
+		.options {
+			gap: 0.6rem;
+		}
 	}
 
 	.opt {
@@ -87,13 +93,13 @@
 		align-items: center;
 		gap: 0.3rem;
 		flex: 1 1 0;
-		min-width: 7.28rem;
-		padding: 0.85rem 0.73rem;
+		min-width: 0;
+		padding: 0.7rem 0.35rem;
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		cursor: pointer;
 		background: var(--surface);
-		font-size: 0.82rem;
+		font-size: 0.72rem;
 		text-align: center;
 		color: var(--muted);
 		transition:
@@ -102,9 +108,30 @@
 			transform 0.15s ease;
 	}
 
+	@media (min-width: 480px) {
+		.opt {
+			min-width: 5.5rem;
+			padding: 0.85rem 0.55rem;
+			font-size: 0.82rem;
+		}
+	}
+
+	@media (min-width: 700px) {
+		.opt {
+			min-width: 7.28rem;
+			padding: 0.85rem 0.73rem;
+		}
+	}
+
 	.opt:hover {
 		border-color: var(--accent);
 		transform: translateY(-1px);
+	}
+
+	@media (hover: none) {
+		.opt:hover {
+			transform: none;
+		}
 	}
 
 	.opt.selected {
@@ -120,12 +147,26 @@
 	}
 
 	.num {
-		font-size: 1.25rem;
+		font-size: 1.15rem;
 		font-weight: 600;
 		color: var(--text);
 	}
 
+	@media (min-width: 480px) {
+		.num {
+			font-size: 1.25rem;
+		}
+	}
+
 	.label {
-		white-space: nowrap;
+		white-space: normal;
+		line-height: 1.2;
+		hyphens: auto;
+	}
+
+	@media (min-width: 700px) {
+		.label {
+			white-space: nowrap;
+		}
 	}
 </style>

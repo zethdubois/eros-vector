@@ -37,4 +37,13 @@ pnpm start
 
 Survey progress persists in the browser via `localStorage` (`eros-vector-survey`). Use **Restart** to clear it.
 
-Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`).
+## Access gate (invite-only)
+
+The app is password-gated. Copy [`.env.example`](.env.example) to `.env` and set:
+
+- `ACCESS_PASSWORD_VIEWER` — public app only (`/`, `/survey`, …)
+- `ACCESS_PASSWORD_READONLY` — public app **plus** `/backstage` (peek tools)
+- `ACCESS_PASSWORD_DEVELOPER` — public app **plus** `/backstage` (full tools, including reset)
+- `ACCESS_COOKIE_SECRET` — long random string for signing the session cookie
+
+Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`) and the access env vars above.
