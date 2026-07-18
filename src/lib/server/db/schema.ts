@@ -3,13 +3,22 @@ import {
 	boolean,
 	check,
 	integer,
+	jsonb,
 	pgEnum,
 	pgTable,
 	text,
-	uniqueIndex
+	timestamp,
+	uniqueIndex,
+	uuid
 } from 'drizzle-orm/pg-core';
 
 export const surveyBankEnum = pgEnum('survey_bank', ['quick_vibe', 'deep_dive']);
+
+export const surveyResponseStatusEnum = pgEnum('survey_response_status', [
+	'in_progress',
+	'complete',
+	'abandoned'
+]);
 
 /** Canonical axis catalog — Y / X / Z poles for scoring and copy. */
 export const surveyAxes = pgTable('survey_axes', {
@@ -45,5 +54,49 @@ export const surveyQuestions = pgTable(
 	]
 );
 
+/** Anonymous browser identity — no accounts; id matches signed `ev_visitor` cookie. */
+export const visitors = pgTable('visitors', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).notNull().defaultNow(),
+	lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+	firstRegion: text('first_region'),
+	lastRegion: text('last_region'),
+	/** HMAC of client IP with IP_HASH_SECRET — raw IP is never stored. */
+	ipHash: text('ip_hash'),
+	userAgentSummary: text('user_agent_summary')
+});
+
+/** Visit-level activity window for a visitor. */
+export const visitorSessions = pgTable('visitor_sessions', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	visitorId: uuid('visitor_id')
+		.notNull()
+		.references(() => visitors.id, { onDelete: 'cascade' }),
+	startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+	lastActivityAt: timestamp('last_activity_at', { withTimezone: true }).notNull().defaultNow(),
+	region: text('region'),
+	landingPath: text('landing_path'),
+	referrer: text('referrer')
+});
+
+/** One survey attempt; full client state stored as jsonb for flexible analytics. */
+export const surveyResponses = pgTable('survey_responses', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	visitorId: uuid('visitor_id')
+		.notNull()
+		.references(() => visitors.id, { onDelete: 'cascade' }),
+	sessionId: uuid('session_id').references(() => visitorSessions.id, { onDelete: 'set null' }),
+	status: surveyResponseStatusEnum('status').notNull().default('in_progress'),
+	phase: text('phase').notNull(),
+	state: jsonb('state').notNull(),
+	results: jsonb('results'),
+	startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+	completedAt: timestamp('completed_at', { withTimezone: true })
+});
+
 export type SurveyAxisRow = typeof surveyAxes.$inferSelect;
 export type SurveyQuestionRow = typeof surveyQuestions.$inferSelect;
+export type VisitorRow = typeof visitors.$inferSelect;
+export type VisitorSessionRow = typeof visitorSessions.$inferSelect;
+export type SurveyResponseRow = typeof surveyResponses.$inferSelect;

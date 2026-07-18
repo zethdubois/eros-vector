@@ -12,5 +12,11 @@ export default defineConfig({
 	dbCredentials: {
 		url: process.env.DATABASE_URL
 	},
-	tablesFilter: ['survey_axes', 'survey_questions']
+	tablesFilter: [
+		'survey_axes',
+		'survey_questions',
+		'visitors',
+		'visitor_sessions',
+		'survey_responses'
+	]
 });

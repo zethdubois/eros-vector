@@ -45,14 +45,17 @@ The app is password-gated. Copy [`.env.example`](.env.example) to `.env` and set
 - `ACCESS_PASSWORD_VIEWER` — public app only (`/`, `/survey`, …)
 - `ACCESS_PASSWORD_READONLY` — public app **plus** `/backstage` (peek tools)
 - `ACCESS_PASSWORD_DEVELOPER` — public app **plus** `/backstage` (full tools, including reset)
-- `ACCESS_COOKIE_SECRET` — long random string for signing the session cookie
-- `DATABASE_URL` — PostgreSQL connection string for the survey question catalog
+- `ACCESS_COOKIE_SECRET` — long random string for signing the access/visitor cookies
+- `IP_HASH_SECRET` — salt for hashing visitor IPs (raw IPs are never stored)
+- `DATABASE_URL` — PostgreSQL connection string for the survey catalog and analytics
 
-Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`) and the access env vars above.
+Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`) and the access env vars above. Also set `IP_HASH_SECRET` in the Railway service.
 
-## Database (survey questions)
+## Database (survey questions + anonymous analytics)
 
-Scored survey questions live in PostgreSQL (`survey_axes`, `survey_questions`), managed with Drizzle:
+Scored survey questions live in PostgreSQL (`survey_axes`, `survey_questions`). Anonymous
+visitor tracking uses `visitors`, `visitor_sessions`, and `survey_responses` (full survey
+state as JSONB, synced after answers). Managed with Drizzle:
 
 ```sh
 # Generate a migration after editing the Drizzle schema (does not touch a database)
@@ -102,3 +105,11 @@ catalog is unavailable or incomplete.
 **Local access (optional):** to run these from your own machine, point `DATABASE_URL` at
 Railway's public Postgres proxy URL (Postgres service → Connect → Public Network). This
 incurs egress fees, so prefer the pre-deploy step for routine use.
+
+### Anonymous visitors
+
+- Signed cookies `ev_visitor` / `ev_session` identify browsers without accounts.
+- Client IP is hashed with `IP_HASH_SECRET` and discarded; coarse region comes from
+  platform geo headers when available.
+- Survey progress still uses `localStorage`; the server syncs via `POST /api/survey/sync`.
+- Privacy and Terms drafts live at `/legal` (linked from the home page).

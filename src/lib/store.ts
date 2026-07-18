@@ -2,106 +2,13 @@ import { get, writable } from 'svelte/store';
 import { decodeSaveKeyPayload, encodeSaveKeyPayload } from './saveKey';
 import { computeRouting } from './routing';
 import type { SectionId } from './surveyNav';
-import { newQuestionSeed } from './shuffle';
-import type { Answers, DualModeAnswers, Era, LikertValue, Phase, SurveyState } from './types';
+import { createInitialState, parseStoredState } from './surveyState';
+import { clearResponseId, queueSurveySync } from './surveySync';
+import type { DualModeAnswers, Era, LikertValue, Phase, SurveyState } from './types';
 
 export const STORAGE_KEY = 'eros-vector-survey';
 
-const PHASES: Phase[] = [
-	'intake',
-	't0',
-	'pause-t0',
-	't1',
-	'pause-t1',
-	't2',
-	'pause-t2',
-	't3',
-	'pause-t3',
-	'complete'
-];
-
-function emptyDual(): DualModeAnswers {
-	return { scouting: {}, bound: {}, shadow: false };
-}
-
-export function createInitialState(): SurveyState {
-	return {
-		questionSeed: newQuestionSeed(),
-		intake: null,
-		routing: null,
-		eras: [],
-		present: emptyDual(),
-		aspiration: {},
-		horizon: null,
-		horizonIncluded: null,
-		pauseEraId: null,
-		phase: 'intake'
-	};
-}
-
-function newEraId(): string {
-	return crypto.randomUUID();
-}
-
-function isPhase(value: unknown): value is Phase {
-	return typeof value === 'string' && (PHASES as string[]).includes(value);
-}
-
-function normalizeHorizon(data: Partial<SurveyState>, base: SurveyState): Answers | null {
-	if (data.horizon === null || data.horizon === undefined) return null;
-	if (typeof data.horizon !== 'object') return null;
-	const keys = Object.keys(data.horizon);
-	if (keys.length === 0 && data.horizonIncluded !== true) return null;
-	return data.horizon as Answers;
-}
-
-export function parseStoredState(raw: string): SurveyState | null {
-	try {
-		const data = JSON.parse(raw) as Partial<SurveyState>;
-		if (!data || typeof data !== 'object' || !isPhase(data.phase)) return null;
-
-		const base = createInitialState();
-		const seed =
-			typeof data.questionSeed === 'number' && Number.isFinite(data.questionSeed)
-				? data.questionSeed >>> 0
-				: base.questionSeed;
-
-		// Migrate legacy `results` phase
-		const phase: Phase = (data.phase as string) === 'results' ? 'complete' : data.phase;
-
-		const horizonIncluded =
-			typeof data.horizonIncluded === 'boolean' ? data.horizonIncluded : base.horizonIncluded;
-
-		return {
-			...base,
-			...data,
-			questionSeed: seed,
-			present: {
-				...emptyDual(),
-				...(data.present ?? {})
-			},
-			eras: Array.isArray(data.eras) ? data.eras : [],
-			aspiration: data.aspiration ?? {},
-			horizon: normalizeHorizon(data, base),
-			horizonIncluded,
-			pauseEraId: typeof data.pauseEraId === 'string' ? data.pauseEraId : null,
-			phase
-		};
-	} catch {
-		return null;
-	}
-}
-
-function readStorage(): SurveyState | null {
-	if (typeof localStorage === 'undefined') return null;
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
-		if (!raw) return null;
-		return parseStoredState(raw);
-	} catch {
-		return null;
-	}
-}
+export { createInitialState, parseStoredState };
 
 function writeStorage(state: SurveyState) {
 	if (typeof localStorage === 'undefined') return;
@@ -121,15 +28,38 @@ function clearStorage() {
 	}
 }
 
+function readStorage(): SurveyState | null {
+	if (typeof localStorage === 'undefined') return null;
+	try {
+		const raw = localStorage.getItem(STORAGE_KEY);
+		if (!raw) return null;
+		return parseStoredState(raw);
+	} catch {
+		return null;
+	}
+}
+
+function newEraId(): string {
+	return crypto.randomUUID();
+}
+
 /** In-memory store; always sync to localStorage inside mutate(). */
 export const survey = writable<SurveyState>(createInitialState());
 
-function mutate(fn: (s: SurveyState) => SurveyState) {
+function mutate(
+	fn: (s: SurveyState) => SurveyState,
+	syncEvent?: 'start' | 'answer' | 'phase' | 'complete'
+) {
+	let nextState: SurveyState | null = null;
 	survey.update((s) => {
 		const next = fn(s);
 		writeStorage(next);
+		nextState = next;
 		return next;
 	});
+	if (syncEvent && nextState) {
+		queueSurveySync(syncEvent, nextState);
+	}
 }
 
 /** Load saved progress into the store. Returns the phase that was restored. */
@@ -138,6 +68,9 @@ export function hydrateSurvey(): Phase {
 	if (stored) {
 		survey.set(stored);
 		writeStorage(stored);
+		if (stored.phase !== 'intake' || stored.intake !== null) {
+			queueSurveySync(stored.phase === 'complete' ? 'complete' : 'phase', stored);
+		}
 		return stored.phase;
 	}
 	const initial = createInitialState();
@@ -148,6 +81,7 @@ export function hydrateSurvey(): Phase {
 
 export function resetSurvey() {
 	clearStorage();
+	clearResponseId();
 	const initial = createInitialState();
 	survey.set(initial);
 	writeStorage(initial);
@@ -173,37 +107,42 @@ export function importSurveyKey(key: string): ImportSurveyKeyResult {
 	const parsed = parseStoredState(json);
 	if (!parsed) return { ok: false, error: 'Invalid save key — check that you copied the full string.' };
 
+	clearResponseId();
 	survey.set(parsed);
 	writeStorage(parsed);
+	queueSurveySync(parsed.phase === 'complete' ? 'complete' : 'start', parsed);
 	return { ok: true, phase: parsed.phase };
 }
 
 export function submitIntake(chronAge: number, awakeAge: number) {
 	const { intake, routing } = computeRouting(chronAge, awakeAge);
-	mutate((s) => ({
-		...s,
-		intake,
-		routing,
-		eras: routing.t0
-			? [
-					{
-						id: newEraId(),
-						name: '',
-						scouting: {},
-						bound: {},
-						shadow: false
-					}
-				]
-			: [],
-		horizon: null,
-		horizonIncluded: null,
-		pauseEraId: null,
-		phase: routing.t0 ? 't0' : 't1'
-	}));
+	mutate(
+		(s) => ({
+			...s,
+			intake,
+			routing,
+			eras: routing.t0
+				? [
+						{
+							id: newEraId(),
+							name: '',
+							scouting: {},
+							bound: {},
+							shadow: false
+						}
+					]
+				: [],
+			horizon: null,
+			horizonIncluded: null,
+			pauseEraId: null,
+			phase: routing.t0 ? 't0' : 't1'
+		}),
+		'start'
+	);
 }
 
 export function setPhase(phase: Phase) {
-	mutate((s) => ({ ...s, phase }));
+	mutate((s) => ({ ...s, phase }), 'phase');
 }
 
 /** Show the billboard after completing a survey section. */
@@ -216,11 +155,14 @@ export function finishPhase(phase: 't0' | 't1' | 't2' | 't3', eraId?: string) {
 		if (phase === 't2') return { ...s, phase: 'pause-t2', pauseEraId: null };
 		if (phase === 't3') return { ...s, phase: 'pause-t3', pauseEraId: null };
 		return s;
-	});
+	}, 'phase');
 }
 
 /** Continue from a standard phase billboard into the next section. */
 export function continueFromPause() {
+	const current = get(survey).phase;
+	const syncEvent =
+		current === 'pause-t2' || current === 'pause-t3' ? 'complete' : 'phase';
 	mutate((s) => {
 		switch (s.phase) {
 			case 'pause-t0':
@@ -234,35 +176,44 @@ export function continueFromPause() {
 			default:
 				return s;
 		}
-	});
+	}, syncEvent);
 }
 
 export function includeHorizon() {
-	mutate((s) => ({
-		...s,
-		horizonIncluded: true,
-		horizon: {},
-		phase: 't3'
-	}));
+	mutate(
+		(s) => ({
+			...s,
+			horizonIncluded: true,
+			horizon: {},
+			phase: 't3'
+		}),
+		'phase'
+	);
 }
 
 export function skipHorizon() {
-	mutate((s) => ({
-		...s,
-		horizonIncluded: false,
-		horizon: null,
-		phase: 'complete'
-	}));
+	mutate(
+		(s) => ({
+			...s,
+			horizonIncluded: false,
+			horizon: null,
+			phase: 'complete'
+		}),
+		'complete'
+	);
 }
 
 /** Skip Past eras entirely and continue to Present. */
 export function skipPastEras() {
-	mutate((s) => ({
-		...s,
-		eras: [],
-		pauseEraId: null,
-		phase: 't1'
-	}));
+	mutate(
+		(s) => ({
+			...s,
+			eras: [],
+			pauseEraId: null,
+			phase: 't1'
+		}),
+		'phase'
+	);
 }
 
 /** Jump to a survey section from breadcrumbs or results actions. */
@@ -308,7 +259,7 @@ export function navigateToSection(section: SectionId) {
 			default:
 				return s;
 		}
-	});
+	}, 'phase');
 }
 
 /** @deprecated Use finishPhase / continueFromPause instead. */
@@ -329,21 +280,21 @@ export function addEra() {
 				{ id: newEraId(), name: '', scouting: {}, bound: {}, shadow: false }
 			]
 		};
-	});
+	}, 'phase');
 }
 
 export function removeEra(id: string) {
 	mutate((s) => {
 		if (s.eras.length <= 1) return s;
 		return { ...s, eras: s.eras.filter((e) => e.id !== id) };
-	});
+	}, 'phase');
 }
 
 export function updateEraName(id: string, name: string) {
 	mutate((s) => ({
 		...s,
 		eras: s.eras.map((e) => (e.id === id ? { ...e, name } : e))
-	}));
+	}), 'answer');
 }
 
 export function setEraAnswer(
@@ -361,14 +312,14 @@ export function setEraAnswer(
 				[mode]: { ...e[mode], [questionId]: value }
 			};
 		})
-	}));
+	}), 'answer');
 }
 
 export function setEraShadow(eraId: string, shadow: boolean) {
 	mutate((s) => ({
 		...s,
 		eras: s.eras.map((e) => (e.id === eraId ? { ...e, shadow } : e))
-	}));
+	}), 'answer');
 }
 
 export function setPresentAnswer(
@@ -382,28 +333,28 @@ export function setPresentAnswer(
 			...s.present,
 			[mode]: { ...s.present[mode], [questionId]: value }
 		}
-	}));
+	}), 'answer');
 }
 
 export function setPresentShadow(shadow: boolean) {
 	mutate((s) => ({
 		...s,
 		present: { ...s.present, shadow }
-	}));
+	}), 'answer');
 }
 
 export function setAspirationAnswer(questionId: string, value: LikertValue) {
 	mutate((s) => ({
 		...s,
 		aspiration: { ...s.aspiration, [questionId]: value }
-	}));
+	}), 'answer');
 }
 
 export function setHorizonAnswer(questionId: string, value: LikertValue) {
 	mutate((s) => ({
 		...s,
 		horizon: { ...(s.horizon ?? {}), [questionId]: value }
-	}));
+	}), 'answer');
 }
 
 /** Debug helper */
@@ -416,4 +367,4 @@ export function peekSurveyPhase(): Phase {
 	return get(survey).phase;
 }
 
-export type { Answers, DualModeAnswers, Era, SurveyState };
+export type { Answers, DualModeAnswers, Era, SurveyState } from './types';

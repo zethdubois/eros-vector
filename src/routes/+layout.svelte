@@ -6,13 +6,24 @@
 
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
 
-	const showSaveKey = $derived(!page.url.pathname.startsWith('/access'));
-	const showBackstageLink = $derived(
-		data.canAccessBackstage &&
-			!page.url.pathname.startsWith('/backstage') &&
-			!page.url.pathname.startsWith('/access')
-	);
-	const onDarkSplash = $derived(page.url.pathname === '/');
+	const path = $derived(page.url.pathname);
+	const showSaveKey = $derived(!path.startsWith('/access') && !path.startsWith('/legal'));
+	const onDarkSplash = $derived(path === '/');
+
+	/** Staff get backstage; viewers get the beta account link in the same corner. */
+	const cornerLink = $derived.by(() => {
+		if (
+			path.startsWith('/access') ||
+			path.startsWith('/backstage') ||
+			path.startsWith('/account') ||
+			path.startsWith('/legal')
+		) {
+			return null;
+		}
+		if (data.canAccessBackstage) return { href: '/backstage', label: 'backstage' } as const;
+		if (data.accessRole === 'viewer') return { href: '/account', label: 'beta user' } as const;
+		return null;
+	});
 </script>
 
 <svelte:head>
@@ -29,8 +40,8 @@
 	/>
 </svelte:head>
 
-{#if showBackstageLink}
-	<a class="backstage-link" class:on-dark={onDarkSplash} href="/backstage">backstage</a>
+{#if cornerLink}
+	<a class="corner-link" class:on-dark={onDarkSplash} href={cornerLink.href}>{cornerLink.label}</a>
 {/if}
 
 {@render children()}
@@ -40,7 +51,7 @@
 {/if}
 
 <style>
-	.backstage-link {
+	.corner-link {
 		position: fixed;
 		top: 1rem;
 		left: 1rem;
@@ -52,15 +63,15 @@
 		text-underline-offset: 0.15em;
 	}
 
-	.backstage-link:hover {
+	.corner-link:hover {
 		color: var(--accent);
 	}
 
-	.backstage-link.on-dark {
+	.corner-link.on-dark {
 		color: color-mix(in srgb, var(--cream) 72%, transparent);
 	}
 
-	.backstage-link.on-dark:hover {
+	.corner-link.on-dark:hover {
 		color: var(--cream);
 	}
 </style>

@@ -8,6 +8,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			accessRole: AccessRole | null;
+			visitorId: string | null;
+			sessionId: string | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

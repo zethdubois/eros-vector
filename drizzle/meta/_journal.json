@@ -8,6 +8,13 @@
       "when": 1784410868872,
       "tag": "0000_serious_purple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784413297027,
+      "tag": "0001_graceful_juggernaut",
+      "breakpoints": true
     }
   ]
 }

@@ -218,6 +218,10 @@
       </p>
     {/if}
   </section>
+
+  <footer class="legal-footer">
+    <a href="/legal">Privacy &amp; Terms</a>
+  </footer>
 </div>
 
 <style>
@@ -790,6 +794,23 @@
     100% {
       left: 2%;
     }
+  }
+
+  .legal-footer {
+    padding: 2rem 1.25rem 2.5rem;
+    text-align: center;
+  }
+
+  .legal-footer a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--cream) 55%, transparent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .legal-footer a:hover {
+    color: var(--cream);
   }
 
   @media (prefers-reduced-motion: reduce) {
