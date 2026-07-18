@@ -10,7 +10,7 @@ export type Archetype = {
 	signs: { y: OctantSign; x: OctantSign; z: OctantSign };
 };
 
-/** Spec octants from docs/archetypes.md (note: Anchor Architect is +Y −X +Z). */
+/** Spec octants from docs/wiki/archetypes.md (note: Anchor Architect is +Y −X +Z). */
 export const ARCHETYPES: Archetype[] = [
 	{
 		id: 'anchored-play-couple',

@@ -32,7 +32,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const track =
 		shouldTrackVisitor(pathname) &&
-		(isUnauthedPath(pathname) || hasAtLeast(role, 'viewer'));
+		(isUnauthedPath(pathname) || hasAtLeast(role, 'beta'));
 
 	if (track) {
 		const ctx = await ensureVisitorContext(event);
@@ -46,17 +46,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	// Backstage: readonly or developer (not viewer-only)
+	// Backstage: reviewer or developer (not viewer-only)
 	if (pathname === '/backstage' || pathname.startsWith('/backstage/')) {
-		if (!hasAtLeast(role, 'readonly')) {
+		if (!hasAtLeast(role, 'reviewer')) {
 			const next = encodeURIComponent(safeNextPath(pathname));
 			redirect(303, `/access?next=${next}&upgrade=backstage`);
 		}
 		return resolve(event);
 	}
 
-	// Public app: any valid invite password (viewer, readonly, or developer)
-	if (!hasAtLeast(role, 'viewer')) {
+	// Public app: any valid invite password (beta, reviewer, or developer)
+	if (!hasAtLeast(role, 'beta')) {
 		const next = encodeURIComponent(safeNextPath(pathname + event.url.search));
 		redirect(303, `/access?next=${next}`);
 	}

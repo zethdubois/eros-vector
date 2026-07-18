@@ -1,8 +1,11 @@
 import 'dotenv/config';
 import { defineConfig } from 'drizzle-kit';
 
-if (!process.env.DATABASE_URL) {
-	throw new Error('DATABASE_URL is required for drizzle-kit');
+const databaseUrl = process.env.DATABASE_PUBLIC_URL?.trim() || process.env.DATABASE_URL?.trim();
+if (!databaseUrl) {
+	throw new Error(
+		'DATABASE_URL is required for drizzle-kit (optional DATABASE_PUBLIC_URL for local access)'
+	);
 }
 
 export default defineConfig({
@@ -10,7 +13,7 @@ export default defineConfig({
 	schema: './src/lib/server/db/schema.ts',
 	dialect: 'postgresql',
 	dbCredentials: {
-		url: process.env.DATABASE_URL
+		url: databaseUrl
 	},
 	tablesFilter: [
 		'survey_axes',

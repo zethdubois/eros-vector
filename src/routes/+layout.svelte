@@ -21,7 +21,7 @@
 			return null;
 		}
 		if (data.canAccessBackstage) return { href: '/backstage', label: 'backstage' } as const;
-		if (data.accessRole === 'viewer') return { href: '/account', label: 'beta user' } as const;
+		if (data.accessRole === 'beta') return { href: '/account', label: 'beta user' } as const;
 		return null;
 	});
 </script>

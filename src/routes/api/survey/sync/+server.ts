@@ -19,7 +19,7 @@ function isUuid(value: unknown): value is string {
 }
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	if (!hasAtLeast(locals.accessRole, 'viewer')) {
+	if (!hasAtLeast(locals.accessRole, 'beta')) {
 		error(401, 'Authentication required');
 	}
 	if (!locals.visitorId) {

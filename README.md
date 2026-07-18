@@ -1,6 +1,6 @@
 # Eros Vector
 
-SvelteKit survey engine for 4D relationship mapping. See [eros-vector-spec.md](eros-vector-spec.md).
+SvelteKit survey engine for 4D relationship mapping. See [docs/dev/eros-vector-spec.md](docs/dev/eros-vector-spec.md). Domain authorship for the Backstage wiki lives in [docs/wiki/](docs/wiki/).
 
 ## Setup
 
@@ -42,12 +42,13 @@ Survey progress persists in the browser via `localStorage` (`eros-vector-survey`
 The app is password-gated. Copy [`.env.example`](.env.example) to `.env` and set:
 
 - `PUBLIC_BETA_MODE=true` — beta labels/flow; set `false` for public-release behavior
-- `ACCESS_PASSWORD_VIEWER` — public app only (`/`, `/survey`, …)
-- `ACCESS_PASSWORD_READONLY` — public app **plus** `/backstage` (peek tools)
+- `ACCESS_PASSWORD_BETA` — public app only (`/`, `/survey`, …)
+- `ACCESS_PASSWORD_REVIEWER` — public app **plus** `/backstage` (peek tools)
 - `ACCESS_PASSWORD_DEVELOPER` — public app **plus** `/backstage` (full tools, including reset)
 - `ACCESS_COOKIE_SECRET` — long random string for signing the access/visitor cookies
 - `IP_HASH_SECRET` — salt for hashing visitor IPs (raw IPs are never stored)
-- `DATABASE_URL` — PostgreSQL connection string for the survey catalog and analytics
+- `DATABASE_URL` — PostgreSQL connection string (private Railway URL on the deployed service)
+- `DATABASE_PUBLIC_URL` — optional; public Railway proxy URL for local `pnpm dev` / db scripts
 
 Uses `@sveltejs/adapter-node`, which writes a Node server to `build/`. On Railway, set `ORIGIN` to your public URL (e.g. `https://your-app.up.railway.app`) and the access env vars above. Also set `IP_HASH_SECRET` in the Railway service.
 
@@ -102,9 +103,12 @@ railway ssh -- sh -lc 'pnpm db:migrate:prod && pnpm db:seed:prod'
 devDependencies may be pruned). The application fails with a clear `503` if the question
 catalog is unavailable or incomplete.
 
-**Local access (optional):** to run these from your own machine, point `DATABASE_URL` at
-Railway's public Postgres proxy URL (Postgres service → Connect → Public Network). This
-incurs egress fees, so prefer the pre-deploy step for routine use.
+**Local access (optional):** from your laptop, `postgres.railway.internal` will not resolve.
+Set `DATABASE_PUBLIC_URL` in `.env` to Railway's public Postgres proxy
+(Postgres service → Connect → Public Network). The app and db scripts prefer
+`DATABASE_PUBLIC_URL` when set. This incurs egress fees, so prefer the pre-deploy
+step for routine migrations. If the DB is unreachable, the survey page falls back to
+the in-repo question catalog so local UI work can continue (visitor sync still needs DB).
 
 ### Anonymous visitors
 

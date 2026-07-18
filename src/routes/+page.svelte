@@ -44,10 +44,13 @@
     {#if ready}
       <a class="cta" href="/survey">{ctaLabel}</a>
     {/if}
-    <button type="button" class="scroll-cue" onclick={scrollToOverview}>
-      <span>How it works</span>
-      <span class="chevron" aria-hidden="true"></span>
-    </button>
+    <div class="hero-bottom">
+      <a class="hero-legal" href="/legal">Privacy &amp; Terms</a>
+      <button type="button" class="scroll-cue" onclick={scrollToOverview}>
+        <span>How it works</span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+    </div>
   </section>
 
   <section id="overview" class="overview" aria-labelledby="overview-heading">
@@ -314,13 +317,31 @@
     animation: none;
   }
 
-  .scroll-cue {
+  .hero-bottom {
     position: absolute;
     bottom: 1.5rem;
     left: 0;
     right: 0;
-    margin-inline: auto;
-    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .hero-legal {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--cream) 55%, transparent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    animation: rise 0.9s ease-out 0.35s both;
+  }
+
+  .hero-legal:hover {
+    color: var(--cream);
+  }
+
+  .scroll-cue {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -818,6 +839,7 @@
     .brand,
     .hero h1,
     .cta,
+    .hero-legal,
     .scroll-cue,
     .chevron,
     .plot-point,

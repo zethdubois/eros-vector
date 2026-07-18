@@ -1,9 +1,11 @@
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1', 'host.docker.internal']);
 
 export function requireDatabaseUrl(): URL {
-	const value = process.env.DATABASE_URL;
+	const value = process.env.DATABASE_PUBLIC_URL?.trim() || process.env.DATABASE_URL?.trim();
 	if (!value) {
-		throw new Error('DATABASE_URL is not set');
+		throw new Error(
+			'DATABASE_URL is not set (optional DATABASE_PUBLIC_URL for local/laptop access)'
+		);
 	}
 
 	try {

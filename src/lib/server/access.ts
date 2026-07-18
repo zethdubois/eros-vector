@@ -2,15 +2,15 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 
-/** viewer = public app; readonly/developer = public app + backstage (dev can mutate). */
-export type AccessRole = 'viewer' | 'readonly' | 'developer';
+/** beta = public app; reviewer/developer = public app + backstage (dev can mutate). */
+export type AccessRole = 'beta' | 'reviewer' | 'developer';
 
 export const ACCESS_COOKIE = 'eros_access';
 const COOKIE_MAX_AGE_SEC = 60 * 60 * 24 * 30; // 30 days
 
 const ROLE_RANK: Record<AccessRole, number> = {
-	viewer: 1,
-	readonly: 2,
+	beta: 1,
+	reviewer: 2,
 	developer: 3
 };
 
@@ -23,12 +23,12 @@ function cookieSecret(): string {
 	return env.ACCESS_COOKIE_SECRET?.trim() ?? '';
 }
 
-function viewerPassword(): string {
-	return env.ACCESS_PASSWORD_VIEWER?.trim() ?? '';
+function betaPassword(): string {
+	return env.ACCESS_PASSWORD_BETA?.trim() ?? '';
 }
 
-function readonlyPassword(): string {
-	return env.ACCESS_PASSWORD_READONLY?.trim() ?? '';
+function reviewerPassword(): string {
+	return env.ACCESS_PASSWORD_REVIEWER?.trim() ?? '';
 }
 
 function developerPassword(): string {
@@ -38,7 +38,7 @@ function developerPassword(): string {
 /** True when env secrets required for gating are present. */
 export function accessConfigured(): boolean {
 	return Boolean(
-		cookieSecret() && (viewerPassword() || readonlyPassword() || developerPassword())
+		cookieSecret() && (betaPassword() || reviewerPassword() || developerPassword())
 	);
 }
 
@@ -54,7 +54,7 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 function isAccessRole(value: unknown): value is AccessRole {
-	return value === 'viewer' || value === 'readonly' || value === 'developer';
+	return value === 'beta' || value === 'reviewer' || value === 'developer';
 }
 
 /** Map a submitted password to a role, or null if invalid. */
@@ -66,11 +66,11 @@ export function roleForPassword(password: string): AccessRole | null {
 	const developer = developerPassword();
 	if (developer && safeEqual(submitted, developer)) return 'developer';
 
-	const readonly = readonlyPassword();
-	if (readonly && safeEqual(submitted, readonly)) return 'readonly';
+	const reviewer = reviewerPassword();
+	if (reviewer && safeEqual(submitted, reviewer)) return 'reviewer';
 
-	const viewer = viewerPassword();
-	if (viewer && safeEqual(submitted, viewer)) return 'viewer';
+	const beta = betaPassword();
+	if (beta && safeEqual(submitted, beta)) return 'beta';
 
 	return null;
 }
@@ -95,10 +95,17 @@ function decodeCookie(value: string): CookiePayload | null {
 	if (!safeEqual(signature, expected)) return null;
 
 	try {
-		const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as CookiePayload;
-		if (!isAccessRole(payload.role)) return null;
+		const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as {
+			role?: unknown;
+			exp?: unknown;
+		};
+		// Migrate legacy cookie role names
+		let roleRaw = payload.role;
+		if (roleRaw === 'readonly') roleRaw = 'reviewer';
+		else if (roleRaw === 'viewer') roleRaw = 'beta';
+		if (!isAccessRole(roleRaw)) return null;
 		if (typeof payload.exp !== 'number' || payload.exp < Date.now()) return null;
-		return payload;
+		return { role: roleRaw, exp: payload.exp };
 	} catch {
 		return null;
 	}

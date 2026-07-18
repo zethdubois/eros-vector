@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
@@ -9,10 +10,18 @@ const globalForDb = globalThis as typeof globalThis & {
 	__erosVectorDb?: Db;
 };
 
-function requireDatabaseUrl(): string {
-	const url = process.env.DATABASE_URL;
+/**
+ * Prefer DATABASE_PUBLIC_URL for laptop/CLI access to Railway Postgres.
+ * Inside Railway, DATABASE_URL (private hostname) is enough.
+ *
+ * Uses SvelteKit `$env/dynamic/private` so `.env` values are visible under Vite SSR
+ * (plain `process.env.DATABASE_URL` is often empty in `pnpm dev`).
+ */
+export function resolveDatabaseUrl(): string {
+	const publicUrl = env.DATABASE_PUBLIC_URL?.trim() || process.env.DATABASE_PUBLIC_URL?.trim();
+	const url = publicUrl || env.DATABASE_URL?.trim() || process.env.DATABASE_URL?.trim();
 	if (!url) {
-		throw new Error('DATABASE_URL is not set');
+		throw new Error('DATABASE_URL is not set (optional DATABASE_PUBLIC_URL for local access)');
 	}
 	return url;
 }
@@ -20,7 +29,7 @@ function requireDatabaseUrl(): string {
 function getPool(): Pool {
 	if (!globalForDb.__erosVectorPgPool) {
 		globalForDb.__erosVectorPgPool = new Pool({
-			connectionString: requireDatabaseUrl()
+			connectionString: resolveDatabaseUrl()
 		});
 	}
 	return globalForDb.__erosVectorPgPool;

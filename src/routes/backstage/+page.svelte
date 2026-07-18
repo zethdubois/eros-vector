@@ -51,134 +51,61 @@
 	}
 </script>
 
-<main class="backstage">
-	<header class="head">
-		<div>
-			<p class="eyebrow">Backstage</p>
-			<h1>{data.role === 'developer' ? 'Developer access' : 'Readonly access'}</h1>
-			<p class="meta">
-				Session role: <strong>{data.role ?? 'none'}</strong>
-			</p>
-		</div>
-		<nav class="nav">
-			<a href="/">Home</a>
-			<a href="/survey">Survey</a>
-			<form method="POST" action="/access?/logout">
-				<button type="submit" class="logout">Log out</button>
-			</form>
-		</nav>
-	</header>
+<header class="page-head">
+	<h1>{data.role === 'developer' ? 'Developer access' : 'Reviewer access'}</h1>
+</header>
 
-	<section class="panel">
-		<h2>Survey debug</h2>
-		{#if ready}
-			<dl class="facts">
-				<dt>App mode</dt>
-				<dd><code>{betaMode ? 'beta' : 'release'}</code></dd>
-				<dt>Phase</dt>
-				<dd><code>{phase}</code></dd>
-				<dt>Question seed</dt>
-				<dd><code>{$survey.questionSeed}</code></dd>
-				<dt>Eras</dt>
-				<dd><code>{$survey.eras.length}</code></dd>
-				<dt>Horizon included</dt>
-				<dd><code>{String($survey.horizonIncluded)}</code></dd>
-			</dl>
+<section class="panel">
+	<h2>Survey debug</h2>
+	{#if ready}
+		<dl class="facts">
+			<dt>App mode</dt>
+			<dd><code>{betaMode ? 'beta' : 'release'}</code></dd>
+			<dt>Phase</dt>
+			<dd><code>{phase}</code></dd>
+			<dt>Question seed</dt>
+			<dd><code>{$survey.questionSeed}</code></dd>
+			<dt>Eras</dt>
+			<dd><code>{$survey.eras.length}</code></dd>
+			<dt>Horizon included</dt>
+			<dd><code>{String($survey.horizonIncluded)}</code></dd>
+		</dl>
 
-			<div class="actions">
-				<button type="button" onclick={copyKey}>Copy save key</button>
-				<button type="button" onclick={refreshPeek}>Refresh storage peek</button>
-				{#if canMutate}
-					<button type="button" class="danger" onclick={onReset}>Reset survey</button>
-				{/if}
-			</div>
-
-			{#if notice}
-				<p class="notice" role="status">{notice}</p>
+		<div class="actions">
+			<button type="button" onclick={copyKey}>Copy save key</button>
+			<button type="button" onclick={refreshPeek}>Refresh storage peek</button>
+			{#if canMutate}
+				<button type="button" class="danger" onclick={onReset}>Reset survey</button>
 			{/if}
+		</div>
 
-			<label class="field">
-				<span>Save key</span>
-				<textarea readonly rows={4} value={saveKey}></textarea>
-			</label>
-
-			<label class="field">
-				<span>Raw localStorage</span>
-				<textarea readonly rows={8} value={rawStorage ?? '(empty)'}></textarea>
-			</label>
-		{:else}
-			<p class="loading">Loading local state…</p>
+		{#if notice}
+			<p class="notice" role="status">{notice}</p>
 		{/if}
-	</section>
-</main>
+
+		<label class="field">
+			<span>Save key</span>
+			<textarea readonly rows={4} value={saveKey}></textarea>
+		</label>
+
+		<label class="field">
+			<span>Raw localStorage</span>
+			<textarea readonly rows={8} value={rawStorage ?? '(empty)'}></textarea>
+		</label>
+	{:else}
+		<p class="loading">Loading local state…</p>
+	{/if}
+</section>
 
 <style>
-	.backstage {
-		max-width: 40rem;
-		margin: 0 auto;
-		padding: 3.5rem 1.25rem 3rem;
-		min-height: 100vh;
-		min-height: 100dvh;
-	}
-
-	.head {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 1rem;
-		margin-bottom: 1.75rem;
-	}
-
-	.eyebrow {
-		margin: 0 0 0.25rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--muted);
+	.page-head {
+		margin-bottom: 1.25rem;
 	}
 
 	h1 {
 		margin: 0;
 		font-family: 'Fraunces', Georgia, serif;
 		font-size: 1.75rem;
-	}
-
-	.meta {
-		margin: 0.4rem 0 0;
-		font-size: 0.9rem;
-		color: var(--muted);
-	}
-
-	.nav {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.65rem;
-	}
-
-	.nav a {
-		font-size: 0.85rem;
-		font-weight: 600;
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-
-	.logout {
-		padding: 0.4rem 0.75rem;
-		min-height: 2.25rem;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--surface);
-		font-size: 0.85rem;
-		font-weight: 600;
-		cursor: pointer;
-	}
-
-	.logout:hover {
-		border-color: var(--danger);
-		color: var(--danger);
 	}
 
 	.panel {

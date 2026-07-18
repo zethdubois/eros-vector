@@ -14,7 +14,7 @@ import {
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const next = safeNextPath(url.searchParams.get('next'));
 	const upgradingBackstage =
-		next.startsWith('/backstage') && !hasAtLeast(locals.accessRole, 'readonly');
+		next.startsWith('/backstage') && !hasAtLeast(locals.accessRole, 'reviewer');
 
 	if (locals.accessRole && !upgradingBackstage) {
 		redirect(303, next === '/access' ? '/' : next);
@@ -47,7 +47,7 @@ export const actions: Actions = {
 			recordLoginFailure(ip);
 			return fail(401, { error: 'Invalid password.', next });
 		}
-		if (next.startsWith('/backstage') && !hasAtLeast(role, 'readonly')) {
+		if (next.startsWith('/backstage') && !hasAtLeast(role, 'reviewer')) {
 			recordLoginFailure(ip);
 			return fail(403, {
 				error: 'That password only unlocks the public survey. Enter a backstage password.',

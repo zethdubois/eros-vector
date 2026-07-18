@@ -56,38 +56,36 @@
 				<h3>What this product is</h3>
 				<p>
 					Eros Vector is an invite-only relationship-mapping survey. You do not create an
-					account with email or password. Progress can stay on your device, and we may also
-					store survey answers on our servers for product research.
+					account with email or password. Your progress can stay on your device, and we may
+					also save survey answers on our servers so we can improve the product.
 				</p>
 			</section>
 
 			<section>
-				<h3>Anonymous visitor cookie</h3>
+				<h3>How we recognize return visits</h3>
 				<p>
-					We set a long-lived, signed cookie (<code>ev_visitor</code>) with a random identifier
-					so we can recognize returning browsers without knowing who you are. A shorter
-					session cookie (<code>ev_session</code>) groups activity within a visit. These are
-					not advertising trackers and are not shared with third-party ad networks.
+					We use a simple browser cookie with a random ID so we can tell that the same
+					browser came back — without knowing who you are. That is not an advertising
+					tracker, and we do not share it with ad networks.
 				</p>
 			</section>
 
 			<section>
 				<h3>IP address and region</h3>
 				<p>
-					When you visit, our servers receive your IP address as part of normal web traffic.
-					We use it only to estimate a coarse region (when a platform geo header is available)
-					and to store a salted cryptographic hash for abuse resistance and approximate
-					deduplication. <strong>We do not retain your raw IP address.</strong>
+					When you visit, our servers see your IP address as part of normal web traffic. We
+					may use it to guess a broad region (for example, country) and to help spot abuse
+					or duplicate activity. We turn the address into a one-way code and discard the
+					original. <strong>We do not keep your raw IP address on file.</strong>
 				</p>
 			</section>
 
 			<section>
 				<h3>Survey answers</h3>
 				<p>
-					As you answer the survey, we may sync your responses to our database—including
-					partial progress, intake ages, era labels, Likert answers, and computed archetype
-					results. This data is linked to your anonymous visitor id, not to a name or email.
-					Your browser also keeps a local copy for continuity if the network is unavailable.
+					As you answer, we may save your responses — including partial progress and final
+					results — linked only to that anonymous browser ID, not to a name or email. Your
+					browser also keeps a local copy so you can continue if the connection drops.
 				</p>
 			</section>
 
@@ -97,25 +95,25 @@
 					<li>Email, password, or social-login identity</li>
 					<li>Payment information</li>
 					<li>Precise GPS location</li>
-					<li>Browser fingerprinting beyond a coarse user-agent summary (e.g. browser/OS family)</li>
+					<li>Detailed device fingerprints — at most a rough note like browser or phone vs computer</li>
 				</ul>
 			</section>
 
 			<section>
 				<h3>Retention</h3>
 				<p>
-					We keep anonymous visitor and survey records while they remain useful for product
-					research and abuse prevention. We may delete or aggregate older records. If you want
-					a specific browser’s data removed, contact us with enough detail to locate the
-					anonymous id (we cannot reverse an IP hash back to an address).
+					We keep anonymous visit and survey records while they remain useful for research
+					and keeping the service healthy. We may delete or summarize older records. If you
+					want data from a particular browser removed, contact us with enough context to
+					find it — we cannot turn an IP code back into an address.
 				</p>
 			</section>
 
 			<section>
 				<h3>Contact</h3>
 				<p>
-					For privacy questions about this beta, contact the operator who invited you, or
-					reach out via the project channel listed on your invite.
+					For privacy questions about this beta, contact the person who invited you, or
+					reach out through the project channel listed on your invite.
 				</p>
 			</section>
 		</article>

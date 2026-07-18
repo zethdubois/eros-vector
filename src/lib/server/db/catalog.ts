@@ -1,4 +1,5 @@
 import { asc, eq } from 'drizzle-orm';
+import { fallbackQuestionBanks } from '$lib/questionCatalog';
 import type { Axis, Question } from '$lib/types';
 import { getDb } from './index';
 import { surveyAxes, surveyQuestions } from './schema';
@@ -41,8 +42,7 @@ function assertBankCounts(
 	}
 }
 
-/** Load active scored questions in canonical Y → X → Z, position order. */
-export async function loadQuestionBanks(): Promise<QuestionBanks> {
+async function loadFromDatabase(): Promise<QuestionBanks> {
 	const db = getDb();
 	const rows = await db
 		.select({
@@ -73,4 +73,21 @@ export async function loadQuestionBanks(): Promise<QuestionBanks> {
 	assertBankCounts('deepDive', deepDive, EXPECTED.deepDive);
 
 	return { quickVibe, deepDive };
+}
+
+/**
+ * Load active scored questions in canonical Y → X → Z order.
+ * Falls back to the in-repo catalog when Postgres is unreachable (e.g. local
+ * `.env` still pointing at `*.railway.internal`).
+ */
+export async function loadQuestionBanks(): Promise<QuestionBanks> {
+	try {
+		return await loadFromDatabase();
+	} catch (err) {
+		console.warn(
+			'Survey catalog DB unavailable — using in-repo fallback. For local Railway access set DATABASE_PUBLIC_URL to the public proxy URL.',
+			err
+		);
+		return fallbackQuestionBanks();
+	}
 }

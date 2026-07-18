@@ -4,6 +4,6 @@ import { hasAtLeast } from '$lib/server/access';
 export const load: LayoutServerLoad = async ({ locals }) => {
 	return {
 		accessRole: locals.accessRole,
-		canAccessBackstage: hasAtLeast(locals.accessRole, 'readonly')
+		canAccessBackstage: hasAtLeast(locals.accessRole, 'reviewer')
 	};
 };

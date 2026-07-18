@@ -10,7 +10,7 @@
     <h1>Eros Vector</h1>
     <p class="lede">
       {#if data.upgradingBackstage}
-        Enter a readonly or developer password to access backstage.
+        Enter a reviewer or developer password to access backstage.
       {:else}
         Invite-only access. <br />Enter the password you were given.
       {/if}
@@ -19,8 +19,8 @@
     {#if !data.configured}
       <p class="error" role="alert">
         Access passwords are not configured. Set
-        <code>ACCESS_PASSWORD_VIEWER</code>,
-        <code>ACCESS_PASSWORD_READONLY</code>,
+        <code>ACCESS_PASSWORD_BETA</code>,
+        <code>ACCESS_PASSWORD_REVIEWER</code>,
         <code>ACCESS_PASSWORD_DEVELOPER</code>, and
         <code>ACCESS_COOKIE_SECRET</code> on the server.
       </p>

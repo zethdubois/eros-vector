@@ -1,2 +1,2 @@
-/** Client survey peek; gate enforced in hooks (viewer+). */
+/** Client survey peek; gate enforced in hooks (beta+). */
 export const ssr = false;
