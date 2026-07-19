@@ -1,0 +1,17 @@
+
+replaceFromCsv failed Error: Unknown axis_id values: w.
+    at replaceFromCsv (/home/golem/projects/eros-vector/src/routes/backstage/content/[table]/+page.server.ts:532:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async fn (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js?v=fafd43aa:289:19)
+    at async handle_action_request (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/page/actions.js?v=fafd43aa:196:16)
+    at async render_page (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/page/index.js?v=fafd43aa:91:21)
+    at async resolve (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/respond.js?v=fafd43aa:535:18)
+    at async fn (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/respond.js?v=fafd43aa:394:12)
+    at async handle (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/respond.js?v=fafd43aa:376:20)
+    at async Object.before_handle (file:///home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/exports/vite/dev/index.js:574:14)
+    at async internal_respond (/home/golem/projects/eros-vector/node_modules/.pnpm/@sveltejs+kit@2.69.3_@sveltejs+vite-plugin-svelte@7.2.0_svelte@5.56.5_vite@8.1.4_@types_1f48303e91687b443cc60a38e64ff3b2/node_modules/@sveltejs/kit/src/runtime/server/respond.js?v=fafd43aa:354:13)
+
+
+
+
+

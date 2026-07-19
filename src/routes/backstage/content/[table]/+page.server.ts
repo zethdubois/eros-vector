@@ -489,15 +489,25 @@ export const actions: Actions = {
 
 			if (params.table === 'survey_questions') {
 				const rows = parseQuestionImport(csv);
-				const validAxes = new Set((await db.select({ id: surveyAxes.id }).from(surveyAxes)).map((r) => r.id));
+				const existingAxes = await db.select({ id: surveyAxes.id, displayOrder: surveyAxes.displayOrder }).from(surveyAxes);
+				const validAxes = new Set(existingAxes.map((r) => r.id));
 				const unknownAxes = [...new Set(rows.map((row) => row.axisId))].filter(
 					(axis) => !validAxes.has(axis)
 				);
-				if (unknownAxes.length) {
-					throw new Error(`Unknown axis_id values: ${unknownAxes.join(', ')}.`);
-				}
 
 				await db.transaction(async (tx) => {
+					// Auto-insert placeholder rows for any axis IDs in the CSV that don't exist yet.
+					if (unknownAxes.length) {
+						const maxOrder = existingAxes.reduce((m, r) => Math.max(m, r.displayOrder), 0);
+						const newAxes = unknownAxes.map((axisId, i) => ({
+							id: axisId,
+							label: axisId.toUpperCase(),
+							positivePole: `${axisId}+`,
+							negativePole: `${axisId}−`,
+							displayOrder: maxOrder + i + 1
+						}));
+						await tx.insert(surveyAxes).values(newAxes).onConflictDoNothing();
+					}
 					await tx.delete(surveyQuestions);
 					await tx.insert(surveyQuestions).values(rows);
 				});
