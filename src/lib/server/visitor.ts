@@ -89,6 +89,11 @@ export async function ensureVisitorContext(event: RequestEvent): Promise<Visitor
 
 	const now = new Date();
 	const region = coarseRegion(event);
+	if (!region) {
+		const allHeaders: Record<string, string> = {};
+		event.request.headers.forEach((v, k) => { allHeaders[k] = v; });
+		console.log('[geo-debug] no region detected. headers:', JSON.stringify(allHeaders));
+	}
 	const ipHash = hashIp(clientIp(event));
 	const uaSummary = summarizeUserAgent(event.request.headers.get('user-agent'));
 	const landingPath = `${event.url.pathname}${event.url.search}`.slice(0, 500);
