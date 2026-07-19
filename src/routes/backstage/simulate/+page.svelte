@@ -22,23 +22,17 @@
 		return v === 0 ? '0' : v > 0 ? '+' : '−';
 	}
 
-	/** Pole name for a given score. */
-	function pole(v: number, pos: string, neg: string) {
-		return v >= 0 ? pos : neg;
-	}
-
 	const coords = $derived({ w, x, y, z });
 	const archetype = $derived(resolveArchetype(coords));
 	const neighbors = $derived(resolveNeighbors(coords));
 
-	const descriptor = $derived(
-		[
-			pole(w, 'Interdependent', 'Autonomous'),
-			pole(x, 'Recreational', 'Romantic'),
-			pole(y, 'Contained', 'Permeable'),
-			pole(z, 'Directed', 'Organic')
-		].join(' · ')
-	);
+	/** Per-axis descriptor parts. Zero-scored axes show "Balanced" in the axis color. */
+	const descriptorParts = $derived([
+		{ label: w === 0 ? 'Balanced' : w > 0 ? 'Interdependent' : 'Autonomous', color: w === 0 ? '#9b7fe8' : null },
+		{ label: x === 0 ? 'Balanced' : x > 0 ? 'Recreational'   : 'Romantic',   color: x === 0 ? '#9e7982' : null },
+		{ label: y === 0 ? 'Balanced' : y > 0 ? 'Contained'       : 'Permeable',  color: y === 0 ? '#c4a574' : null },
+		{ label: z === 0 ? 'Balanced' : z > 0 ? 'Directed'        : 'Organic',    color: z === 0 ? '#7a9e9a' : null }
+	]);
 
 	function reset() {
 		w = 0;
@@ -166,7 +160,16 @@
 			<span class="sign-chip" style="--c:#7a9e9a">Z{sign(z)}</span>
 		</div>
 
-		<p class="descriptor">{descriptor}</p>
+		<p class="descriptor">
+			{#each descriptorParts as part, i}
+				{#if i > 0}<span class="descriptor-sep"> · </span>{/if}
+				{#if part.color !== null}
+					<span style="color:{part.color}">{part.label}</span>
+				{:else}
+					{part.label}
+				{/if}
+			{/each}
+		</p>
 
 		<div class="result-divider"></div>
 
