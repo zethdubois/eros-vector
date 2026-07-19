@@ -42,7 +42,7 @@ export type QuestionGroup = {
 	}[];
 };
 
-const AXIS_ORDER = ['y', 'x', 'z', 'w'] as const;
+const AXIS_ORDER = ['w', 'x', 'y', 'z'] as const;
 
 const BANK_META = {
 	quick_vibe: {
@@ -57,7 +57,7 @@ const BANK_META = {
 
 const FALLBACK_AXES: AxisContent[] = [
 	{
-		axis: 'y',
+		axis: 'w',
 		label: 'Architecture',
 		positivePole: 'Interdependent',
 		negativePole: 'Autonomous',
@@ -66,22 +66,22 @@ const FALLBACK_AXES: AxisContent[] = [
 	{
 		axis: 'x',
 		label: 'Drive',
-		positivePole: 'Erotic',
-		negativePole: 'Emotional',
+		positivePole: 'Recreational',
+		negativePole: 'Romantic',
 		displayOrder: 2
+	},
+	{
+		axis: 'y',
+		label: 'Permeability',
+		positivePole: 'Contained',
+		negativePole: 'Permeable',
+		displayOrder: 3
 	},
 	{
 		axis: 'z',
 		label: 'Method',
 		positivePole: 'Directed',
 		negativePole: 'Organic',
-		displayOrder: 3
-	},
-	{
-		axis: 'w',
-		label: 'Permeability',
-		positivePole: 'Contained',
-		negativePole: 'Permeable',
 		displayOrder: 4
 	}
 ];

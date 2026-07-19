@@ -153,6 +153,7 @@
 		{mode}
 		modeSlider={!SETTINGS.scoutingDisabled}
 		modeSliderDisabled={locked}
+		modePrompt={SETTINGS.scoutingDisabled ? MODE_PROMPTS.bound : undefined}
 		onModeChange={!SETTINGS.scoutingDisabled ? onModeChange : undefined}
 		scoutingBadge={SETTINGS.scoutingDisabled}
 		{axisBadge}
