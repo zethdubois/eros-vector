@@ -6,6 +6,7 @@
 	let {
 		title,
 		phaseBlurb,
+		phaseNote,
 		stepLabel,
 		mode,
 		modePrompt,
@@ -23,6 +24,7 @@
 	}: {
 		title: string;
 		phaseBlurb?: string;
+		phaseNote?: string;
 		stepLabel: string;
 		mode?: 'scouting' | 'bound' | null;
 		modePrompt?: string;
@@ -45,6 +47,9 @@
 		<h2>{title}</h2>
 		{#if phaseBlurb}
 			<p class="phase-blurb">{phaseBlurb}</p>
+		{/if}
+		{#if phaseNote}
+			<p class="phase-note">{@html phaseNote}</p>
 		{/if}
 	</header>
 
@@ -84,7 +89,7 @@
 				{:else if mode && modePrompt}
 					<p class="mode" class:scouting={mode === 'scouting'} class:bound={mode === 'bound'}>
 						<span class="mode-name">{mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
-						{modePrompt}
+						{@html modePrompt}
 					</p>
 				{:else}
 					<div class="mode-spacer" aria-hidden="true"></div>

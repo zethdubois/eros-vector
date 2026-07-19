@@ -6,6 +6,13 @@ export const MODE_PROMPTS = {
 		'Answer based on your ideal bond structure even if you are currently single.'
 } as const;
 
+/**
+ * Bound-mode prompt used for future-facing stages (Aspiration, Horizon, Final Form).
+ * Rendered with {@html} so the <em> tag applies.
+ */
+export const FUTURE_BOUND_PROMPT =
+	'Future states assume always a bound condition for answering the questions. That is, <em>not single</em>.';
+
 /** One-line context for each time layer — shown under the T label. */
 export const PHASE_BLURBS = {
 	t0: 'Named chapters of your relational past — one era at a time.',

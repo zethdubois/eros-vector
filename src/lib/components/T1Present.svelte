@@ -149,6 +149,7 @@
 	<QuestionShell
 		title="Present"
 		phaseBlurb={PHASE_BLURBS.t1}
+		phaseNote="Answer this section of the survey based on how your intimate life works <em>now</em>.<br>In the Aspirational section, you will answer the same questions with a focus on how you want your intimate life to evolve next!"
 		{stepLabel}
 		{mode}
 		modeSlider={!SETTINGS.scoutingDisabled}

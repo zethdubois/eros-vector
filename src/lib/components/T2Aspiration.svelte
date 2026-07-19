@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LikertQuestion from './LikertQuestion.svelte';
 	import QuestionShell from './QuestionShell.svelte';
-	import { MODE_PROMPTS, PHASE_BLURBS } from '$lib/questions';
+	import { FUTURE_BOUND_PROMPT, PHASE_BLURBS } from '$lib/questions';
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setAspirationAnswer } from '$lib/store';
@@ -89,7 +89,7 @@
 	{phaseBlurb}
 	stepLabel={`Question ${stepIndex + 1} of ${questions.length}`}
 	mode="bound"
-	modePrompt={MODE_PROMPTS.bound}
+	modePrompt={FUTURE_BOUND_PROMPT}
 	onBack={canBack ? goBack : undefined}
 	backDisabled={locked}
 	onForward={canForward ? goForward : undefined}

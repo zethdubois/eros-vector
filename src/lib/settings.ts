@@ -9,4 +9,11 @@ export const SETTINGS = {
 	 * (Schrödinger) until this is re-enabled and scouting questions are answered.
 	 */
 	scoutingDisabled: true,
+
+	/**
+	 * When true, age-based routing heuristics (sexAge threshold for past eras,
+	 * chronAge >= 55 triggering finalForm) are disabled. All phases are shown
+	 * to every respondent regardless of age inputs.
+	 */
+	sexAgeDisabled: true,
 } as const;

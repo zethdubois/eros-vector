@@ -1,4 +1,5 @@
 import type { Intake, Routing } from './types';
+import { SETTINGS } from './settings';
 
 export function computeSexAge(chronAge: number, awakeAge: number): number {
 	return chronAge - awakeAge;
@@ -6,8 +7,15 @@ export function computeSexAge(chronAge: number, awakeAge: number): number {
 
 export function computeRouting(chronAge: number, awakeAge: number): { intake: Intake; routing: Routing } {
 	const sexAge = computeSexAge(chronAge, awakeAge);
-	const finalForm = chronAge >= 55;
 
+	if (SETTINGS.sexAgeDisabled) {
+		return {
+			intake: { chronAge, awakeAge, sexAge },
+			routing: { t0: true, t1: true, t2: true, t3: true, finalForm: false }
+		};
+	}
+
+	const finalForm = chronAge >= 55;
 	return {
 		intake: { chronAge, awakeAge, sexAge },
 		routing: {
