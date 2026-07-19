@@ -5,18 +5,21 @@
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setAspirationAnswer } from '$lib/store';
+	import { AXIS_META } from '$lib/labels';
 	import type { Answers, LikertValue, Question } from '$lib/types';
 
 	let {
 		aspiration,
 		finalForm,
 		questionSeed,
-		questions: bank
+		questions: bank,
+		isDeveloper = false
 	}: {
 		aspiration: Answers;
 		finalForm: boolean;
 		questionSeed: number;
 		questions: Question[];
+		isDeveloper?: boolean;
 	} = $props();
 
 	const questions = $derived(orderedDeepDive(bank, questionSeed));
@@ -48,6 +51,11 @@
 	const q = $derived(questions[stepIndex]);
 	const canBack = $derived(stepIndex > 0);
 	const canForward = $derived(stepIndex < highWaterMark);
+	const axisBadge = $derived(
+		isDeveloper
+			? { label: AXIS_META[q.axis].label, domain: AXIS_META[q.axis].domain, color: AXIS_META[q.axis].color }
+			: undefined
+	);
 
 	function goBack() {
 		if (locked || !canBack) return;
@@ -86,6 +94,7 @@
 	backDisabled={locked}
 	onForward={canForward ? goForward : undefined}
 	forwardDisabled={locked}
+	{axisBadge}
 	animKey={q.id}
 >
 	<LikertQuestion

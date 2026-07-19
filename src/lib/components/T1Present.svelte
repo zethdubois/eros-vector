@@ -5,16 +5,20 @@
 	import { orderedDeepDive } from '$lib/shuffle';
 	import { afterSelect } from '$lib/surveyAdvance';
 	import { finishPhase, setPresentAnswer, setPresentShadow, type DualModeAnswers } from '$lib/store';
+	import { AXIS_META } from '$lib/labels';
+	import { SETTINGS } from '$lib/settings';
 	import type { LikertValue, Question } from '$lib/types';
 
 	let {
 		present,
 		questionSeed,
-		questions: bank
+		questions: bank,
+		isDeveloper = false
 	}: {
 		present: DualModeAnswers;
 		questionSeed: number;
 		questions: Question[];
+		isDeveloper?: boolean;
 	} = $props();
 
 	const questions = $derived(orderedDeepDive(bank, questionSeed));
@@ -26,7 +30,7 @@
 	function firstOpen(): OpenStep {
 		for (let qi = 0; qi < questions.length; qi++) {
 			const q = questions[qi];
-			if (present.scouting[q.id] === undefined) {
+			if (!SETTINGS.scoutingDisabled && present.scouting[q.id] === undefined) {
 				return { kind: 'q', qi, mode: 'scouting' };
 			}
 			if (present.bound[q.id] === undefined) {
@@ -36,8 +40,11 @@
 		return { kind: 'shadow' };
 	}
 
+	/** Default mode: 'bound' when scouting is disabled, otherwise 'scouting'. */
+	const defaultMode = SETTINGS.scoutingDisabled ? 'bound' : 'scouting';
+
 	let questionIndex = $state(0);
-	let mode = $state<'scouting' | 'bound'>('scouting');
+	let mode = $state<'scouting' | 'bound'>(defaultMode);
 	let showShadow = $state(false);
 	let locked = $state(false);
 	let started = $state(false);
@@ -71,9 +78,14 @@
 			? 'Wrap-up · Bound'
 			: `Question ${questionIndex + 1} of ${questions.length} · ${mode === 'scouting' ? 'Scouting' : 'Bound'}`
 	);
+	const axisBadge = $derived(
+		!showShadow && isDeveloper
+			? { label: AXIS_META[q.axis].label, domain: AXIS_META[q.axis].domain, color: AXIS_META[q.axis].color }
+			: undefined
+	);
 
 	function onModeChange(next: 'scouting' | 'bound') {
-		if (locked || showShadow) return;
+		if (locked || showShadow || SETTINGS.scoutingDisabled) return;
 		mode = next;
 	}
 
@@ -83,12 +95,12 @@
 		if (showShadow) {
 			showShadow = false;
 			questionIndex = questions.length - 1;
-			mode = 'scouting';
+			mode = defaultMode;
 			return;
 		}
 		if (questionIndex > 0) {
 			questionIndex -= 1;
-			mode = 'scouting';
+			mode = defaultMode;
 		}
 	}
 
@@ -96,9 +108,8 @@
 		if (locked || !canForward) return;
 		if (questionIndex < questions.length - 1) {
 			questionIndex += 1;
-			mode = 'scouting';
+			mode = defaultMode;
 		} else {
-			// reached the last question — go to shadow if we've been there
 			showShadow = true;
 		}
 	}
@@ -108,7 +119,7 @@
 		locked = true;
 		setPresentAnswer(mode, q.id, v);
 		afterSelect(() => {
-			if (mode === 'scouting') {
+			if (!SETTINGS.scoutingDisabled && mode === 'scouting') {
 				mode = 'bound';
 				locked = false;
 				return;
@@ -118,7 +129,7 @@
 				showShadow = true;
 			} else {
 				questionIndex += 1;
-				mode = 'scouting';
+				mode = defaultMode;
 			}
 			locked = false;
 		});
@@ -140,9 +151,11 @@
 		phaseBlurb={PHASE_BLURBS.t1}
 		{stepLabel}
 		{mode}
-		modeSlider
+		modeSlider={!SETTINGS.scoutingDisabled}
 		modeSliderDisabled={locked}
-		onModeChange={onModeChange}
+		onModeChange={!SETTINGS.scoutingDisabled ? onModeChange : undefined}
+		scoutingBadge={SETTINGS.scoutingDisabled}
+		{axisBadge}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
 		onForward={canForward ? goForward : undefined}

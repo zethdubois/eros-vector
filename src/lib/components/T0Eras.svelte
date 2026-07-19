@@ -15,15 +15,19 @@
 		type Era
 	} from '$lib/store';
 	import type { LikertValue, Question } from '$lib/types';
+	import { AXIS_META } from '$lib/labels';
+	import { SETTINGS } from '$lib/settings';
 
 	let {
 		eras,
 		questionSeed,
-		questions: bank
+		questions: bank,
+		isDeveloper = false
 	}: {
 		eras: Era[];
 		questionSeed: number;
 		questions: Question[];
+		isDeveloper?: boolean;
 	} = $props();
 
 	const questions = $derived(orderedQuickVibe(bank, questionSeed));
@@ -36,9 +40,12 @@
 
 	function buildSteps(list: Era[], bank: Question[]): Step[] {
 		const out: Step[] = [];
+		const modes = (SETTINGS.scoutingDisabled
+			? ['bound']
+			: ['scouting', 'bound']) as ('scouting' | 'bound')[];
 		list.forEach((_, eraIndex) => {
 			out.push({ kind: 'name', eraIndex });
-			for (const mode of ['scouting', 'bound'] as const) {
+			for (const mode of modes) {
 				bank.forEach((_, qi) => {
 					out.push({ kind: 'q', eraIndex, mode, qi });
 				});
@@ -110,12 +117,12 @@
 		}
 	});
 
-	const questionsPerEra = $derived(questions.length * 2);
+	const questionsPerEra = $derived(SETTINGS.scoutingDisabled ? questions.length : questions.length * 2);
 	const stepLabel = $derived.by(() => {
 		if (step.kind === 'gate') return 'Past eras';
 		if (step.kind === 'name') return `Era ${step.eraIndex + 1} of ${eras.length} · Name`;
 		if (step.kind === 'shadow') return `Era ${step.eraIndex + 1} · Bound wrap-up`;
-		const offset = step.mode === 'bound' ? questions.length : 0;
+		const offset = (!SETTINGS.scoutingDisabled && step.mode === 'bound') ? questions.length : 0;
 		return `Era ${step.eraIndex + 1} · Question ${step.qi + 1 + offset} of ${questionsPerEra}`;
 	});
 
@@ -190,6 +197,12 @@
 	}
 
 	const showPastAdvice = $derived(step.kind === 'name' && step.eraIndex === 0);
+	const axisBadge = $derived.by(() => {
+		if (!isDeveloper || step.kind !== 'q') return undefined;
+		const qItem = questions[step.qi];
+		const m = AXIS_META[qItem.axis];
+		return { label: m.label, domain: m.domain, color: m.color };
+	});
 </script>
 
 {#if step.kind === 'name' && era}
@@ -248,6 +261,8 @@
 		backDisabled={locked}
 		onForward={canForward ? goForward : undefined}
 		forwardDisabled={locked}
+		scoutingBadge={SETTINGS.scoutingDisabled}
+		{axisBadge}
 		animKey={`${era.id}-${step.mode}-${q.id}`}
 	>
 		<div class="likert-stack">

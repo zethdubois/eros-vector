@@ -16,6 +16,8 @@
 		backDisabled = false,
 		onForward,
 		forwardDisabled = false,
+		scoutingBadge = false,
+		axisBadge,
 		animKey,
 		children
 	}: {
@@ -31,6 +33,8 @@
 		backDisabled?: boolean;
 		onForward?: () => void;
 		forwardDisabled?: boolean;
+		scoutingBadge?: boolean;
+		axisBadge?: { label: string; domain: string; color: string };
 		animKey: string | number;
 		children: Snippet;
 	} = $props();
@@ -46,8 +50,16 @@
 
 	<div class="body">
 		<div class="question-block">
+			{#if scoutingBadge}
+				<div class="scouting-badge">Scouting disabled</div>
+			{/if}
 			<div class="step-row">
-				<p class="step-label">{stepLabel}</p>
+				<div class="step-left">
+					{#if axisBadge}
+						<span class="axis-chip" style="--c:{axisBadge.color}">{axisBadge.label} · {axisBadge.domain}</span>
+					{/if}
+					<p class="step-label">{stepLabel}</p>
+				</div>
 				<div class="nav-btns">
 					{#if onBack}
 						<button type="button" class="nav-btn" disabled={backDisabled} onclick={onBack}>
@@ -148,6 +160,40 @@
 		margin: 0;
 		font-size: 0.95rem;
 		color: var(--muted);
+	}
+
+	.scouting-badge {
+		display: inline-block;
+		margin-bottom: 0.5rem;
+		padding: 0.18rem 0.55rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--danger) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+		color: var(--danger);
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.step-left {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 0;
+	}
+
+	.axis-chip {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.15rem 0.5rem;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--c) 14%, transparent);
+		border: 1px solid color-mix(in srgb, var(--c) 28%, transparent);
+		color: var(--c);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
 	}
 
 	.nav-btns {

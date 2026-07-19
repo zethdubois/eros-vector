@@ -23,6 +23,8 @@
     $survey.phase !== "intake" || $survey.intake !== null,
   );
 
+  const isDeveloper = $derived(data.accessRole === 'developer');
+
   function onRestart() {
     if (!canRestart) return;
     if (!confirm("Clear all survey progress and start over?")) return;
@@ -59,6 +61,7 @@
           eras={$survey.eras}
           questionSeed={$survey.questionSeed}
           questions={data.banks.quickVibe}
+          {isDeveloper}
         />
       {:else if $survey.phase === "pause-t0" || $survey.phase === "pause-t1" || $survey.phase === "pause-t2" || $survey.phase === "pause-t3"}
         <PhaseBillboard state={$survey} banks={data.banks} />
@@ -67,6 +70,7 @@
           present={$survey.present}
           questionSeed={$survey.questionSeed}
           questions={data.banks.deepDive}
+          {isDeveloper}
         />
       {:else if $survey.phase === "t2"}
         <T2Aspiration
@@ -74,12 +78,14 @@
           finalForm={$survey.routing?.finalForm ?? false}
           questionSeed={$survey.questionSeed}
           questions={data.banks.deepDive}
+          {isDeveloper}
         />
       {:else if $survey.phase === "t3" && $survey.horizonIncluded !== false}
         <T3Horizon
           horizon={$survey.horizon ?? {}}
           questionSeed={$survey.questionSeed}
           questions={data.banks.deepDive}
+          {isDeveloper}
         />
       {:else if $survey.phase === "complete"}
         <Results state={$survey} banks={data.banks} />
