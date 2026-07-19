@@ -325,6 +325,7 @@ export function resolveNeighbors(coords: Coordinates, threshold = 1.5): Neighbor
 		const score = coords[axis];
 		const dist = Math.abs(score);
 
+		if (dist === 0) continue;         // balanced axis — already shown as co-equal archetype
 		if (dist >= threshold) continue; // firmly committed — no meaningful pull
 
 		const flippedSign: OctantSign = primarySigns[axis] === '+' ? '-' : '+';
