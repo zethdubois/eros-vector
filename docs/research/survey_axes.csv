@@ -1,0 +1,5 @@
+id,label,positive_pole,negative_pole,display_order
+w,Architecture,Interdependent,Autonomous,1
+x,Drive,Recreational,Romantic,2
+y,Permeability,Contained,Permeable,3
+z,Method,Directed,Organic,4

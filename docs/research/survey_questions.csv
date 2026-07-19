@@ -1,0 +1,25 @@
+id,axis_id,bank,text,position,active
+qv-w,w,quick_vibe,"I envision my ideal life having a central ""home base"" partner or anchor, rather than keeping my living and financial life entirely my own.",1,true
+qv-x,x,quick_vibe,"My primary drive for seeking connections is the pursuit of sexual variety and erotic thrill, rather than building deep emotional romance.",1,true
+qv-y,y,quick_vibe,"I prefer to keep different connections strictly compartmentalized in their own lanes, rather than letting them cross-pollinate into one integrated web.",1,true
+qv-z,z,quick_vibe,"I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.",1,true
+dd-w1,w,deep_dive,"I envision my ideal life having a central ""home base"" partner or anchor, rather than keeping my living and financial life entirely my own.",1,true
+dd-w2,w,deep_dive,"I believe it is natural and ethical to organize my life around a prioritized relational core, rather than maintaining my individual sovereignty above all else.",2,true
+dd-w3,w,deep_dive,"I imagine wanting to deeply merge my logistics (finances, housing, family building) with a partner, rather than maintaining strict logistical independence.",3,true
+dd-w4,w,deep_dive,"I envision my ideal relationship architecture having a central, prioritized partnership at its core, rather than keeping all connections on an equal, peripheral level.",4,true
+dd-w5,w,deep_dive,"I see the ""couple/unit"" as the fundamental organizing unit of my relational life, rather than the ""individual.""",5,true
+dd-x1,x,deep_dive,"My primary drive for seeking connections is the pursuit of sexual variety and erotic thrill, rather than building deep emotional romance.",1,true
+dd-x2,x,deep_dive,"I view sexual play primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.",2,true
+dd-x3,x,deep_dive,"I am drawn to erotic energy primarily for the physical thrill and sport of it, rather than for the purpose of cultivating a chosen family.",3,true
+dd-x4,x,deep_dive,"I believe connections are best when they serve the purpose of mutual pleasure and play, rather than needing to serve the practical realities of life.",4,true
+dd-x5,x,deep_dive,"I imagine I would be more fulfilled by a wide variety of casual, playful sexual connections than by a few deeply emotionally integrated romances.",5,true
+dd-y1,y,deep_dive,"I prefer to keep different connections (romantic, sexual, social) strictly compartmentalized in their own lanes, rather than letting them cross-pollinate into one integrated web.",1,true
+dd-y2,y,deep_dive,"I believe a protected, siloed approach to connections is essential, rather than letting them integrate into my wider social or logistical fabric.",2,true
+dd-y3,y,deep_dive,"I prefer that casual or play partners remain separate from my core life and friend groups, rather than bringing them ""into the light"" as integrated community members.",3,true
+dd-y4,y,deep_dive,"I value keeping boundaries firm so connections do not reshape my relational system, rather than allowing people to freely become family or merge logistics.",4,true
+dd-y5,y,deep_dive,"I view the boundary of my relational system as a wall that protects my core, rather than a porous membrane that lets connections freely enter and integrate.",5,true
+dd-z1,z,deep_dive,"I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.",1,true
+dd-z2,z,deep_dive,"I prefer to rely on explicitly negotiated rules and boundaries regarding interactions, rather than fluid, unspoken social vibes.",2,true
+dd-z3,z,deep_dive,"I believe relational structures work best as a scheduled, defined activity, rather than something that spontaneously happens when the vibe is right.",3,true
+dd-z4,z,deep_dive,"I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner), rather than letting them organically evolve far beyond their starting point.",4,true
+dd-z5,z,deep_dive,"I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who we meet and what the situation requires.",5,true
