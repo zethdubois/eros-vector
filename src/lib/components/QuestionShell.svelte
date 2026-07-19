@@ -123,7 +123,7 @@
 	.head {
 		flex-shrink: 0;
 		margin-top: 0.25rem;
-		margin-bottom: 1.25rem;
+		margin-bottom: 0.625rem;
 	}
 
 	.head h2 {
@@ -134,9 +134,17 @@
 
 	.phase-blurb {
 		margin: 0;
-		font-size: 0.95rem;
+		font-size: 0.85rem;
 		color: var(--text);
 		line-height: 1.45;
+		max-width: 36rem;
+	}
+
+	.phase-note {
+		margin: 0.4rem 0 0;
+		font-size: 0.85rem;
+		color: var(--muted);
+		line-height: 1.5;
 		max-width: 36rem;
 	}
 
@@ -151,6 +159,10 @@
 	.question-block {
 		grid-row: 2;
 		width: 100%;
+		padding: 1rem 1rem 0;
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		background: var(--surface);
 	}
 
 	.step-row {
