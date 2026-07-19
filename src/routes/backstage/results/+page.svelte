@@ -26,6 +26,16 @@
 		selected = next;
 	}
 
+	// ── Refresh ──────────────────────────────────────────────────────────────
+	let refreshing = $state(false);
+
+	async function handleRefresh() {
+		if (refreshing) return;
+		refreshing = true;
+		await invalidateAll();
+		refreshing = false;
+	}
+
 	// ── Two-step delete ──────────────────────────────────────────────────────
 	let confirmPending = $state(false);
 	let confirmTimer: ReturnType<typeof setTimeout> | null = null;
@@ -223,6 +233,15 @@
 			{/if}
 		</button>
 	{/if}
+	<button
+		type="button"
+		class="refresh-btn"
+		class:spinning={refreshing}
+		disabled={refreshing}
+		onclick={handleRefresh}
+		aria-label="Refresh"
+		title="Refresh"
+	>↻</button>
 </div>
 
 <div class="table-wrap">
@@ -527,6 +546,40 @@
 	.delete-btn:disabled {
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+
+	.refresh-btn {
+		margin-left: auto;
+		width: 1.9rem;
+		height: 1.9rem;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: var(--surface);
+		color: var(--muted);
+		font-size: 1rem;
+		line-height: 1;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: border-color 0.12s, color 0.12s;
+	}
+
+	.refresh-btn:hover:not(:disabled) {
+		border-color: var(--text);
+		color: var(--text);
+	}
+
+	.refresh-btn:disabled {
+		cursor: not-allowed;
+	}
+
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+
+	.refresh-btn.spinning {
+		animation: spin 0.6s linear infinite;
 	}
 
 	/* ── Table ── */

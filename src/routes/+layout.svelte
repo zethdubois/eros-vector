@@ -37,7 +37,7 @@
 	<title>Eros Vector</title>
 	<meta
 		name="description"
-		content="A 4D relationship mapping tool. Plot your trajectory across Architecture, Drive, and Method — plus Time."
+		content="Map your relational orientation across four axes — Architecture, Drive, Permeability, and Method — and track how it shifts from past to future."
 	/>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
