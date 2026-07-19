@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolveArchetype } from '$lib/labels';
+	import { resolveArchetype, resolveNeighbors } from '$lib/labels';
 
 	// Four axis scores, range −2 to +2, default 0 (balanced centre)
 	let w = $state(0);
@@ -29,6 +29,7 @@
 
 	const coords = $derived({ w, x, y, z });
 	const archetype = $derived(resolveArchetype(coords));
+	const neighbors = $derived(resolveNeighbors(coords));
 
 	const descriptor = $derived(
 		[
@@ -157,6 +158,7 @@
 
 	<!-- ── Orthant result ── -->
 	<div class="result">
+		<!-- Signs -->
 		<div class="signs-row">
 			<span class="sign-chip" style="--c:#9b7fe8">W{sign(w)}</span>
 			<span class="sign-chip" style="--c:#9e7982">X{sign(x)}</span>
@@ -168,12 +170,46 @@
 
 		<div class="result-divider"></div>
 
+		<!-- Primary archetype -->
 		<p class="archetype-name">{archetype.name}</p>
+		<p class="archetype-sig">{archetype.signature}</p>
 		<p class="archetype-desc">{archetype.description}</p>
 
-		<p class="resolver-note">
-			V1 resolver active — XYZ only. W (Architecture) is not yet included in archetype names.
-		</p>
+		<!-- ── Neighbouring influences ── -->
+		{#if archetype.id === 'schrodingers-partner'}
+			<div class="result-divider"></div>
+			<p class="nb-schrodinger">
+				You are at the exact origin — equidistant from all 16 archetypes. Every neighbouring
+				influence fires at maximum pull in all directions simultaneously. Move any slider to
+				see which boundaries you approach.
+			</p>
+		{:else if neighbors.length > 0}
+			<div class="result-divider"></div>
+			<p class="nb-heading">Neighbouring influences</p>
+			<div class="nb-list">
+				{#each neighbors as nb}
+					<div class="nb-card">
+						<div class="nb-left">
+							<span class="nb-chip" style="--c:{nb.axisColor}">{nb.axisLabel}</span>
+						</div>
+						<div class="nb-body">
+							<div class="nb-approach">
+								Approaching <strong>{nb.approachingPole}</strong>
+								<span class="nb-domain-label">· {nb.domain}</span>
+							</div>
+							<div class="nb-archetype-name">{nb.archetype.name}</div>
+							<div class="nb-archetype-sig">{nb.archetype.signature}</div>
+							<div class="nb-bar-wrap" title="Pull strength {(nb.pullStrength * 100).toFixed(0)}%">
+								<div
+									class="nb-bar"
+									style="--w:{(nb.pullStrength * 100).toFixed(1)}%;--c:{nb.axisColor}"
+								></div>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </section>
 
@@ -405,25 +441,124 @@
 	}
 
 	.archetype-name {
-		margin: 0 0 0.4rem;
+		margin: 0 0 0.2rem;
 		font-family: 'Fraunces', Georgia, serif;
 		font-size: 1.25rem;
 		font-weight: 600;
 	}
 
+	.archetype-sig {
+		margin: 0 0 0.65rem;
+		font-size: 0.82rem;
+		font-style: italic;
+		color: var(--muted);
+	}
+
 	.archetype-desc {
-		margin: 0 0 1.25rem;
+		margin: 0;
 		font-size: 0.88rem;
 		color: var(--muted);
 		line-height: 1.65;
 		max-width: 56ch;
 	}
 
-	.resolver-note {
+	/* ── Neighbours ── */
+
+	.nb-schrodinger {
 		margin: 0;
+		font-size: 0.85rem;
+		color: var(--muted);
+		font-style: italic;
+		line-height: 1.6;
+	}
+
+	.nb-heading {
+		margin: 0 0 0.85rem;
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+
+	.nb-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.nb-card {
+		display: flex;
+		gap: 0.75rem;
+		align-items: flex-start;
+	}
+
+	.nb-left {
+		padding-top: 0.1rem;
+		flex-shrink: 0;
+	}
+
+	.nb-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--c) 16%, transparent);
+		border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+		color: var(--c);
+		font-size: 0.78rem;
+		font-weight: 700;
+		font-family: 'Fraunces', Georgia, serif;
+	}
+
+	.nb-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.nb-approach {
+		font-size: 0.82rem;
+		margin-bottom: 0.15rem;
+	}
+
+	.nb-approach strong {
+		font-weight: 600;
+	}
+
+	.nb-domain-label {
+		color: var(--muted);
+		font-size: 0.78rem;
+	}
+
+	.nb-archetype-name {
+		font-family: 'Fraunces', Georgia, serif;
+		font-size: 0.95rem;
+		font-weight: 600;
+		margin-bottom: 0.1rem;
+	}
+
+	.nb-archetype-sig {
 		font-size: 0.78rem;
 		color: var(--muted);
-		opacity: 0.7;
 		font-style: italic;
+		margin-bottom: 0.5rem;
+	}
+
+	.nb-bar-wrap {
+		height: 4px;
+		border-radius: 2px;
+		background: color-mix(in srgb, currentColor 10%, transparent);
+		overflow: hidden;
+		max-width: 16rem;
+	}
+
+	.nb-bar {
+		height: 100%;
+		width: var(--w);
+		border-radius: 2px;
+		background: var(--c);
+		transition: width 0.2s ease;
 	}
 </style>

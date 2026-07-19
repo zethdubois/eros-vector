@@ -1,4 +1,4 @@
-import type { Coordinates } from './types';
+import type { Axis, Coordinates } from './types';
 
 export type OctantSign = '+' | '-';
 
@@ -229,4 +229,97 @@ export function resolveArchetype(coords: Coordinates): Archetype {
 /** Display name for a coordinate set (archetype title). */
 export function coordinateLabel(coords: Coordinates): string {
 	return resolveArchetype(coords).name;
+}
+
+// ── Neighbour analysis ────────────────────────────────────────────────────────
+
+/** Display metadata for each axis, used by the neighbour resolver and UI. */
+export const AXIS_META: Record<
+	Axis,
+	{ label: string; color: string; domain: string; plus: string; minus: string }
+> = {
+	w: { label: 'W', color: '#9b7fe8', domain: 'Architecture', plus: 'Interdependent', minus: 'Autonomous' },
+	x: { label: 'X', color: '#9e7982', domain: 'Drive',        plus: 'Recreational',   minus: 'Romantic'   },
+	y: { label: 'Y', color: '#c4a574', domain: 'Permeability', plus: 'Contained',       minus: 'Permeable'  },
+	z: { label: 'Z', color: '#7a9e9a', domain: 'Method',       plus: 'Directed',        minus: 'Organic'    }
+};
+
+export type Neighbor = {
+	/** Which axis is near the sign boundary. */
+	axis: Axis;
+	axisLabel: string;
+	axisColor: string;
+	domain: string;
+	/** The pole on the far side of the boundary — the one being approached. */
+	approachingPole: string;
+	/** Absolute axis score — distance from the 0 boundary. Range: [0, threshold). */
+	distanceToBoundary: number;
+	/** Normalised pull strength: 1 at the boundary, 0 at the threshold edge. */
+	pullStrength: number;
+	/** The archetype that lives across the boundary on this axis. */
+	archetype: Archetype;
+};
+
+/**
+ * Return the neighbouring orthants that are exerting gravitational pull on
+ * these coordinates. An axis contributes a neighbour only when |score| < threshold
+ * (default 1.5), meaning the person has not firmly committed to that pole.
+ *
+ * Results are sorted by pull strength descending (strongest — closest to zero — first).
+ *
+ * Special case: coords (0, 0, 0, 0) — Schrödinger's Partner — returns an empty
+ * array. The UI handles this separately since there is no primary orthant from
+ * which neighbours can be measured.
+ */
+export function resolveNeighbors(coords: Coordinates, threshold = 1.5): Neighbor[] {
+	// Origin point: no primary orthant, neighbours are not meaningful.
+	if (coords.w === 0 && coords.x === 0 && coords.y === 0 && coords.z === 0) {
+		return [];
+	}
+
+	const primarySigns = {
+		w: axisSign(coords.w),
+		x: axisSign(coords.x),
+		y: axisSign(coords.y),
+		z: axisSign(coords.z)
+	};
+
+	const neighbors: Neighbor[] = [];
+
+	for (const axis of ['w', 'x', 'y', 'z'] as Axis[]) {
+		const score = coords[axis];
+		const dist = Math.abs(score);
+
+		if (dist >= threshold) continue; // firmly committed — no meaningful pull
+
+		const flippedSign: OctantSign = primarySigns[axis] === '+' ? '-' : '+';
+		const flippedSigns = { ...primarySigns, [axis]: flippedSign };
+
+		const neighborArchetype = ARCHETYPES.find(
+			(a) =>
+				a.signs &&
+				a.signs.w === flippedSigns.w &&
+				a.signs.x === flippedSigns.x &&
+				a.signs.y === flippedSigns.y &&
+				a.signs.z === flippedSigns.z
+		);
+
+		if (!neighborArchetype) continue;
+
+		const meta = AXIS_META[axis];
+
+		neighbors.push({
+			axis,
+			axisLabel: meta.label,
+			axisColor: meta.color,
+			domain: meta.domain,
+			approachingPole: flippedSign === '+' ? meta.plus : meta.minus,
+			distanceToBoundary: dist,
+			pullStrength: 1 - dist / threshold,
+			archetype: neighborArchetype
+		});
+	}
+
+	// Strongest pull (smallest distance) first.
+	return neighbors.sort((a, b) => a.distanceToBoundary - b.distanceToBoundary);
 }
