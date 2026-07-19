@@ -1,0 +1,1 @@
+- [Axis letter-to-domain mapping](axis-mapping.md) — locked key from axes.md; W=Architecture, X=Drive, Y=Permeability, Z=Method.

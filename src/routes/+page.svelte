@@ -67,8 +67,8 @@
           <ul class="axis-list">
             <li>
               <span class="axis-glyph" data-axis="w" aria-hidden="true"></span>
-              <strong>Permeability: Contained ↔ Permeable</strong>
-              <small>How open is your relational world?</small>
+              <strong>Architecture: Interdependent ↔ Autonomous</strong>
+              <small>How do you build your life?</small>
             </li>
             <li>
               <span class="axis-glyph" data-axis="x" aria-hidden="true"></span>
@@ -77,8 +77,8 @@
             </li>
             <li>
               <span class="axis-glyph" data-axis="y" aria-hidden="true"></span>
-              <strong>Architecture: Interdependent ↔ Autonomous</strong>
-              <small>How do you build your life?</small>
+              <strong>Permeability: Contained ↔ Permeable</strong>
+              <small>How open is your relational world?</small>
             </li>
             <li>
               <span class="axis-glyph" data-axis="z" aria-hidden="true"></span>
@@ -99,8 +99,14 @@
             <!--
               Parallel coordinates — four vertical bipolar axes (W X Y Z).
               Centre (score = 0) = balanced. + pole at top, − at bottom.
+              Axes (axes.md locked key):
+                W = Architecture  + Interdependent / − Autonomous
+                X = Drive         + Recreational   / − Romantic
+                Y = Permeability  + Contained      / − Permeable
+                Z = Method        + Directed       / − Organic
               Simulated result: Guarded Free Agent
-              W(Permeability)=+1.5  X(Drive)=+1.8  Y(Architecture)=−1.6  Z(Method)=−1.7
+                W(Architecture)=−1.5  X(Drive)=+1.8  Y(Permeability)=+1.6  Z(Method)=−1.7
+                → Autonomous + Recreational + Contained + Organic
             -->
             <svg class="plot-svg" viewBox="0 0 240 168" role="img" aria-label="Parallel coordinates profile chart">
               <!-- vertical axis lines -->
@@ -118,28 +124,28 @@
                 <line x1="203" y1="81" x2="213" y2="81"/>
               </g>
               <!-- + pole labels (top) -->
-              <text x="28"  y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Contained</text>
+              <text x="28"  y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Interdependent</text>
               <text x="88"  y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Recreational</text>
-              <text x="148" y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Interdependent</text>
+              <text x="148" y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Contained</text>
               <text x="208" y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Directed</text>
               <!-- − pole labels (bottom) -->
-              <text x="28"  y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Permeable</text>
+              <text x="28"  y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Autonomous</text>
               <text x="88"  y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Romantic</text>
-              <text x="148" y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Autonomous</text>
+              <text x="148" y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Permeable</text>
               <text x="208" y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Organic</text>
               <!-- axis letter labels -->
               <text x="28"  y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#9b7fe8">W</text>
               <text x="88"  y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#9e7982">X</text>
               <text x="148" y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#c4a574">Y</text>
               <text x="208" y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#7a9e9a">Z</text>
-              <!-- profile line -->
-              <polyline points="28,34 88,24 148,133 208,136"
+              <!-- profile line: W−1.5→y=130  X+1.8→y=24  Y+1.6→y=30  Z−1.7→y=136 -->
+              <polyline points="28,130 88,24 148,30 208,136"
                 fill="none" stroke="#9e7982" stroke-width="2.2"
                 stroke-linejoin="round" opacity="0.82"/>
               <!-- score dots (one per axis, colored) -->
-              <circle cx="28"  cy="34"  r="4.5" fill="#9b7fe8"/>
+              <circle cx="28"  cy="130" r="4.5" fill="#9b7fe8"/>
               <circle cx="88"  cy="24"  r="4.5" fill="#9e7982"/>
-              <circle cx="148" cy="133" r="4.5" fill="#c4a574"/>
+              <circle cx="148" cy="30"  r="4.5" fill="#c4a574"/>
               <circle cx="208" cy="136" r="4.5" fill="#7a9e9a"/>
             </svg>
             <p class="archetype-tag">Guarded Free Agent</p>
