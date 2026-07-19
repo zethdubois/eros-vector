@@ -33,11 +33,10 @@ export function hashIp(ip: string | null | undefined): string | null {
 }
 
 /**
- * Coarse region from platform geo headers when present.
- * No paid/external geo lookup — falls back to null.
+ * Country (+region) from CDN geo headers when present.
+ * Returns e.g. "US" or "US-CA", or null if no header found.
  */
-export function coarseRegion(event: RequestEvent): string | null {
-	const headers = event.request.headers;
+function regionFromHeaders(headers: Headers): string | null {
 	const country =
 		headers.get('cf-ipcountry') ||
 		headers.get('x-vercel-ip-country') ||
@@ -53,8 +52,62 @@ export function coarseRegion(event: RequestEvent): string | null {
 
 	const normalizedCountry = country.trim().toUpperCase();
 	if (!region) return normalizedCountry;
-
 	return `${normalizedCountry}-${region.trim().toUpperCase()}`;
+}
+
+// Simple TTL cache: ip → { result, expiresAt }
+const geoCache = new Map<string, { result: string | null; expiresAt: number }>();
+const GEO_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const GEO_LOOKUP_TIMEOUT_MS = 1500;
+
+async function lookupIpRegion(ip: string): Promise<string | null> {
+	// Skip private / loopback addresses
+	if (/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1$|fc|fd)/.test(ip)) return null;
+
+	const cached = geoCache.get(ip);
+	if (cached && cached.expiresAt > Date.now()) return cached.result;
+
+	try {
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), GEO_LOOKUP_TIMEOUT_MS);
+		const res = await fetch(
+			`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,countryCode,region`,
+			{ signal: controller.signal }
+		);
+		clearTimeout(timer);
+
+		if (!res.ok) {
+			geoCache.set(ip, { result: null, expiresAt: Date.now() + GEO_CACHE_TTL_MS });
+			return null;
+		}
+
+		const data = (await res.json()) as { status?: string; countryCode?: string; region?: string };
+		let result: string | null = null;
+		if (data.status === 'success' && data.countryCode) {
+			result = data.region
+				? `${data.countryCode.toUpperCase()}-${data.region.toUpperCase()}`
+				: data.countryCode.toUpperCase();
+		}
+		geoCache.set(ip, { result, expiresAt: Date.now() + GEO_CACHE_TTL_MS });
+		return result;
+	} catch {
+		geoCache.set(ip, { result: null, expiresAt: Date.now() + GEO_CACHE_TTL_MS });
+		return null;
+	}
+}
+
+/**
+ * Coarse region string for analytics (e.g. "US" or "US-CA").
+ * Prefers CDN geo headers; falls back to a free IP-API lookup.
+ * Never throws — returns null on any failure.
+ */
+export async function coarseRegion(event: RequestEvent): Promise<string | null> {
+	const fromHeaders = regionFromHeaders(event.request.headers);
+	if (fromHeaders) return fromHeaders;
+
+	const ip = clientIp(event);
+	if (!ip) return null;
+	return lookupIpRegion(ip);
 }
 
 /** Short UA token for analytics — not a fingerprint. */
