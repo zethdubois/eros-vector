@@ -30,6 +30,13 @@ const axes = [
 		positivePole: 'Directed',
 		negativePole: 'Organic',
 		displayOrder: 3
+	},
+	{
+		id: 'w',
+		label: 'W',
+		positivePole: 'W+',
+		negativePole: 'W−',
+		displayOrder: 4
 	}
 ] as const;
 
@@ -229,18 +236,19 @@ async function seed() {
 			quickVibe: {
 				y: byBankAxis('quick_vibe', 'y'),
 				x: byBankAxis('quick_vibe', 'x'),
-				z: byBankAxis('quick_vibe', 'z')
+				z: byBankAxis('quick_vibe', 'z'),
+				w: byBankAxis('quick_vibe', 'w')
 			},
 			deepDive: {
 				y: byBankAxis('deep_dive', 'y'),
 				x: byBankAxis('deep_dive', 'x'),
-				z: byBankAxis('deep_dive', 'z')
+				z: byBankAxis('deep_dive', 'z'),
+				w: byBankAxis('deep_dive', 'w')
 			}
 		};
 
-		if (summary.totalActive !== 18) {
-			throw new Error(`Expected 18 active questions, found ${summary.totalActive}`);
-		}
+		// Validate core XYZ axes have their expected counts.
+		// W is additive — no minimum enforced until W questions are authored.
 		for (const axis of ['y', 'x', 'z'] as const) {
 			if (summary.quickVibe[axis] !== 1) {
 				throw new Error(`quick_vibe/${axis}: expected 1, got ${summary.quickVibe[axis]}`);

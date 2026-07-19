@@ -9,18 +9,21 @@ export type QuestionBanks = {
 	deepDive: Question[];
 };
 
+/** Minimum active question counts required per bank for the core XYZ axes. W is additive and not yet enforced. */
 const EXPECTED = {
 	quickVibe: { y: 1, x: 1, z: 1 },
 	deepDive: { y: 5, x: 5, z: 5 }
 } as const;
 
+type CoreAxis = 'x' | 'y' | 'z';
+
 function assertAxis(id: string): Axis {
-	if (id === 'x' || id === 'y' || id === 'z') return id;
+	if (id === 'x' || id === 'y' || id === 'z' || id === 'w') return id;
 	throw new Error(`Invalid survey axis id in database: ${id}`);
 }
 
 function countByAxis(questions: Question[]): Record<Axis, number> {
-	const counts: Record<Axis, number> = { x: 0, y: 0, z: 0 };
+	const counts: Record<Axis, number> = { x: 0, y: 0, z: 0, w: 0 };
 	for (const q of questions) {
 		counts[q.axis] += 1;
 	}
@@ -30,7 +33,7 @@ function countByAxis(questions: Question[]): Record<Axis, number> {
 function assertBankCounts(
 	bank: 'quickVibe' | 'deepDive',
 	questions: Question[],
-	expected: Record<Axis, number>
+	expected: Record<CoreAxis, number>
 ): void {
 	const counts = countByAxis(questions);
 	for (const axis of ['y', 'x', 'z'] as const) {

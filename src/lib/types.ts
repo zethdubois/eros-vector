@@ -1,4 +1,4 @@
-export type Axis = 'x' | 'y' | 'z';
+export type Axis = 'x' | 'y' | 'z' | 'w';
 
 export type LikertValue = 1 | 2 | 3 | 4 | 5;
 
@@ -27,6 +27,7 @@ export type Coordinates = {
 	x: number;
 	y: number;
 	z: number;
+	w: number;
 };
 
 export type Routing = {

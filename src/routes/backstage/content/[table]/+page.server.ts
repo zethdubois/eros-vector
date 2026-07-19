@@ -383,8 +383,8 @@ export const actions: Actions = {
 		if (bankRaw !== 'quick_vibe' && bankRaw !== 'deep_dive') {
 			return fail(400, { ok: false as const, error: 'bank must be quick_vibe or deep_dive.' });
 		}
-		if (!['y', 'x', 'z'].includes(axisId)) {
-			return fail(400, { ok: false as const, error: 'axis_id must be y, x, or z.' });
+		if (!['y', 'x', 'z', 'w'].includes(axisId)) {
+			return fail(400, { ok: false as const, error: 'axis_id must be y, x, z, or w.' });
 		}
 		if (!text) {
 			return fail(400, { ok: false as const, error: 'Question text cannot be empty.' });

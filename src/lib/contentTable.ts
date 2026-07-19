@@ -29,7 +29,7 @@ export const QUESTIONS_COLUMNS: TableColumn[] = [
 		label: 'axis_id',
 		type: 'enum',
 		editable: false,
-		options: ['y', 'x', 'z']
+		options: ['y', 'x', 'z', 'w']
 	},
 	{
 		key: 'bank',
@@ -50,7 +50,7 @@ export const QUESTIONS_EXPORT_COLUMNS: TableColumn[] = [
 		label: 'axis_id',
 		type: 'enum',
 		editable: false,
-		options: ['y', 'x', 'z']
+		options: ['y', 'x', 'z', 'w']
 	},
 	{
 		key: 'bank',

@@ -42,7 +42,7 @@ export type QuestionGroup = {
 	}[];
 };
 
-const AXIS_ORDER = ['y', 'x', 'z'] as const;
+const AXIS_ORDER = ['y', 'x', 'z', 'w'] as const;
 
 const BANK_META = {
 	quick_vibe: {
@@ -76,6 +76,13 @@ const FALLBACK_AXES: AxisContent[] = [
 		positivePole: 'Directed',
 		negativePole: 'Organic',
 		displayOrder: 3
+	},
+	{
+		axis: 'w',
+		label: 'W',
+		positivePole: 'W+',
+		negativePole: 'W−',
+		displayOrder: 4
 	}
 ];
 
