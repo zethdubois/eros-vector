@@ -50,6 +50,11 @@
 		return result;
 	}
 
+	/** Orthant sign character — shows 0 at the exact centre. */
+	function sign(v: number): string {
+		return v === 0 ? '0' : v > 0 ? '+' : '−';
+	}
+
 	/** Template sentence describing a neighbour's pull, scaled by proximity. */
 	function neighborSentence(nb: Neighbor): string {
 		const { domain, approachingPole, distanceToBoundary, archetype } = nb;
@@ -105,6 +110,11 @@
 								aria-expanded={open}
 								onclick={() => togglePass(section.id, pass.mode)}
 							>
+								<div class="signs-row">
+									{#each (['w','x','y','z'] as const) as axis}
+										<span class="sign-chip" style="--c:{AXIS_META[axis].color}">{AXIS_META[axis].label}{sign(pass.coordinates[axis])}</span>
+									{/each}
+								</div>
 								<div class="pass-meta">
 									<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
 									{#if pass.shadow}
@@ -148,6 +158,9 @@
 														<div class="nb-text">
 															<p class="nb-sentence">{neighborSentence(nb)}</p>
 															<p class="nb-sig">{nb.archetype.name} — {nb.archetype.signature}</p>
+															<div class="nb-bar-wrap" title="Pull strength {(nb.pullStrength * 100).toFixed(0)}%">
+																<div class="nb-bar" style="--w:{(nb.pullStrength * 100).toFixed(1)}%;--c:{nb.axisColor}"></div>
+															</div>
 														</div>
 													</div>
 												{/each}
@@ -367,6 +380,28 @@
 		color: var(--muted);
 	}
 
+	/* ── Axis sign chips ── */
+
+	.signs-row {
+		display: flex;
+		gap: 0.45rem;
+		margin-bottom: 0.55rem;
+	}
+
+	.sign-chip {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.15rem 0.5rem;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--c) 16%, transparent);
+		border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+		color: var(--c);
+		font-size: 0.75rem;
+		font-weight: 700;
+		font-family: 'Courier New', monospace;
+		letter-spacing: 0.04em;
+	}
+
 	/* ── Tab strip ── */
 
 	.tab-strip {
@@ -486,6 +521,23 @@
 		font-style: italic;
 		color: var(--muted);
 		opacity: 0.65;
+	}
+
+	.nb-bar-wrap {
+		margin-top: 0.4rem;
+		height: 4px;
+		border-radius: 2px;
+		background: color-mix(in srgb, currentColor 10%, transparent);
+		overflow: hidden;
+		max-width: 14rem;
+	}
+
+	.nb-bar {
+		height: 100%;
+		width: var(--w);
+		border-radius: 2px;
+		background: var(--c);
+		transition: width 0.2s ease;
 	}
 
 	.extras {
