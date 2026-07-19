@@ -10,6 +10,7 @@
 		buildPartialResultSections,
 		type QuestionBanks
 	} from '$lib/results';
+	import { SETTINGS } from '$lib/settings';
 
 	let {
 		state,
@@ -19,13 +20,24 @@
 		banks: QuestionBanks;
 	} = $props();
 
-	const lines = $derived(buildBillboardLines(state, banks));
+	const lines = $derived.by(() => {
+		const raw = buildBillboardLines(state, banks);
+		if (!SETTINGS.scoutingDisabled) return raw;
+		return raw
+			.map((l) => ({ ...l, passes: l.passes.filter((p) => p.mode !== 'scouting') }))
+			.filter((l) => l.passes.length > 0);
+	});
 	const showHorizonChoice = $derived(
 		state.phase === 'pause-t2' && state.routing?.t3 && !state.routing.finalForm
 	);
-	const partialSections = $derived(
-		showHorizonChoice ? buildPartialResultSections(state, banks) : []
-	);
+	const partialSections = $derived.by(() => {
+		if (!showHorizonChoice) return [];
+		const raw = buildPartialResultSections(state, banks);
+		if (!SETTINGS.scoutingDisabled) return raw;
+		return raw
+			.map((s) => ({ ...s, passes: s.passes.filter((p) => p.mode !== 'scouting') }))
+			.filter((s) => s.passes.length > 0);
+	});
 	const continueLabel = $derived.by(() => {
 		switch (state.phase) {
 			case 'pause-t0':

@@ -4,6 +4,7 @@
 	import { canAddHorizon, canAddPastEras } from '$lib/surveyNav';
 	import { AXIS_META, type Neighbor } from '$lib/labels';
 	import type { Axis } from '$lib/types';
+	import { SETTINGS } from '$lib/settings';
 
 	let {
 		state: surveyState,
@@ -13,7 +14,13 @@
 		banks: QuestionBanks;
 	} = $props();
 
-	const sections = $derived(buildResultSections(surveyState, banks));
+	const sections = $derived.by(() => {
+		const raw = buildResultSections(surveyState, banks);
+		if (!SETTINGS.scoutingDisabled) return raw;
+		return raw
+			.map((s) => ({ ...s, passes: s.passes.filter((p) => p.mode !== 'scouting') }))
+			.filter((s) => s.passes.length > 0);
+	});
 	const showAddPast = $derived(canAddPastEras(surveyState));
 	const showAddHorizon = $derived(canAddHorizon(surveyState));
 
