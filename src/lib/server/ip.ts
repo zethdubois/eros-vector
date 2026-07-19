@@ -6,8 +6,29 @@ function ipHashSecret(): string {
 	return env.IP_HASH_SECRET?.trim() || env.ACCESS_COOKIE_SECRET?.trim() || '';
 }
 
+const PRIVATE_IP_RE =
+	/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.|::1$|fc|fd|fe80)/i;
+
+function isPrivateIp(ip: string): boolean {
+	return PRIVATE_IP_RE.test(ip.trim());
+}
+
 /** Extract client IP from SvelteKit / reverse-proxy headers. Never persist the result. */
 export function clientIp(event: RequestEvent): string | null {
+	// x-forwarded-for carries the real client IP when behind a reverse proxy
+	// (e.g. Replit's edge). Take the leftmost public IP from the chain before
+	// falling back to getClientAddress(), which returns the proxy's internal IP.
+	const forwarded = event.request.headers.get('x-forwarded-for');
+	if (forwarded) {
+		for (const part of forwarded.split(',')) {
+			const ip = part.trim();
+			if (ip && !isPrivateIp(ip)) return ip;
+		}
+	}
+
+	const xReal = event.request.headers.get('x-real-ip')?.trim();
+	if (xReal && !isPrivateIp(xReal)) return xReal;
+
 	try {
 		const fromKit = event.getClientAddress();
 		if (fromKit) return fromKit;
@@ -15,13 +36,7 @@ export function clientIp(event: RequestEvent): string | null {
 		// getClientAddress can throw when the adapter has no address
 	}
 
-	const forwarded = event.request.headers.get('x-forwarded-for');
-	if (forwarded) {
-		const first = forwarded.split(',')[0]?.trim();
-		if (first) return first;
-	}
-
-	return event.request.headers.get('x-real-ip')?.trim() || null;
+	return null;
 }
 
 /** Salted HMAC of IP — reversible only with the secret; raw IP is discarded. */
