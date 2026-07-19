@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import './layout.css';
 	import SaveKeyPanel from '$lib/components/SaveKeyPanel.svelte';
+	import { survey } from '$lib/store';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
@@ -21,6 +22,8 @@
 
 	/** Show the coloured role banner whenever the user is authenticated. */
 	const showBanner = $derived(!!data.accessRole && !hiddenRoute);
+
+	const sexAge = $derived($survey.intake?.sexAge ?? null);
 
 	const bannerBg = $derived.by(() => {
 		if (data.accessRole === 'developer') return '#c4b5fd'; // violet
@@ -51,7 +54,12 @@
 		{:else}
 			<span></span>
 		{/if}
-		<SaveKeyPanel floating={false} />
+		<div class="banner-right">
+			{#if sexAge !== null}
+				<span class="sex-age-pill"><span class="sex-age-label">sex-age</span>{sexAge}<span class="sex-age-unit">yr</span></span>
+			{/if}
+			<SaveKeyPanel floating={false} />
+		</div>
 	</div>
 {/if}
 
@@ -83,5 +91,36 @@
 	.corner-link:hover {
 		opacity: 1;
 		color: var(--accent);
+	}
+
+	.banner-right {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.sex-age-pill {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.25rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		opacity: 0.7;
+		color: var(--text);
+	}
+
+	.sex-age-label {
+		font-weight: 500;
+		opacity: 0.65;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-right: 0.15rem;
+	}
+
+	.sex-age-unit {
+		font-size: 0.68rem;
+		font-weight: 500;
+		opacity: 0.7;
 	}
 </style>
