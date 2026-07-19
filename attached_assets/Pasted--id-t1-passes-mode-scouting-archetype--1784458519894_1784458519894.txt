@@ -1,0 +1,300 @@
+[
+  {
+    "id": "t1",
+    "passes": [
+      {
+        "mode": "scouting",
+        "archetype": {
+          "id": "schrodingers-partner",
+          "name": "Schrödinger's Partner",
+          "tagline": "The Origin Point · All Poles · None of Them · Pure Potential",
+          "signature": "A singularity of pure, uncommitted potential energy.",
+          "description": "You have somehow managed to plot the exact mathematical origin point of the Eros Vector. You exist in a state of perfect relational quantum superposition.\n\nYou are simultaneously craving a merged, interdependent home base and fiercely protecting your total autonomy. You seek the physical thrill of casual, recreational play, yet you are equally drawn to the profound depths of romantic integration. You want strict, compartmentalized boundaries around your core life, but you also want a porous, cross-pollinating tribe where friends and lovers freely blur together. You love a deliberate, app-driven blueprint, but you prefer to just let things erupt organically when the vibe is right.\n\nBecause you sit at the absolute dead center of the 4D map, you are equidistant from all 16 archetypes. You are a walking \"It depends.\" Until someone actually opens the box and interacts with you, you are every relationship style and none of them — a singularity of pure, uncommitted potential energy."
+        },
+        "neighbors": [],
+        "archetypes": [
+          {
+            "id": "schrodingers-partner",
+            "name": "Schrödinger's Partner",
+            "tagline": "The Origin Point · All Poles · None of Them · Pure Potential",
+            "signature": "A singularity of pure, uncommitted potential energy.",
+            "description": "You have somehow managed to plot the exact mathematical origin point of the Eros Vector. You exist in a state of perfect relational quantum superposition.\n\nYou are simultaneously craving a merged, interdependent home base and fiercely protecting your total autonomy. You seek the physical thrill of casual, recreational play, yet you are equally drawn to the profound depths of romantic integration. You want strict, compartmentalized boundaries around your core life, but you also want a porous, cross-pollinating tribe where friends and lovers freely blur together. You love a deliberate, app-driven blueprint, but you prefer to just let things erupt organically when the vibe is right.\n\nBecause you sit at the absolute dead center of the 4D map, you are equidistant from all 16 archetypes. You are a walking \"It depends.\" Until someone actually opens the box and interacts with you, you are every relationship style and none of them — a singularity of pure, uncommitted potential energy."
+          }
+        ],
+        "coordinates": {
+          "w": 0,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "profileLabel": "Schrödinger's Partner"
+      },
+      {
+        "mode": "bound",
+        "shadow": true,
+        "archetype": {
+          "id": "relationship-anarchist",
+          "name": "Relationship Anarchist",
+          "signs": {
+            "w": "-",
+            "x": "-",
+            "y": "-",
+            "z": "-"
+          },
+          "tagline": "Autonomous · Romantic · Permeable · Organic",
+          "signature": "An organically evolving web of deep connection and autonomy.",
+          "description": "You reject blueprints. You do not organize life around a relational core, nor do you impose a fixed ranking on connections. You let bonds — romantic, platonic, sexual, practical — grow organically into what they are meant to be, driven by emotional resonance and mutual care. Your boundaries are permeable; the network is a fluid web of belonging that evolves with the people and the moment, without a predetermined hierarchy."
+        },
+        "neighbors": [
+          {
+            "axis": "w",
+            "domain": "Architecture",
+            "archetype": {
+              "id": "chosen-family",
+              "name": "Chosen Family",
+              "signs": {
+                "w": "+",
+                "x": "-",
+                "y": "-",
+                "z": "-"
+              },
+              "tagline": "Interdependent · Romantic · Permeable · Organic",
+              "signature": "An organically grown, intertwined relational family.",
+              "description": "Your life is organized around an interdependent relational core driven by profound romantic attachment, but you let the wider relational system grow without a rigid blueprint. Your boundaries are highly permeable; connections naturally evolve and integrate. A friend may become a lover, a lover a housemate, a partner a co-parent. You grow an organically intertwined, permeable chosen family through love and practical need."
+            },
+            "axisColor": "#9b7fe8",
+            "axisLabel": "W",
+            "pullStrength": 0.33333333333333337,
+            "approachingPole": "Interdependent",
+            "distanceToBoundary": 1
+          },
+          {
+            "axis": "x",
+            "domain": "Drive",
+            "archetype": {
+              "id": "free-agent",
+              "name": "Free Agent",
+              "signs": {
+                "w": "-",
+                "x": "+",
+                "y": "-",
+                "z": "-"
+              },
+              "tagline": "Autonomous · Recreational · Permeable · Organic",
+              "signature": "Independent flow through a porous social-erotic ecosystem.",
+              "description": "You are fiercely independent and thrive on recreational erotic play. Your method is organic — you move through permissive social spaces and let casual connections arise when the vibe is right. Your boundaries are highly permeable; lovers are not siloed. Connections organically become friends and community members, weaving a fluid erotic ecosystem around your autonomous life."
+            },
+            "axisColor": "#9e7982",
+            "axisLabel": "X",
+            "pullStrength": 0.33333333333333337,
+            "approachingPole": "Recreational",
+            "distanceToBoundary": 1
+          },
+          {
+            "axis": "y",
+            "domain": "Permeability",
+            "archetype": {
+              "id": "lone-wolf-romantic",
+              "name": "Lone Wolf Romantic",
+              "signs": {
+                "w": "-",
+                "x": "-",
+                "y": "+",
+                "z": "-"
+              },
+              "tagline": "Autonomous · Romantic · Contained · Organic",
+              "signature": "Deep, organic romance around an independent life.",
+              "description": "You are sovereign, organizing life around yourself, yet you crave deep romantic and emotional intimacy. Your method is organic — exclusive bonds arise through circumstance and connection rather than proactive searching. When you bond, it is intense and contained, walled off from additional integration. You form profound closed romantic attachments on your own terms, letting them evolve authentically while preserving independence."
+            },
+            "axisColor": "#c4a574",
+            "axisLabel": "Y",
+            "pullStrength": 0.33333333333333337,
+            "approachingPole": "Contained",
+            "distanceToBoundary": 1
+          },
+          {
+            "axis": "z",
+            "domain": "Method",
+            "archetype": {
+              "id": "solo-polyamorist",
+              "name": "Solo Polyamorist",
+              "signs": {
+                "w": "-",
+                "x": "-",
+                "y": "-",
+                "z": "+"
+              },
+              "tagline": "Autonomous · Romantic · Permeable · Directed",
+              "signature": "Intentionally integrated love without a merged home base.",
+              "description": "You are sovereign — refusing to merge logistics or organize around a relational core — yet you cultivate deep romantic emotional connections. You build them deliberately, using clear negotiation so attachment can be profound without logistical entanglement. Your system is permeable: partners may be integrated into your life and brought into the light, while you remain the architect of your own independence."
+            },
+            "axisColor": "#7a9e9a",
+            "axisLabel": "Z",
+            "pullStrength": 0.33333333333333337,
+            "approachingPole": "Directed",
+            "distanceToBoundary": 1
+          }
+        ],
+        "archetypes": [
+          {
+            "id": "relationship-anarchist",
+            "name": "Relationship Anarchist",
+            "signs": {
+              "w": "-",
+              "x": "-",
+              "y": "-",
+              "z": "-"
+            },
+            "tagline": "Autonomous · Romantic · Permeable · Organic",
+            "signature": "An organically evolving web of deep connection and autonomy.",
+            "description": "You reject blueprints. You do not organize life around a relational core, nor do you impose a fixed ranking on connections. You let bonds — romantic, platonic, sexual, practical — grow organically into what they are meant to be, driven by emotional resonance and mutual care. Your boundaries are permeable; the network is a fluid web of belonging that evolves with the people and the moment, without a predetermined hierarchy."
+          }
+        ],
+        "coordinates": {
+          "w": -1,
+          "x": -1,
+          "y": -1,
+          "z": -1
+        },
+        "profileLabel": "Relationship Anarchist"
+      }
+    ],
+    "context": "Where you are now in your relational life.",
+    "phaseLabel": "Present"
+  },
+  {
+    "id": "t2",
+    "passes": [
+      {
+        "mode": "bound",
+        "archetype": {
+          "id": "focused-romantic",
+          "name": "Focused Romantic",
+          "signs": {
+            "w": "-",
+            "x": "-",
+            "y": "+",
+            "z": "+"
+          },
+          "tagline": "Autonomous · Romantic · Contained · Directed",
+          "signature": "Sovereign life architecture with intentionally focused romance.",
+          "description": "You maintain autonomy and individual logistics while deliberately seeking profound, exclusive romantic connection. Your method is directed — purposeful dating, clear pursuit, and focused bonding. When you bond, your system becomes highly contained and closed to additional romantic or sexual integration. Serial monogamy is one common landmark in this orthant, but so is any intentionally pursued, deeply romantic, bounded connection that preserves the individual as life's organizing center."
+        },
+        "neighbors": [
+          {
+            "axis": "x",
+            "domain": "Drive",
+            "archetype": {
+              "id": "solo-player",
+              "name": "Solo Player",
+              "signs": {
+                "w": "-",
+                "x": "+",
+                "y": "+",
+                "z": "+"
+              },
+              "tagline": "Autonomous · Recreational · Contained · Directed",
+              "signature": "Independent, proactive, and cleanly compartmentalized.",
+              "description": "You are sovereign. You do not organize life around a merged relational core, preferring your own logistics and independence. You have a strong drive for recreational erotic play and find it through directed outreach — apps, events, or clear casual arrangements. Your system is strictly contained: sexual connections stay siloed from one another and from the rest of your life rather than becoming intertwined or integrated."
+            },
+            "axisColor": "#9e7982",
+            "axisLabel": "X",
+            "pullStrength": 0.7333333333333334,
+            "approachingPole": "Recreational",
+            "distanceToBoundary": 0.4
+          },
+          {
+            "axis": "y",
+            "domain": "Permeability",
+            "archetype": {
+              "id": "solo-polyamorist",
+              "name": "Solo Polyamorist",
+              "signs": {
+                "w": "-",
+                "x": "-",
+                "y": "-",
+                "z": "+"
+              },
+              "tagline": "Autonomous · Romantic · Permeable · Directed",
+              "signature": "Intentionally integrated love without a merged home base.",
+              "description": "You are sovereign — refusing to merge logistics or organize around a relational core — yet you cultivate deep romantic emotional connections. You build them deliberately, using clear negotiation so attachment can be profound without logistical entanglement. Your system is permeable: partners may be integrated into your life and brought into the light, while you remain the architect of your own independence."
+            },
+            "axisColor": "#c4a574",
+            "axisLabel": "Y",
+            "pullStrength": 0.7333333333333334,
+            "approachingPole": "Permeable",
+            "distanceToBoundary": 0.4
+          },
+          {
+            "axis": "w",
+            "domain": "Architecture",
+            "archetype": {
+              "id": "closed-builder",
+              "name": "Closed Builder",
+              "signs": {
+                "w": "+",
+                "x": "-",
+                "y": "+",
+                "z": "+"
+              },
+              "tagline": "Interdependent · Romantic · Contained · Directed",
+              "signature": "A carefully designed, emotionally deep, closed relational core.",
+              "description": "You intentionally build life around a merged, interdependent relational core driven by profound romantic and emotional depth. Your method is directed: explicit agreements, defined roles, and architecture designed from a blueprint. Your system is strictly contained; the intimacy of the core is protected from integration by additional people. Whether that core is a dyad, a closed triad, a polyfidelitous group, or another bounded configuration, the bond is deliberately constructed and highly protected."
+            },
+            "axisColor": "#9b7fe8",
+            "axisLabel": "W",
+            "pullStrength": 0.6000000000000001,
+            "approachingPole": "Interdependent",
+            "distanceToBoundary": 0.6
+          },
+          {
+            "axis": "z",
+            "domain": "Method",
+            "archetype": {
+              "id": "lone-wolf-romantic",
+              "name": "Lone Wolf Romantic",
+              "signs": {
+                "w": "-",
+                "x": "-",
+                "y": "+",
+                "z": "-"
+              },
+              "tagline": "Autonomous · Romantic · Contained · Organic",
+              "signature": "Deep, organic romance around an independent life.",
+              "description": "You are sovereign, organizing life around yourself, yet you crave deep romantic and emotional intimacy. Your method is organic — exclusive bonds arise through circumstance and connection rather than proactive searching. When you bond, it is intense and contained, walled off from additional integration. You form profound closed romantic attachments on your own terms, letting them evolve authentically while preserving independence."
+            },
+            "axisColor": "#7a9e9a",
+            "axisLabel": "Z",
+            "pullStrength": 0.4666666666666667,
+            "approachingPole": "Organic",
+            "distanceToBoundary": 0.8
+          }
+        ],
+        "archetypes": [
+          {
+            "id": "focused-romantic",
+            "name": "Focused Romantic",
+            "signs": {
+              "w": "-",
+              "x": "-",
+              "y": "+",
+              "z": "+"
+            },
+            "tagline": "Autonomous · Romantic · Contained · Directed",
+            "signature": "Sovereign life architecture with intentionally focused romance.",
+            "description": "You maintain autonomy and individual logistics while deliberately seeking profound, exclusive romantic connection. Your method is directed — purposeful dating, clear pursuit, and focused bonding. When you bond, your system becomes highly contained and closed to additional romantic or sexual integration. Serial monogamy is one common landmark in this orthant, but so is any intentionally pursued, deeply romantic, bounded connection that preserves the individual as life's organizing center."
+          }
+        ],
+        "coordinates": {
+          "w": -0.6,
+          "x": -0.4,
+          "y": 0.4,
+          "z": 0.8
+        },
+        "profileLabel": "Focused Romantic"
+      }
+    ],
+    "context": "The pair-bond structure you want to build toward.",
+    "phaseLabel": "Aspiration"
+  }
+]
