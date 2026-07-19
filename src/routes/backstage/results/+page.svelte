@@ -13,11 +13,8 @@
 	const someChecked = $derived(selected.size > 0 && !allChecked);
 
 	function toggleAll() {
-		if (allChecked) {
-			selected = new Set();
-		} else {
-			selected = new Set(allIds);
-		}
+		if (allChecked) selected = new Set();
+		else selected = new Set(allIds);
 	}
 
 	function toggleRow(id: string) {
@@ -76,6 +73,69 @@
 		}
 	}
 
+	// ── JSON modal ───────────────────────────────────────────────────────────
+	type ModalTab = 'state' | 'results';
+	type ModalRow = (typeof data.rows)[number];
+
+	let modalRow = $state<ModalRow | null>(null);
+	let modalTab = $state<ModalTab>('state');
+
+	function openModal(row: ModalRow, tab: ModalTab) {
+		modalRow = row;
+		modalTab = tab;
+	}
+
+	function closeModal() {
+		modalRow = null;
+	}
+
+	function onBackdropClick(e: MouseEvent) {
+		if (e.target === e.currentTarget) closeModal();
+	}
+
+	function onKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') closeModal();
+	}
+
+	const modalJson = $derived.by(() => {
+		if (!modalRow) return null;
+		const val = modalTab === 'state' ? modalRow.state : modalRow.results;
+		if (val == null) return null;
+		return val;
+	});
+
+	// ── JSON syntax highlighting ─────────────────────────────────────────────
+	function highlight(val: unknown, depth = 0): string {
+		if (val === null) return `<span class="jn">null</span>`;
+		if (typeof val === 'boolean') return `<span class="jb">${val}</span>`;
+		if (typeof val === 'number') return `<span class="ji">${val}</span>`;
+		if (typeof val === 'string') return `<span class="js">"${escHtml(val)}"</span>`;
+
+		const indent = '  '.repeat(depth);
+		const innerIndent = '  '.repeat(depth + 1);
+
+		if (Array.isArray(val)) {
+			if (val.length === 0) return `<span class="jp">[]</span>`;
+			const items = val.map((v) => `${innerIndent}${highlight(v, depth + 1)}`).join(',\n');
+			return `<span class="jp">[</span>\n${items}\n${indent}<span class="jp">]</span>`;
+		}
+
+		if (typeof val === 'object') {
+			const entries = Object.entries(val as Record<string, unknown>);
+			if (entries.length === 0) return `<span class="jp">{}</span>`;
+			const lines = entries
+				.map(([k, v]) => `${innerIndent}<span class="jk">"${escHtml(k)}"</span>: ${highlight(v, depth + 1)}`)
+				.join(',\n');
+			return `<span class="jp">{</span>\n${lines}\n${indent}<span class="jp">}</span>`;
+		}
+
+		return escHtml(String(val));
+	}
+
+	function escHtml(s: string) {
+		return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	}
+
 	// ── Formatting ───────────────────────────────────────────────────────────
 	function shortId(id: string) {
 		return id.slice(0, 8);
@@ -93,6 +153,8 @@
 		});
 	}
 </script>
+
+<svelte:window onkeydown={onKeydown} />
 
 <header class="page-head">
 	<div class="title-row">
@@ -156,12 +218,13 @@
 				<th class="col-dt">Started</th>
 				<th class="col-dt">Updated</th>
 				<th class="col-dt">Completed</th>
+				<th class="col-peek">Data</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#if data.rows.length === 0}
 				<tr>
-					<td colspan={data.canDelete ? 10 : 9} class="empty">No records yet.</td>
+					<td colspan={data.canDelete ? 11 : 10} class="empty">No records yet.</td>
 				</tr>
 			{:else}
 				{#each data.rows as row (row.id)}
@@ -193,12 +256,67 @@
 						<td class="col-dt">{fmtDate(row.startedAt)}</td>
 						<td class="col-dt">{fmtDate(row.updatedAt)}</td>
 						<td class="col-dt">{fmtDate(row.completedAt)}</td>
+						<td class="col-peek">
+							<div class="peek-btns">
+								<button
+									type="button"
+									class="peek-btn"
+									onclick={() => openModal(row, 'state')}
+									title="View state JSON"
+								>state</button>
+								<button
+									type="button"
+									class="peek-btn"
+									class:dim={row.results == null}
+									onclick={() => openModal(row, 'results')}
+									title="View results JSON"
+								>results</button>
+							</div>
+						</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 	</table>
 </div>
+
+<!-- ── JSON modal ─────────────────────────────────────────────────────────── -->
+{#if modalRow}
+	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+	<div class="backdrop" onclick={onBackdropClick} role="dialog" aria-modal="true" aria-label="JSON viewer" tabindex="-1">
+		<div class="modal">
+			<div class="modal-head">
+				<div class="modal-meta">
+					<span class="mono muted" title={modalRow.id}>{modalRow.id}</span>
+				</div>
+				<button type="button" class="modal-close" onclick={closeModal} aria-label="Close">✕</button>
+			</div>
+
+			<div class="modal-tabs">
+				<button
+					type="button"
+					class="modal-tab"
+					class:active={modalTab === 'state'}
+					onclick={() => (modalTab = 'state')}
+				>state</button>
+				<button
+					type="button"
+					class="modal-tab"
+					class:active={modalTab === 'results'}
+					onclick={() => (modalTab = 'results')}
+				>results {#if modalRow.results == null}<span class="tab-null">null</span>{/if}</button>
+			</div>
+
+			<div class="modal-body">
+				{#if modalJson == null}
+					<p class="json-null">null — no data recorded yet.</p>
+				{:else}
+					<pre class="json-tree">{@html highlight(modalJson)}</pre>
+				{/if}
+			</div>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.page-head {
@@ -333,16 +451,36 @@
 		text-align: center;
 	}
 
-	.col-id {
-		width: 6rem;
+	.col-id { width: 6rem; }
+	.col-meta { width: 7rem; }
+	.col-dt { width: 9.5rem; color: var(--muted); }
+	.col-peek { width: 8rem; }
+
+	/* ── Peek buttons ── */
+	.peek-btns {
+		display: flex;
+		gap: 0.3rem;
 	}
 
-	.col-meta {
-		width: 7rem;
+	.peek-btn {
+		padding: 0.15rem 0.45rem;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		background: var(--bg);
+		color: var(--accent);
+		font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+		font-size: 0.68rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: border-color 0.12s, background 0.12s;
 	}
 
-	.col-dt {
-		width: 9.5rem;
+	.peek-btn:hover {
+		border-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+	}
+
+	.peek-btn.dim {
 		color: var(--muted);
 	}
 
@@ -362,9 +500,7 @@
 		font-size: 0.75rem;
 	}
 
-	.muted {
-		color: var(--muted);
-	}
+	.muted { color: var(--muted); }
 
 	.empty {
 		text-align: center;
@@ -417,4 +553,143 @@
 		background: transparent;
 		color: var(--muted);
 	}
+
+	/* ── Modal backdrop ── */
+	.backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 200;
+		background: color-mix(in srgb, var(--bg) 60%, transparent);
+		backdrop-filter: blur(3px);
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding: 3rem 1.25rem 1.25rem;
+		overflow-y: auto;
+	}
+
+	/* ── Modal panel ── */
+	.modal {
+		width: 100%;
+		max-width: 56rem;
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		background: var(--surface);
+		box-shadow: 0 8px 40px color-mix(in srgb, #000 18%, transparent);
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.modal-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.85rem 1rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.modal-meta {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 0.72rem;
+	}
+
+	.modal-close {
+		flex-shrink: 0;
+		width: 1.75rem;
+		height: 1.75rem;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: transparent;
+		color: var(--muted);
+		font-size: 0.8rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: border-color 0.12s, color 0.12s;
+	}
+
+	.modal-close:hover {
+		border-color: var(--text);
+		color: var(--text);
+	}
+
+	/* ── Modal tabs ── */
+	.modal-tabs {
+		display: flex;
+		gap: 0;
+		border-bottom: 1px solid var(--border);
+		padding: 0 1rem;
+	}
+
+	.modal-tab {
+		padding: 0.5rem 0.9rem;
+		border: none;
+		border-bottom: 2px solid transparent;
+		background: transparent;
+		color: var(--muted);
+		font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+		font-size: 0.78rem;
+		font-weight: 600;
+		cursor: pointer;
+		margin-bottom: -1px;
+		transition: color 0.12s, border-color 0.12s;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.modal-tab:hover {
+		color: var(--text);
+	}
+
+	.modal-tab.active {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+
+	.tab-null {
+		font-size: 0.65rem;
+		font-weight: 500;
+		color: var(--muted);
+		background: color-mix(in srgb, var(--muted) 12%, transparent);
+		border-radius: 3px;
+		padding: 0.05rem 0.3rem;
+	}
+
+	/* ── JSON tree ── */
+	.modal-body {
+		padding: 1rem 1.1rem 1.25rem;
+		overflow: auto;
+		max-height: 70vh;
+	}
+
+	.json-null {
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--muted);
+		font-style: italic;
+	}
+
+	.json-tree {
+		margin: 0;
+		font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+		font-size: 0.78rem;
+		line-height: 1.6;
+		white-space: pre;
+		color: var(--text);
+	}
+
+	/* syntax token colours */
+	.json-tree :global(.jk) { color: #7c3aed; }          /* key — purple */
+	.json-tree :global(.js) { color: #0284c7; }           /* string — blue */
+	.json-tree :global(.ji) { color: #b45309; }           /* number — amber */
+	.json-tree :global(.jb) { color: #059669; }           /* boolean — green */
+	.json-tree :global(.jn) { color: var(--muted); }      /* null — muted */
+	.json-tree :global(.jp) { color: var(--muted); }      /* punctuation */
 </style>

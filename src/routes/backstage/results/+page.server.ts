@@ -22,7 +22,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 			completedAt: surveyResponses.completedAt,
 			visitorId: surveyResponses.visitorId,
 			visitorRegion: visitors.lastRegion,
-			visitorUa: visitors.userAgentSummary
+			visitorUa: visitors.userAgentSummary,
+			state: surveyResponses.state,
+			results: surveyResponses.results
 		})
 		.from(surveyResponses)
 		.leftJoin(visitors, eq(surveyResponses.visitorId, visitors.id))
