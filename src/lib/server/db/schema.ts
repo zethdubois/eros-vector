@@ -90,6 +90,8 @@ export const surveyResponses = pgTable('survey_responses', {
 	phase: text('phase').notNull(),
 	state: jsonb('state').notNull(),
 	results: jsonb('results'),
+	/** Access role of the respondent at the time of the survey (beta / reviewer / developer). */
+	role: text('role'),
 	startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 	completedAt: timestamp('completed_at', { withTimezone: true })

@@ -93,6 +93,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 					.update(surveyResponses)
 					.set({
 						sessionId: sessionId ?? undefined,
+						role: locals.accessRole ?? undefined,
 						status: existing.status === 'complete' ? 'complete' : status,
 						phase: parsed.phase,
 						state: parsed,
@@ -112,6 +113,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.values({
 				visitorId,
 				sessionId: sessionId ?? null,
+				role: locals.accessRole ?? null,
 				status,
 				phase: parsed.phase,
 				state: parsed,
