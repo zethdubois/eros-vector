@@ -51,7 +51,7 @@
 	<div class="body">
 		<div class="question-block">
 			{#if scoutingBadge}
-				<div class="scouting-badge">Scouting disabled</div>
+				<div class="scouting-badge">BETA: SCOUTING DISABLED</div>
 			{/if}
 			<div class="step-row">
 				<div class="step-left">
