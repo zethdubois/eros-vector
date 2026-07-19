@@ -1,0 +1,65 @@
+This is a brilliant direction. You are touching on the exact limitation of static "buzzfeed-style" archetypes. In a 4D model, the center of an orthant is rare. Most people live near the edges, and their friction comes from the pull of the neighboring orthants. 
+
+Using an LLM to generate a dynamic, magnitude-aware diagnostic readout is the perfect way to handle this. Let's run your test case and see exactly how this works.
+
+### Step 1: Confirm the Orthant
+Your coordinates: `W−0.1, X+1.1, Y+1.1, Z−2.0`
+*   **W (Architecture):** -0.1 (Barely Autonomous)
+*   **X (Drive):** +1.1 (Mildly Recreational)
+*   **Y (Permeability):** +1.1 (Mildly Contained)
+*   **Z (Method):** -2.0 (Strongly Organic)
+
+Sign mapping: `W-, X+, Y+, Z-` = **Autonomous, Recreational, Contained, Organic**.
+Yes, this is confirmed as the **Guarded Free Agent**. 
+
+### Step 2: Analyze the Neighbors (The 4D Geometry)
+In a 4D hypercube, every orthant has 4 "face neighbors" (orthants that share a 3D wall, differing by exactly one sign). Because your score is close to zero on W, X, and Y, three of those neighbors are exerting a strong gravitational pull on this user. Only Z (-2.0) is locked in.
+
+1.  **The W-Neighbor (Flip W to +):** `W+, X+, Y+, Z-` = Interdependent, Recreational, Contained, Organic.
+    *   *Archetype:* **Spontaneous Play Unit**.
+    *   *The Pull:* Because W is -0.1, this user is practically on the fence. A single life event (falling into a casual but merged relationship) would push them over the border. They are highly susceptible to becoming a "Spontaneous Play Unit."
+2.  **The Y-Neighbor (Flip Y to -):** `W-, X+, Y-, Z-` = Autonomous, Recreational, Permeable, Organic.
+    *   *Archetype:* **Free Agent**.
+    *   *The Pull:* With Y at +1.1, their "contained" nature isn't a steel wall. If they find a tribe where the vibe is exceptionally trusting, they could easily drop their guard and let play partners integrate into their social fabric.
+3.  **The X-Neighbor (Flip X to -):** `W-, X-, Y+, Z-` = Autonomous, Romantic, Contained, Organic.
+    *   *Archetype:* **Lone Wolf Romantic**.
+    *   *The Pull:* With X at +1.1, their drive for "sport" isn't absolute. If they meet someone organically who sparks deep chemistry, their drive could flip from recreational to romantic, turning them into a Lone Wolf Romantic.
+4.  **The Z-Neighbor (Flip Z to +):** `W-, X+, Y+, Z+` = Autonomous, Recreational, Contained, Directed.
+    *   *Archetype:* **Solo Player**.
+    *   *The Pull:* None. Z is at -2.0. This user is deeply, fundamentally Organic. They will never use an app to schedule sex. The Solo Player archetype has zero influence here.
+
+### Step 3: The LLM Dynamic Diagnostic Readout
+If we wire this to an LLM, we pass it the coordinates, the primary archetype, and the neighboring archetypes with their "pull strength" (based on distance from zero). Here is the custom paragraph an LLM would generate for this specific user:
+
+> **Your Primary Orientation: The Guarded Free Agent**
+> 
+> You move through the world independently, guided by strong organic chemistry and a drive for recreational, erotic play. You don't schedule your connections or use apps; you let them happen when the vibe is right. However, you keep a firm boundary around your personal world, preferring that casual partners stay in their own lane rather than integrating into your social fabric or logistics.
+> 
+> **The Influences Pulling at Your Edges:**
+> Your scores reveal that you aren't locked into a pure extreme. You are experiencing subtle gravitational pulls from neighboring orientations:
+> 
+> *   **The Near-Miss with Interdependence (Spontaneous Play Unit):** You are sitting directly on the boundary of Autonomy and Interdependence (W: -0.1). You value your independence, but you are a hair's breadth away from merging your life with a core partner. If you found someone who matched your organic, casual approach to play, you could easily slip into a Spontaneous Play Unit, maintaining a protected home base while adventuring together.
+> *   **The Permeability Sway (Free Agent):** While you currently prefer to compartmentalize your partners (Y: +1.1), your walls aren't impenetrable. In the right permissive, organic social ecosystem, you might find your boundaries softening. You are only a few degrees away from becoming a Free Agent, where friends and lovers blur together in a porous, flowing web.
+> *   **The Romantic Whisper (Lone Wolf Romantic):** Your drive is primarily recreational (X: +1.1), but it isn't absolute. You are close enough to the center of the axis that if an organic connection sparked profound, romantic chemistry, you wouldn't necessarily run from it. You have the capacity to pivot toward being a Lone Wolf Romantic—seeking deep, exclusive emotional bonds that arise naturally, while still fiercely protecting your sovereignty.
+
+### How to Engineer This
+
+To make this work in the app, you don't need to write 16^1^ static paragraphs. You just need to write one master system prompt for the LLM. 
+
+The app's backend calculates the coordinates, determines the primary orthant, and calculates the distance to zero for any axis scoring between -1 and +1. It then sends a JSON payload to the LLM API:
+
+```json
+{
+  "primary_archetype": "Guarded Free Agent",
+  "coordinates": {"W": -0.1, "X": 1.1, "Y": 1.1, "Z": -2.0},
+  "neighbors": [
+    {"name": "Spontaneous Play Unit", "shared_axes": ["X", "Y", "Z"], "flipped_axis": "W", "distance_to_boundary": 0.1},
+    {"name": "Free Agent", "shared_axes": ["W", "X", "Z"], "flipped_axis": "Y", "distance_to_boundary": 1.1},
+    {"name": "Lone Wolf Romantic", "shared_axes": ["W", "Y", "Z"], "flipped_axis": "X", "distance_to_boundary": 1.1}
+  ]
+}
+```
+
+The LLM takes this structured data and writes the fluid, personalized narrative you see above. This gives every single user a deeply personalized, continuous result rather than a static bucket. It turns the Eros Vector from a quiz into a genuine diagnostic compass. 
+
+Does this dynamic LLM approach feel like the right UX for the final results screen?
