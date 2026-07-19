@@ -11,15 +11,18 @@
 
 The tool maps users on three bipolar axes. Scoring is based on a 5-point Likert scale (1=Strongly Disagree, 5=Strongly Agree).
 
-- **Y-Axis: Structure (+Y) vs. Autonomy (-Y)**
-  - _High +Y:_ Hierarchical Anchor, Monogamish, merged logistics.
-  - _High -Y:_ Solo Poly, Relationship Anarchy, strict independence.
-- **X-Axis: Eroticism (+X) vs. Emotional Depth (-X)**
-  - _High +X:_ Recreational play, swinging, casual sexual variety — erotic drive outward.
-  - _High -X:_ Egalitarian Poly, Pragmatic Polycule, chosen family, strict monogamy.
-- **Z-Axis: Intentional (+Z) vs. Organic (-Z)**
-  - _High +Z:_ App-driven, explicit rules, scheduled quests, lifestyle clubs, strict monogamous boundaries.
-  - _High -Z:_ Permissive tribes, spontaneous eruption, pragmatic evolution.
+- **Y-Axis — Architecture: Interdependent (+Y) vs. Autonomous (-Y)**
+  - _Question:_ How do you build your life?
+  - _High +Y:_ Merged, anchored, couple-centric, prioritized.
+  - _High -Y:_ Independent, solo, individual-centric, sovereign.
+- **X-Axis — Drive: Erotic (+X) vs. Emotional (-X)**
+  - _Question:_ Why are you connecting?
+  - _High +X:_ Sexual variety, physical play, recreational.
+  - _High -X:_ Romantic depth, chosen family, intertwined.
+- **Z-Axis — Method: Directed (+Z) vs. Organic (-Z)**
+  - _Question:_ How does it actually happen?
+  - _High +Z:_ Proactive, app-driven, explicit rules, scheduled, aimed.
+  - _High -Z:_ Spontaneous, emergent, fluid vibes, authentic, growing.
 
 **Scoring Math:**
 Transform 1-5 scale to -2 to +2 for coordinate plotting.
@@ -109,7 +112,7 @@ Collect `chron_age` and `awake_age`. Calculate routing.
 
 _(All phrased so 5 = Strongest pull to Positive Pole. Phrased to capture Orientation/Desire so they work for both Scouting and Bound modes, including strict monogamy.)_
 
-**Y-Axis (Structure +Y vs Autonomy -Y)**
+**Y-Axis — Architecture (Interdependent +Y vs Autonomous -Y)**
 
 1. I envision my ideal life having a central "home base" partner or anchor, rather than keeping my living and financial life entirely my own.
 2. I believe it is natural and ethical for one relationship to hold clear priority in my life decisions over others.
@@ -117,7 +120,7 @@ _(All phrased so 5 = Strongest pull to Positive Pole. Phrased to capture Orienta
 4. I envision my ideal relationship architecture having a central, prioritized partnership, with other connections playing more peripheral roles.
 5. I see the "couple" as the fundamental unit of my relational life, rather than the "individual."
 
-**X-Axis (Eroticism +X vs Emotional Depth -X)**
+**X-Axis — Drive (Erotic +X vs Emotional -X)**
 
 1. I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.
 2. I view sexual play with others primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.
@@ -125,9 +128,9 @@ _(All phrased so 5 = Strongest pull to Positive Pole. Phrased to capture Orienta
 4. I believe relationships are best when they serve the purpose of mutual pleasure and play, rather than needing to serve the practical realities of life (co-parenting, shared resources).
 5. I imagine I would be more fulfilled by a wide variety of casual/playful sexual connections than by a few deeply emotionally integrated ones.
 
-**Z-Axis (Intentional +Z vs Organic -Z)**
+**Z-Axis — Method (Directed +Z vs Organic -Z)**
 
-1. I prefer to find and manage connections through intentional design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.
+1. I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.
 2. I prefer to rely on explicitly negotiated rules and boundaries regarding outside interactions (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.
 3. I believe relational structures work best as a scheduled, defined activity, rather than something that spontaneously happens when the vibe is right.
 4. I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner; a monogamous bond stays monogamous), rather than letting them organically evolve far beyond their starting point.

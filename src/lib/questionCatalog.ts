@@ -73,7 +73,7 @@ export const FALLBACK_DEEP_DIVE: Question[] = [
 	{
 		id: 'dd-z1',
 		axis: 'z',
-		text: 'I prefer to find and manage connections through intentional design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.'
+		text: 'I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.'
 	},
 	{
 		id: 'dd-z2',

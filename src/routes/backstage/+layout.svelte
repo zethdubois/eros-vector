@@ -1,12 +1,18 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
+
+	const wide = $derived(
+		page.url.pathname.startsWith('/backstage/wiki') ||
+			page.url.pathname.startsWith('/backstage/content')
+	);
 </script>
 
-<div class="shell">
+<div class="shell" class:wide>
 	<header class="head">
-		<div>
+		<div class="brand">
 			<p class="eyebrow">Backstage</p>
 			<p class="meta">
 				Session role: <strong>{data.role ?? 'none'}</strong>
@@ -15,8 +21,7 @@
 		<nav class="nav">
 			<a href="/backstage">Debug</a>
 			<a href="/backstage/wiki">Wiki</a>
-			<a href="/backstage/questions">Questions</a>
-			<a href="/">Home</a>
+			<a href="/backstage/content">Content</a>
 			<form method="POST" action="/access?/logout">
 				<button type="submit" class="logout">Log out</button>
 			</form>
@@ -35,6 +40,19 @@
 		min-height: 100dvh;
 	}
 
+	.shell.wide {
+		max-width: 90rem;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	@media (min-width: 1100px) {
+		.shell.wide {
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
+	}
+
 	.head {
 		display: flex;
 		flex-wrap: wrap;
@@ -42,6 +60,12 @@
 		justify-content: space-between;
 		gap: 1rem;
 		margin-bottom: 1.75rem;
+	}
+
+	.brand {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
 	}
 
 	.eyebrow {

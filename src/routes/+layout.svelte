@@ -10,15 +10,14 @@
 	const showSaveKey = $derived(!path.startsWith('/access') && !path.startsWith('/legal'));
 	const onDarkSplash = $derived(path === '/');
 
-	/** Staff get backstage; viewers get the beta account link in the same corner. */
+	/** Staff get backstage; viewers get the beta account link in the same corner.
+	 *  On backstage pages, mirror that with a home escape hatch. */
 	const cornerLink = $derived.by(() => {
-		if (
-			path.startsWith('/access') ||
-			path.startsWith('/backstage') ||
-			path.startsWith('/account') ||
-			path.startsWith('/legal')
-		) {
+		if (path.startsWith('/access') || path.startsWith('/account') || path.startsWith('/legal')) {
 			return null;
+		}
+		if (path.startsWith('/backstage')) {
+			return { href: '/', label: 'home' } as const;
 		}
 		if (data.canAccessBackstage) return { href: '/backstage', label: 'backstage' } as const;
 		if (data.accessRole === 'beta') return { href: '/account', label: 'beta user' } as const;
@@ -30,7 +29,7 @@
 	<title>Eros Vector</title>
 	<meta
 		name="description"
-		content="A 4D relationship mapping tool. Plot your trajectory across Structure, Eroticism, and Intent — plus Time."
+		content="A 4D relationship mapping tool. Plot your trajectory across Architecture, Drive, and Method — plus Time."
 	/>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

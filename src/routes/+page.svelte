@@ -67,18 +67,18 @@
           <ul class="axis-list">
             <li>
               <span class="axis-glyph" data-axis="y" aria-hidden="true"></span>
-              <strong>Structure ↔ Autonomy</strong>
-              <small>How tightly you bond</small>
+              <strong>Architecture: Interdependent ↔ Autonomous</strong>
+              <small>How do you build your life?</small>
             </li>
             <li>
               <span class="axis-glyph" data-axis="x" aria-hidden="true"></span>
-              <strong>Eroticism ↔ Depth</strong>
-              <small>What draws you to others</small>
+              <strong>Drive: Erotic ↔ Emotional</strong>
+              <small>Why are you connecting?</small>
             </li>
             <li>
               <span class="axis-glyph" data-axis="z" aria-hidden="true"></span>
-              <strong>Intentional ↔ Organic</strong>
-              <small>How connections happen</small>
+              <strong>Method: Directed ↔ Organic</strong>
+              <small>How does it actually happen?</small>
             </li>
           </ul>
         </div>

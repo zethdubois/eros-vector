@@ -12,22 +12,22 @@ import {
 const axes = [
 	{
 		id: 'y',
-		label: 'Structure',
-		positivePole: 'Structure',
-		negativePole: 'Autonomy',
+		label: 'Architecture',
+		positivePole: 'Interdependent',
+		negativePole: 'Autonomous',
 		displayOrder: 1
 	},
 	{
 		id: 'x',
-		label: 'Eroticism',
-		positivePole: 'Eroticism',
-		negativePole: 'Emotional Depth',
+		label: 'Drive',
+		positivePole: 'Erotic',
+		negativePole: 'Emotional',
 		displayOrder: 2
 	},
 	{
 		id: 'z',
-		label: 'Intentional',
-		positivePole: 'Intentional',
+		label: 'Method',
+		positivePole: 'Directed',
 		negativePole: 'Organic',
 		displayOrder: 3
 	}
@@ -143,7 +143,7 @@ const questions: (typeof surveyQuestions.$inferInsert)[] = [
 		bank: 'deep_dive',
 		axisId: 'z',
 		position: 1,
-		text: 'I prefer to find and manage connections through intentional design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.',
+		text: 'I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.',
 		active: true
 	},
 	{
