@@ -63,17 +63,22 @@
     <div class="flow-wrap">
       <div class="flow" role="list">
         <div class="stage axes-stage" role="listitem">
-          <p class="stage-label">Three domains orient you</p>
+          <p class="stage-label">Four orientations map you</p>
           <ul class="axis-list">
+            <li>
+              <span class="axis-glyph" data-axis="w" aria-hidden="true"></span>
+              <strong>Permeability: Contained ↔ Permeable</strong>
+              <small>How open is your relational world?</small>
+            </li>
+            <li>
+              <span class="axis-glyph" data-axis="x" aria-hidden="true"></span>
+              <strong>Drive: Recreational ↔ Romantic</strong>
+              <small>Why are you connecting?</small>
+            </li>
             <li>
               <span class="axis-glyph" data-axis="y" aria-hidden="true"></span>
               <strong>Architecture: Interdependent ↔ Autonomous</strong>
               <small>How do you build your life?</small>
-            </li>
-            <li>
-              <span class="axis-glyph" data-axis="x" aria-hidden="true"></span>
-              <strong>Drive: Erotic ↔ Emotional</strong>
-              <small>Why are you connecting?</small>
             </li>
             <li>
               <span class="axis-glyph" data-axis="z" aria-hidden="true"></span>
@@ -88,80 +93,58 @@
           <span class="arrow"></span>
         </div>
 
-        <div class="stage cube-stage" role="listitem">
-          <p class="stage-label">Map your coordinates</p>
+        <div class="stage coords-stage" role="listitem">
+          <p class="stage-label">Read your profile</p>
           <div class="plot-viz" aria-hidden="true">
-            <!-- Cabinet @ 30°: square front face, depth ×0.5 (less stretch) -->
-            <svg class="plot-svg" viewBox="32 39 136 122" role="img">
-              <g fill="none" stroke="currentColor" stroke-linejoin="round">
-                <g stroke-width="1.6">
-                  <path d="M78 148 L156 148 L156 70 L78 70 Z" opacity="0.75" />
-                  <path
-                    d="M78 70 L44.2 50.5 L122.2 50.5 L156 70"
-                    opacity="0.75"
-                  />
-                  <path
-                    d="M78 148 L44.2 128.5 L44.2 50.5 L78 70"
-                    opacity="0.75"
-                  />
-                  <path d="M156 148 L122.2 128.5 L44.2 128.5" opacity="0.28" />
-                  <path
-                    d="M156 148 L122.2 128.5 L122.2 50.5 L156 70"
-                    opacity="0.28"
-                  />
-                </g>
-                <!-- Floor (y=0): ∥ X then ∥ Z; then vertical ∥ Y -->
-                <g
-                  stroke-width="2"
-                  stroke-dasharray="4 5"
-                  stroke-linecap="round"
-                >
-                  <line class="axis-x" x1="78" y1="148" x2="126.4" y2="148" />
-                  <line
-                    class="axis-z"
-                    x1="126.4"
-                    y1="148"
-                    x2="111.2"
-                    y2="139.2"
-                  />
-                  <line
-                    class="axis-z"
-                    x1="78"
-                    y1="148"
-                    x2="62.8"
-                    y2="139.2"
-                    opacity="0.4"
-                  />
-                  <line
-                    class="axis-x"
-                    x1="62.8"
-                    y1="139.2"
-                    x2="111.2"
-                    y2="139.2"
-                    opacity="0.4"
-                  />
-                  <line
-                    class="axis-y"
-                    x1="111.2"
-                    y1="139.2"
-                    x2="111.2"
-                    y2="101.8"
-                  />
-                </g>
+            <!--
+              Parallel coordinates — four vertical bipolar axes (W X Y Z).
+              Centre (score = 0) = balanced. + pole at top, − at bottom.
+              Simulated result: Guarded Free Agent
+              W(Permeability)=+1.5  X(Drive)=+1.8  Y(Architecture)=−1.6  Z(Method)=−1.7
+            -->
+            <svg class="plot-svg" viewBox="0 0 240 168" role="img" aria-label="Parallel coordinates profile chart">
+              <!-- vertical axis lines -->
+              <g fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.32">
+                <line x1="28" y1="18" x2="28" y2="145"/>
+                <line x1="88" y1="18" x2="88" y2="145"/>
+                <line x1="148" y1="18" x2="148" y2="145"/>
+                <line x1="208" y1="18" x2="208" y2="145"/>
               </g>
-              <circle
-                class="plot-point"
-                cx="111.2"
-                cy="101.8"
-                r="5.5"
-                fill="currentColor"
-              />
+              <!-- centre ticks (score = 0) -->
+              <g stroke="currentColor" stroke-width="0.8" opacity="0.28">
+                <line x1="23" y1="81" x2="33" y2="81"/>
+                <line x1="83" y1="81" x2="93" y2="81"/>
+                <line x1="143" y1="81" x2="153" y2="81"/>
+                <line x1="203" y1="81" x2="213" y2="81"/>
+              </g>
+              <!-- + pole labels (top) -->
+              <text x="28"  y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Contained</text>
+              <text x="88"  y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Recreational</text>
+              <text x="148" y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Interdependent</text>
+              <text x="208" y="12" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Directed</text>
+              <!-- − pole labels (bottom) -->
+              <text x="28"  y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Permeable</text>
+              <text x="88"  y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Romantic</text>
+              <text x="148" y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Autonomous</text>
+              <text x="208" y="155" text-anchor="middle" font-size="5.5" fill="currentColor" opacity="0.55">Organic</text>
+              <!-- axis letter labels -->
+              <text x="28"  y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#9b7fe8">W</text>
+              <text x="88"  y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#9e7982">X</text>
+              <text x="148" y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#c4a574">Y</text>
+              <text x="208" y="166" text-anchor="middle" font-size="8" font-weight="600" fill="#7a9e9a">Z</text>
+              <!-- profile line -->
+              <polyline points="28,34 88,24 148,133 208,136"
+                fill="none" stroke="#9e7982" stroke-width="2.2"
+                stroke-linejoin="round" opacity="0.82"/>
+              <!-- score dots (one per axis, colored) -->
+              <circle cx="28"  cy="34"  r="4.5" fill="#9b7fe8"/>
+              <circle cx="88"  cy="24"  r="4.5" fill="#9e7982"/>
+              <circle cx="148" cy="133" r="4.5" fill="#c4a574"/>
+              <circle cx="208" cy="136" r="4.5" fill="#7a9e9a"/>
             </svg>
-            <aside class="callout">
-              <span class="callout-label">Anchored Team Player</span>
-            </aside>
+            <p class="archetype-tag">Guarded Free Agent</p>
           </div>
-          <p class="stage-caption">A plain-language name for that place</p>
+          <p class="stage-caption">One of 16 named orientation profiles</p>
         </div>
 
         <div class="connector" aria-hidden="true">
@@ -208,12 +191,12 @@
         </div>
       </div>
     </aside>
-
+<!-- 
     <p class="closing">
-      <em>Don’t diagnose</em>
+      <em>Don’t just label.</em>
       <br /><br />
       <em>Understand your relational evolution.</em>
-    </p>
+    </p> -->
 
     {#if ready}
       <p class="detail-cta">
@@ -544,17 +527,20 @@
     background: var(--rose);
   }
 
-  .axis-glyph[data-axis="y"] {
-    background: #c4a574;
+  .axis-glyph[data-axis="w"] {
+    background: #9b7fe8;
   }
   .axis-glyph[data-axis="x"] {
     background: var(--rose);
+  }
+  .axis-glyph[data-axis="y"] {
+    background: #c4a574;
   }
   .axis-glyph[data-axis="z"] {
     background: #7a9e9a;
   }
 
-  .cube-stage {
+  .coords-stage {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -573,55 +559,14 @@
     color: var(--cream);
   }
 
-  .axis-x {
-    stroke: var(--rose);
-  }
-  .axis-y {
-    stroke: #c4a574;
-  }
-  .axis-z {
-    stroke: #7a9e9a;
-  }
-
-  .plot-point {
-    filter: drop-shadow(
-      0 0 6px color-mix(in srgb, var(--rose) 70%, transparent)
-    );
-    animation: pulse-dot 2.4s ease-in-out infinite;
-  }
-
-  .callout {
-    position: absolute;
-    right: 4%;
-    top: 12%;
-    max-width: 8.5rem;
-    padding: 0.5rem 0.65rem;
-    border: 1px solid color-mix(in srgb, var(--cream) 30%, transparent);
-    border-radius: 6px;
-    background: color-mix(in srgb, var(--navy) 88%, var(--cream));
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-  }
-
-  .callout::before {
-    content: "";
-    position: absolute;
-    left: -5px;
-    bottom: 0.7rem;
-    width: 8px;
-    height: 8px;
-    border-left: 1px solid color-mix(in srgb, var(--cream) 30%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--cream) 30%, transparent);
-    background: inherit;
-    transform: rotate(45deg);
-  }
-
-  .callout-label {
-    display: block;
+  .archetype-tag {
+    margin: 0.65rem 0 0;
+    text-align: center;
     font-family: "Fraunces", Georgia, serif;
-    font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+    font-size: clamp(0.88rem, 1.6vw, 1rem);
     font-weight: 600;
-    line-height: 1.25;
     color: var(--cream);
+    letter-spacing: 0.01em;
   }
 
   .mini-point {
@@ -842,7 +787,6 @@
     .hero-legal,
     .scroll-cue,
     .chevron,
-    .plot-point,
     .traveler {
       animation: none;
     }

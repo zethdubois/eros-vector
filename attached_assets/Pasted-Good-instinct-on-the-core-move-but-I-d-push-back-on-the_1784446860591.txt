@@ -1,0 +1,50 @@
+Good instinct on the core move, but I'd push back on the specific destinations. Let me separate the insight from the tooling, because I think one is right and the other is half-right.
+
+## The insight is correct: decouple the model from the render
+
+You've hit a real principle. Your **data model** (N scored axes) should not be held hostage by your **visualization**. Right now they're fused: `Coordinates` is literally `{ x, y, z }` (`src/lib/types.ts:26`) and the spec mandates "Render a 3D interactive cube" (`docs/dev/eros-vector-spec.md:141`). The moment you say "we don't have to render a hypercube," you're free to add axis 4. That part is 100% right, and refusing to literally render 4 spatial dimensions to laypeople is the correct call — nobody intuits a tesseract.
+
+But "therefore radar chart / Venn" is where I'd slow you down.
+
+## First, a terminology landmine
+
+You already sell **Time as the 4th axis** (T0→T3, everywhere in the pitch/blurb/spec). If you now add a 4th *spatial* axis, you have **4 spatial + 1 temporal = 5 dimensions** of data. You need to decide the public framing deliberately, or the "4D" branding gets muddy. Internally I'd call them "4 orientation axes + a time track," not "the 4th axis," which is already claimed.
+
+## The two constraints that should decide the visualization
+
+Whatever you pick has to survive these two facts about your data, both of which I confirmed in the code:
+
+1. **Your axes are bipolar, not magnitude.** Scores run roughly −2…+2 with the *origin meaning "balanced,"* and the sign picks the pole (that's the whole octant/archetype system in `labels.ts`). This is the big one.
+2. **The product's soul is multi-point trajectory + friction, not a single snapshot.** You connect Scouting dots over time, connect Bound dots over time, and draw the **Friction Gap** between Present and Aspiration (`results.ts` builds 2 passes per timepoint across T0–T3; spec §7 lines 156–160). So a typical result is *~8–14 points in two modes, joined into paths.*
+
+Now score the candidates against those:
+
+**4-set Venn diagram — I'd drop this one.** Venn shows *set membership and overlap*, not continuous position or movement over time. A true 4-set Venn also can't be drawn with circles (needs ellipses, 15 regions) and is famously hard to read. It could only ever visualize "which of the 16 archetypes are you," discarding the scores and the trajectory — i.e., it throws away the two things above. Wrong tool for this data.
+
+**Radar / spider — good for one snapshot, bad for your actual story.** Radar handles "N axes at once" and makes a nice *profile card for a single point.* But:
+- It fights bipolarity. A radar spoke runs center=low → edge=high. Your axes are center=balanced → *either* edge = a *different pole.* You'd have to either split each axis into two spokes (8 spokes for 4 axes) or invent a diverging radial, both of which muddy the "distance from center = score" story you were hoping for.
+- It's notoriously bad at **overlaying many polygons.** Two modes × up to 7 timepoints = a dozen translucent quadrilaterals stacked on one web. That's spaghetti, and it kills the trajectory/friction narrative that makes this product special.
+
+So radar is a fine *secondary* "here's your Present profile" card, but a poor *primary* canvas.
+
+## What I'd actually reach for
+
+Given bipolar + trajectory + dual-mode, two options fit far better:
+
+1. **Parallel coordinates.** Vertical axis per dimension, each *centered at 0 with a pole label at top and bottom* (bipolar-native). A person = a line crossing all axes; a timepoint = a line; Scouting vs Bound = two line styles; T0→T3 = a color ramp. This is the one visualization that scales cleanly to *4, 5, 6 axes* AND naturally shows trajectories and the friction gap as *diverging lines*. It's the least sexy-sounding and the best fit for what you're actually measuring.
+
+2. **Keep spatial position for 3 axes, encode the 4th as a visual channel.** The classic move: don't render 4D — render 3 axes as position and map axis 4 to **color / size / glyph**. You keep your beloved spatial "map" and the trajectory lines, and the 4th axis rides along as, say, a warm↔cool color. This lets you add the axis *without* abandoning the cube at all — which may make this a smaller change than you think.
+
+A "constellation map" can be the *art direction* on top of either of these — but as described it's an aesthetic, not yet a coordinate system, so I'd pin down the underlying encoding first.
+
+## The cost you haven't priced in yet
+
+Adding a 4th **binary** axis doubles the archetype space: **8 octants → 16.** That means 16 authored archetype paragraphs + 16 names (and naming 16 non-overlapping "species" is genuinely hard), plus a new question bank axis, scoring changes, and the `Axis`/`Coordinates` type widening. The visualization is arguably the *easy* half; the content and taxonomy is the expensive half.
+
+## What I need from you to give a firm recommendation
+
+1. **What does axis 4 actually measure**, and is it bipolar like the other three (a "vs." pair) or a magnitude/categorical thing? This single answer changes everything.
+2. **What's the primary on-screen story** — the *snapshot* ("what am I") or the *trajectory* ("how am I moving")? Radar leans snapshot; parallel-coords/spatial-map lean trajectory.
+3. Are you willing to author **16 archetypes**, or would you rather keep 8 named archetypes and treat axis 4 as a *modifier* (a tag/shading on the existing 8) rather than a full doubling?
+
+My gut: the decoupling realization is a genuine unlock, but I'd steer you toward **parallel coordinates (primary) + a radar "profile card" (secondary)**, or the **3-spatial + 4th-as-color** compromise — and away from Venn entirely. Tell me the nature of axis 4 and the 8-vs-16 appetite, and I'll sketch the concrete model + rendering plan (and when you switch to Agent mode I can start on the type/model changes).
