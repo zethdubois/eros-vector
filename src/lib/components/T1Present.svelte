@@ -41,39 +41,31 @@
 	let showShadow = $state(false);
 	let locked = $state(false);
 	let started = $state(false);
-	let highWaterLinear = $state(0);
-
-	/** Map {qi, mode} → linear index: scouting[i]=i*2, bound[i]=i*2+1, shadow=len*2. */
-	function posLinear(qi: number, m: 'scouting' | 'bound'): number {
-		return qi * 2 + (m === 'bound' ? 1 : 0);
-	}
+	let highWaterQuestion = $state(0);
 
 	$effect(() => {
 		if (!started) {
 			const open = firstOpen();
 			if (open.kind === 'shadow') {
 				showShadow = true;
-				highWaterLinear = questions.length * 2;
+				highWaterQuestion = questions.length;
 			} else {
 				questionIndex = open.qi;
 				mode = open.mode;
-				highWaterLinear = posLinear(open.qi, open.mode);
+				highWaterQuestion = open.qi;
 			}
 			started = true;
 		}
 	});
 
 	$effect(() => {
-		const cur = showShadow ? questions.length * 2 : posLinear(questionIndex, mode);
-		if (cur > highWaterLinear) highWaterLinear = cur;
+		const mark = showShadow ? questions.length : questionIndex;
+		if (mark > highWaterQuestion) highWaterQuestion = mark;
 	});
 
 	const q = $derived(questions[questionIndex]);
 	const canBack = $derived(showShadow || questionIndex > 0);
-	const currentLinear = $derived(
-		showShadow ? questions.length * 2 : posLinear(questionIndex, mode)
-	);
-	const canForward = $derived(!showShadow && currentLinear < highWaterLinear);
+	const canForward = $derived(!showShadow && questionIndex < highWaterQuestion);
 	const stepLabel = $derived(
 		showShadow
 			? 'Wrap-up · Bound'
@@ -102,12 +94,11 @@
 
 	function goForward() {
 		if (locked || !canForward) return;
-		if (mode === 'scouting') {
-			mode = 'bound';
-		} else if (questionIndex < questions.length - 1) {
+		if (questionIndex < questions.length - 1) {
 			questionIndex += 1;
 			mode = 'scouting';
 		} else {
+			// reached the last question — go to shadow if we've been there
 			showShadow = true;
 		}
 	}
