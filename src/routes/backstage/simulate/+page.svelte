@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolveArchetype, resolveNeighbors } from '$lib/labels';
+	import { resolveArchetypeSet, resolveNeighbors, AXIS_META } from '$lib/labels';
 
 	// Four axis scores, range −2 to +2, default 0 (balanced centre)
 	let w = $state(0);
@@ -23,8 +23,14 @@
 	}
 
 	const coords = $derived({ w, x, y, z });
-	const archetype = $derived(resolveArchetype(coords));
+	const archetypes = $derived(resolveArchetypeSet(coords));
+	/** First archetype — Schrödinger when all axes are zero, otherwise archetypes[0]. */
+	const archetype = $derived(archetypes[0]);
 	const neighbors = $derived(resolveNeighbors(coords));
+	/** Axes that are exactly zero (used for the co-equal notice). */
+	const balancedAxes = $derived(
+		(['w', 'x', 'y', 'z'] as const).filter((a) => coords[a] === 0)
+	);
 
 	/** Per-axis descriptor parts. Zero-scored axes show "Balanced" in the axis color. */
 	const descriptorParts = $derived([
@@ -173,10 +179,24 @@
 
 		<div class="result-divider"></div>
 
-		<!-- Primary archetype -->
-		<p class="archetype-name">{archetype.name}</p>
-		<p class="archetype-sig">{archetype.signature}</p>
-		<p class="archetype-desc">{archetype.description}</p>
+		<!-- Primary archetype / co-equal archetypes -->
+		{#if archetypes.length > 1}
+			<div class="coequal-notice">
+				{#each balancedAxes as axis, i}{#if i > 0}, {/if}<strong style="color:{AXIS_META[axis].color}">{AXIS_META[axis].label}</strong>{/each}{balancedAxes.length === 1 ? ' axis' : ' axes'} balanced · {archetypes.length} co-equal archetypes
+			</div>
+			<div class="coequal-list">
+				{#each archetypes as at, i}
+					{#if i > 0}<div class="coequal-sep"></div>{/if}
+					<p class="archetype-name">{at.name}</p>
+					<p class="archetype-sig">{at.signature}</p>
+					<p class="archetype-desc">{at.description}</p>
+				{/each}
+			</div>
+		{:else}
+			<p class="archetype-name">{archetype.name}</p>
+			<p class="archetype-sig">{archetype.signature}</p>
+			<p class="archetype-desc">{archetype.description}</p>
+		{/if}
 
 		<!-- ── Neighbouring influences ── -->
 		{#if archetype.id === 'schrodingers-partner'}
@@ -463,6 +483,29 @@
 		color: var(--muted);
 		line-height: 1.65;
 		max-width: 56ch;
+	}
+
+	/* ── Co-equal archetypes ── */
+
+	.coequal-notice {
+		margin: 0 0 1rem;
+		font-size: 0.82rem;
+		color: var(--muted);
+		line-height: 1.45;
+	}
+
+	.coequal-notice strong {
+		font-weight: 700;
+	}
+
+	.coequal-list {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.coequal-sep {
+		border-top: 1px solid var(--border);
+		margin: 1.1rem 0;
 	}
 
 	/* ── Neighbours ── */

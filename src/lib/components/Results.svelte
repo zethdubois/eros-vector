@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { buildResultSections, type QuestionBanks } from '$lib/results';
+	import { buildResultSections, type QuestionBanks, type ResultPass } from '$lib/results';
 	import { navigateToSection, resetSurvey, type SurveyState } from '$lib/store';
 	import { canAddHorizon, canAddPastEras } from '$lib/surveyNav';
-	import type { Neighbor } from '$lib/labels';
+	import { AXIS_META, type Neighbor } from '$lib/labels';
+	import type { Axis } from '$lib/types';
 
 	let {
 		state: surveyState,
@@ -17,6 +18,7 @@
 	const showAddHorizon = $derived(canAddHorizon(surveyState));
 
 	let expanded = $state<Record<string, boolean>>({});
+	let selectedTab = $state<Record<string, number>>({});
 
 	function passKey(sectionId: string, mode: string) {
 		return `${sectionId}:${mode}`;
@@ -25,6 +27,27 @@
 	function togglePass(sectionId: string, mode: string) {
 		const key = passKey(sectionId, mode);
 		expanded = { ...expanded, [key]: !expanded[key] };
+	}
+
+	function tabIndex(key: string): number {
+		return selectedTab[key] ?? 0;
+	}
+
+	/** Unique balanced axes across all passes in a section that have multiple co-equal archetypes. */
+	function sectionBalancedAxes(passes: ResultPass[]): Axis[] {
+		const seen = new Set<Axis>();
+		const result: Axis[] = [];
+		for (const p of passes) {
+			if (p.archetypes.length > 1) {
+				for (const a of ['w', 'x', 'y', 'z'] as Axis[]) {
+					if (p.coordinates[a] === 0 && !seen.has(a)) {
+						seen.add(a);
+						result.push(a);
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	/** Template sentence describing a neighbour's pull, scaled by proximity. */
@@ -51,6 +74,7 @@
 
 	<div class="sections">
 		{#each sections as section (section.id)}
+			{@const balAxes = sectionBalancedAxes(section.passes)}
 			<article class="section">
 				<header class="section-head">
 					<h3>{section.phaseLabel}</h3>
@@ -59,48 +83,80 @@
 					{/if}
 				</header>
 
+				{#if balAxes.length > 0}
+					<div class="balance-notice">
+						{#each balAxes as axis, i}{#if i > 0}, {/if}<strong style="color:{AXIS_META[axis].color}">{AXIS_META[axis].label}</strong>{/each}{balAxes.length === 1 ? ' axis' : ' axes'} balanced — open the card to see all co-equal archetypes.
+					</div>
+				{/if}
+
 				<div class="passes">
 					{#each section.passes as pass (pass.mode)}
 						{@const key = passKey(section.id, pass.mode)}
 						{@const open = !!expanded[key]}
-						<button
-							type="button"
+						<div
 							class="pass"
 							class:scouting={pass.mode === 'scouting'}
 							class:bound={pass.mode === 'bound'}
 							class:open
-							aria-expanded={open}
-							onclick={() => togglePass(section.id, pass.mode)}
 						>
-							<div class="pass-meta">
-								<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
-								{#if pass.shadow}
-									<span class="shadow">Shadow</span>
-								{/if}
-								<span class="hint">{open ? 'Hide' : 'Read more'}</span>
-							</div>
-							<p class="profile">{pass.archetype.name}</p>
-							<p class="tagline">{pass.archetype.tagline}</p>
+							<button
+								type="button"
+								class="pass-header"
+								aria-expanded={open}
+								onclick={() => togglePass(section.id, pass.mode)}
+							>
+								<div class="pass-meta">
+									<span class="mode">{pass.mode === 'scouting' ? 'Scouting' : 'Bound'}</span>
+									{#if pass.shadow}
+										<span class="shadow">Shadow</span>
+									{/if}
+									{#if pass.archetypes.length > 1}
+										<span class="multi-badge">{pass.archetypes.length} archetypes</span>
+									{/if}
+									<span class="hint">{open ? 'Hide' : 'Read more'}</span>
+								</div>
+								<p class="profile">{pass.archetype.name}</p>
+								<p class="tagline">{pass.archetype.tagline}</p>
+							</button>
 							{#if open}
-								<p class="description">{pass.archetype.description}</p>
-								{#if pass.neighbors.length > 0}
-									<div class="nb-section">
-										<p class="nb-label">Neighbouring influences</p>
-										<div class="nb-list">
-											{#each pass.neighbors as nb}
-												<div class="nb-item">
-													<span class="nb-chip" style="--c:{nb.axisColor}">{nb.axisLabel}</span>
-													<div class="nb-text">
-														<p class="nb-sentence">{neighborSentence(nb)}</p>
-														<p class="nb-sig">{nb.archetype.name} — {nb.archetype.signature}</p>
-													</div>
-												</div>
+								{@const activeIdx = tabIndex(key)}
+								{@const activeAt = pass.archetypes[activeIdx]}
+								<div class="pass-body">
+									{#if pass.archetypes.length > 1}
+										<div class="tab-strip" role="tablist">
+											{#each pass.archetypes as at, i}
+												<button
+													type="button"
+													role="tab"
+													class="tab-btn"
+													class:active={activeIdx === i}
+													aria-selected={activeIdx === i}
+													onclick={() => { selectedTab = { ...selectedTab, [key]: i }; }}
+												>{at.name}</button>
 											{/each}
 										</div>
-									</div>
-								{/if}
+										<p class="tab-note">These archetypes are co-equal — your score sits exactly on the boundary between them.</p>
+									{/if}
+									<p class="description">{activeAt.description}</p>
+									{#if pass.neighbors.length > 0}
+										<div class="nb-section">
+											<p class="nb-label">Neighbouring influences</p>
+											<div class="nb-list">
+												{#each pass.neighbors as nb}
+													<div class="nb-item">
+														<span class="nb-chip" style="--c:{nb.axisColor}">{nb.axisLabel}</span>
+														<div class="nb-text">
+															<p class="nb-sentence">{neighborSentence(nb)}</p>
+															<p class="nb-sig">{nb.archetype.name} — {nb.archetype.signature}</p>
+														</div>
+													</div>
+												{/each}
+											</div>
+										</div>
+									{/if}
+								</div>
 							{/if}
-						</button>
+						</div>
 					{/each}
 				</div>
 			</article>
@@ -178,6 +234,25 @@
 		line-height: 1.45;
 	}
 
+	/* ── Balance notice ── */
+
+	.balance-notice {
+		margin: 0 0 1rem;
+		padding: 0.55rem 0.85rem;
+		border-radius: 7px;
+		border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+		background: color-mix(in srgb, var(--accent) 5%, var(--bg));
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--muted);
+	}
+
+	.balance-notice strong {
+		font-weight: 700;
+	}
+
+	/* ── Pass card ── */
+
 	.passes {
 		display: flex;
 		flex-direction: column;
@@ -185,16 +260,9 @@
 	}
 
 	.pass {
-		display: block;
-		width: 100%;
-		text-align: left;
-		padding: 0.9rem 1rem;
 		border-radius: 10px;
 		border: 1px solid var(--border);
 		background: var(--bg);
-		color: inherit;
-		font: inherit;
-		cursor: pointer;
 		transition:
 			border-color 0.15s ease,
 			background 0.15s ease;
@@ -214,6 +282,27 @@
 
 	.pass.open {
 		background: color-mix(in srgb, var(--accent) 4%, var(--bg));
+	}
+
+	.pass-header {
+		display: block;
+		width: 100%;
+		text-align: left;
+		padding: 0.9rem 1rem;
+		background: transparent;
+		border: none;
+		border-radius: 10px;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.pass-body {
+		padding: 0 1rem 1rem;
+	}
+
+	.pass-body > .description:first-child {
+		margin-top: 0;
 	}
 
 	.pass-meta {
@@ -251,6 +340,17 @@
 		color: var(--danger);
 	}
 
+	.multi-badge {
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		padding: 0.12rem 0.45rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		color: var(--accent);
+	}
+
 	.profile {
 		margin: 0;
 		font-family: 'Fraunces', Georgia, serif;
@@ -265,6 +365,52 @@
 		font-weight: 500;
 		font-style: italic;
 		color: var(--muted);
+	}
+
+	/* ── Tab strip ── */
+
+	.tab-strip {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 0.65rem;
+		padding-bottom: 0.65rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.tab-btn {
+		padding: 0.3rem 0.8rem;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--muted);
+		font-size: 0.82rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition:
+			background 0.12s,
+			color 0.12s,
+			border-color 0.12s;
+		font-family: 'Fraunces', Georgia, serif;
+	}
+
+	.tab-btn:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.tab-btn.active {
+		background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+		border-color: var(--accent);
+		color: var(--text);
+	}
+
+	.tab-note {
+		margin: 0 0 0.65rem;
+		font-size: 0.8rem;
+		font-style: italic;
+		color: var(--muted);
+		opacity: 0.75;
 	}
 
 	.description {

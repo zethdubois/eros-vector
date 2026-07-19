@@ -1,4 +1,4 @@
-import { resolveArchetype, resolveNeighbors, type Archetype, type Neighbor } from './labels';
+import { resolveArchetype, resolveArchetypeSet, resolveNeighbors, type Archetype, type Neighbor } from './labels';
 import { scoreAnswers } from './scoring';
 import type { Answers, Coordinates, Question, SurveyState } from './types';
 
@@ -7,6 +7,9 @@ export type ResultMode = 'scouting' | 'bound';
 export type ResultPass = {
 	mode: ResultMode;
 	profileLabel: string;
+	/** All co-equal archetypes for these coordinates (1 when no axis is zero). */
+	archetypes: Archetype[];
+	/** Primary archetype — always archetypes[0]. Kept for backward compat. */
 	archetype: Archetype;
 	coordinates: Coordinates;
 	neighbors: Neighbor[];
@@ -38,11 +41,13 @@ function toPass(
 	shadow?: boolean
 ): ResultPass {
 	const coordinates = scoreAnswers(answers, questions);
-	const archetype = resolveArchetype(coordinates);
+	const archetypes = resolveArchetypeSet(coordinates);
+	const archetype = archetypes[0];
 	const neighbors = resolveNeighbors(coordinates);
 	return {
 		mode,
 		profileLabel: archetype.name,
+		archetypes,
 		archetype,
 		coordinates,
 		neighbors,

@@ -231,6 +231,41 @@ export function coordinateLabel(coords: Coordinates): string {
 	return resolveArchetype(coords).name;
 }
 
+/**
+ * Resolve all co-equal archetypes when one or more axes are exactly 0.
+ *
+ * - All four zero → [SCHRODINGERS_PARTNER]
+ * - No zeros       → [resolveArchetype(coords)]  (single, unchanged)
+ * - n zeros        → 2^n archetypes, one per sign combination of the zero axes
+ *
+ * Sign combinations are enumerated with the first zero axis varying fastest
+ * (bit 0), so element 0 always has every zero axis resolved as '+'.
+ */
+export function resolveArchetypeSet(coords: Coordinates): Archetype[] {
+	if (coords.w === 0 && coords.x === 0 && coords.y === 0 && coords.z === 0) {
+		return [SCHRODINGERS_PARTNER];
+	}
+
+	const zeroAxes = (['w', 'x', 'y', 'z'] as const).filter((a) => coords[a] === 0);
+
+	if (zeroAxes.length === 0) {
+		return [resolveArchetype(coords)];
+	}
+
+	const n = zeroAxes.length;
+	const results: Archetype[] = [];
+
+	for (let bits = 0; bits < 1 << n; bits++) {
+		const c: Coordinates = { ...coords };
+		for (let i = 0; i < n; i++) {
+			c[zeroAxes[i]] = (bits >> i) & 1 ? -1 : 1;
+		}
+		results.push(resolveArchetype(c));
+	}
+
+	return results;
+}
+
 // ── Neighbour analysis ────────────────────────────────────────────────────────
 
 /** Display metadata for each axis, used by the neighbour resolver and UI. */
