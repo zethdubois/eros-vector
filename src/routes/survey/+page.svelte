@@ -19,39 +19,26 @@
     ready = true;
   });
 
-  const canRestart = $derived(
-    $survey.phase !== "intake" || $survey.intake !== null,
+  const canClear = $derived(
+    ready && ($survey.phase !== "intake" || $survey.intake !== null),
   );
 
   const isDeveloper = $derived(data.accessRole === 'developer');
-
-  function onRestart() {
-    if (!canRestart) return;
-    if (!confirm("Clear all survey progress and start over?")) return;
-    resetSurvey();
-  }
 </script>
 
 <main>
   <header class="brand">
-    <div class="brand-row">
-      <a class="home" href="/">
-        <img src="/img/eros-icon.png" alt="" width="40" height="40" />
-        <div>
-          <h1>Eros Vector</h1>
-          <!-- <p class="tagline">4D relationship mapping</p> -->
-        </div>
-      </a>
-      {#if ready && canRestart}
-        <button type="button" class="restart" onclick={onRestart}
-          >Restart</button
-        >
-      {/if}
-    </div>
+    <a class="home" href="/">
+      <img src="/img/eros-icon.png" alt="" width="40" height="40" />
+      <div>
+        <h1>Eros Vector</h1>
+        <!-- <p class="tagline">4D relationship mapping</p> -->
+      </div>
+    </a>
   </header>
 
   {#if ready}
-    <ProgressBar state={$survey} />
+    <ProgressBar state={$survey} {canClear} onClear={resetSurvey} />
 
     <div class="phase">
       {#if $survey.phase === "intake"}
@@ -129,24 +116,11 @@
 
   .brand {
     flex-shrink: 0;
+    position: relative;
+    z-index: 100;
     margin-bottom: 1.25rem;
   }
 
-  .brand-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.75rem;
-    /* Clear fixed Key button (top-right) */
-    padding-right: 4.25rem;
-  }
-
-  @media (min-width: 700px) {
-    .brand-row {
-      padding-right: 11.5rem;
-      gap: 1rem;
-    }
-  }
 
   .home {
     display: flex;
@@ -194,21 +168,4 @@
     font-size: 0.95rem;
   }
 
-  .restart {
-    flex-shrink: 0;
-    padding: 0.45rem 0.75rem;
-    min-height: 2.5rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .restart:hover {
-    border-color: var(--danger);
-    color: var(--danger);
-  }
 </style>

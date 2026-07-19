@@ -9,16 +9,24 @@
 		type SectionId
 	} from '$lib/surveyNav';
 
-	let { state }: { state: SurveyState } = $props();
+	let {
+		state: surveyState,
+		canClear = false,
+		onClear
+	}: {
+		state: SurveyState;
+		canClear?: boolean;
+		onClear?: () => void;
+	} = $props();
 
-	const pastSkipped = $derived(isPastSkipped(state));
-	const horizonSkipped = $derived(isHorizonSkipped(state));
+	const pastSkipped = $derived(isPastSkipped(surveyState));
+	const horizonSkipped = $derived(isHorizonSkipped(surveyState));
 
 	const steps = $derived.by(() => {
-		const order = sectionOrder(state);
+		const order = sectionOrder(surveyState);
 		return order.map((id) => ({
 			id,
-			label: sectionNavLabel(id, state),
+			label: sectionNavLabel(id, surveyState),
 			optional: id === 't3'
 		}));
 	});
@@ -34,7 +42,7 @@
 		if (pastSkipped) skippedIds.push('t0');
 		if (horizonSkipped) skippedIds.push('t3');
 
-		switch (state.phase) {
+		switch (surveyState.phase) {
 			case 'intake':
 				doneThrough = -1;
 				currentId = 'intake';
@@ -42,30 +50,30 @@
 			case 't0':
 			case 'pause-t0':
 				doneThrough = idx('t0') - 1;
-				currentId = state.phase === 'pause-t0' ? (ids.includes('t1') ? 't1' : 't0') : 't0';
-				if (state.phase === 'pause-t0' && idx('t0') >= 0) doneThrough = idx('t0');
+				currentId = surveyState.phase === 'pause-t0' ? (ids.includes('t1') ? 't1' : 't0') : 't0';
+				if (surveyState.phase === 'pause-t0' && idx('t0') >= 0) doneThrough = idx('t0');
 				break;
 			case 't1':
 			case 'pause-t1':
 				doneThrough = pastSkipped ? idx('intake') : idx('t1') - 1;
-				currentId = state.phase === 'pause-t1' ? 't2' : 't1';
-				if (state.phase === 'pause-t1') doneThrough = idx('t1');
+				currentId = surveyState.phase === 'pause-t1' ? 't2' : 't1';
+				if (surveyState.phase === 'pause-t1') doneThrough = idx('t1');
 				break;
 			case 't2':
 			case 'pause-t2':
 				doneThrough = pastSkipped ? idx('t1') : idx('t2') - 1;
-				if (state.routing?.finalForm || !state.routing?.t3) {
-					currentId = state.phase === 'pause-t2' ? null : 't2';
+				if (surveyState.routing?.finalForm || !surveyState.routing?.t3) {
+					currentId = surveyState.phase === 'pause-t2' ? null : 't2';
 				} else {
-					currentId = state.phase === 'pause-t2' ? 't3' : 't2';
+					currentId = surveyState.phase === 'pause-t2' ? 't3' : 't2';
 				}
-				if (state.phase === 'pause-t2') doneThrough = idx('t2');
+				if (surveyState.phase === 'pause-t2') doneThrough = idx('t2');
 				break;
 			case 't3':
 			case 'pause-t3':
 				doneThrough = idx('t3') - 1;
-				currentId = state.phase === 'pause-t3' ? null : 't3';
-				if (state.phase === 'pause-t3' && idx('t3') >= 0) doneThrough = idx('t3');
+				currentId = surveyState.phase === 'pause-t3' ? null : 't3';
+				if (surveyState.phase === 'pause-t3' && idx('t3') >= 0) doneThrough = idx('t3');
 				break;
 			case 'complete':
 				doneThrough = ids.length - 1;
@@ -77,15 +85,41 @@
 	});
 
 	function handleNav(id: SectionId) {
-		if (!canNavigateToSection(state, id)) return;
+		if (!canNavigateToSection(surveyState, id)) return;
 		navigateToSection(id);
 	}
+
+	// ── Clear Survey dual-press ─────────────────────────────────────────────
+	let confirmPending = $state(false);
+	let clearTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function handleClear() {
+		if (!canClear || !onClear) return;
+		if (!confirmPending) {
+			confirmPending = true;
+			clearTimer = setTimeout(() => {
+				confirmPending = false;
+				clearTimer = null;
+			}, 3000);
+		} else {
+			if (clearTimer) clearTimeout(clearTimer);
+			clearTimer = null;
+			confirmPending = false;
+			onClear();
+		}
+	}
+
+	$effect(() => {
+		return () => {
+			if (clearTimer) clearTimeout(clearTimer);
+		};
+	});
 </script>
 
 <nav class="progress" aria-label="Survey progress">
 	<ol>
 		{#each steps as step, i}
-			{@const navigable = canNavigateToSection(state, step.id)}
+			{@const navigable = canNavigateToSection(surveyState, step.id)}
 			{@const isSkipped = progress.skippedIds.includes(step.id)}
 			<li
 				class:done={i <= progress.doneThrough && !isSkipped}
@@ -94,8 +128,8 @@
 					i > (steps.findIndex((s) => s.id === progress.currentId) ?? -1) &&
 					!isSkipped}
 				class:optional={step.optional &&
-					state.horizonIncluded === null &&
-					(state.phase === 'pause-t2' || state.phase === 't3' || state.phase === 'pause-t3')}
+					surveyState.horizonIncluded === null &&
+					(surveyState.phase === 'pause-t2' || surveyState.phase === 't3' || surveyState.phase === 'pause-t3')}
 				class:skipped={isSkipped}
 				class:navigable={navigable}
 			>
@@ -106,8 +140,8 @@
 						{#if isSkipped && (step.id === 't0' || step.id === 't3')}
 							<span class="add-tag">+ add</span>
 						{:else if step.optional &&
-							state.horizonIncluded === null &&
-							(state.phase === 'pause-t2' || state.phase === 't3' || state.phase === 'pause-t3')}
+							surveyState.horizonIncluded === null &&
+							(surveyState.phase === 'pause-t2' || surveyState.phase === 't3' || surveyState.phase === 'pause-t3')}
 							<span class="opt-tag">optional</span>
 						{/if}
 					</button>
@@ -115,8 +149,8 @@
 					<span class="label">
 						{step.label}
 						{#if step.optional &&
-							state.horizonIncluded === null &&
-							(state.phase === 'pause-t2' || state.phase === 't3' || state.phase === 'pause-t3')}
+							surveyState.horizonIncluded === null &&
+							(surveyState.phase === 'pause-t2' || surveyState.phase === 't3' || surveyState.phase === 'pause-t3')}
 							<span class="opt-tag">optional</span>
 						{/if}
 					</span>
@@ -124,11 +158,25 @@
 			</li>
 		{/each}
 	</ol>
+
+	{#if canClear && onClear}
+		<button
+			type="button"
+			class="clear-btn"
+			class:confirm={confirmPending}
+			onclick={handleClear}
+		>
+			{confirmPending ? 'Confirm Clear?' : 'Clear Survey'}
+		</button>
+	{/if}
 </nav>
 
 <style>
 	.progress {
 		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 		margin-bottom: 1.25rem;
 		overflow-x: auto;
 		-webkit-overflow-scrolling: touch;
@@ -140,6 +188,7 @@
 	}
 
 	ol {
+		flex: 1;
 		display: flex;
 		flex-wrap: nowrap;
 		gap: 0.5rem 0.85rem;
@@ -147,7 +196,7 @@
 		padding: 0;
 		margin: 0;
 		width: max-content;
-		min-width: 100%;
+		min-width: 0;
 	}
 
 	@media (min-width: 700px) {
@@ -158,7 +207,6 @@
 		ol {
 			flex-wrap: wrap;
 			width: auto;
-			min-width: 0;
 			gap: 0.5rem 1rem;
 		}
 	}
@@ -251,5 +299,35 @@
 
 	.add-tag {
 		color: var(--accent);
+	}
+
+	/* ── Clear Survey button ──────────────────────────────────────────────── */
+	.clear-btn {
+		flex-shrink: 0;
+		padding: 0.2rem 0.6rem;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: var(--surface);
+		color: var(--muted);
+		font-size: 0.72rem;
+		font-weight: 600;
+		line-height: 1.4;
+		cursor: pointer;
+		white-space: nowrap;
+		transition:
+			border-color 0.15s ease,
+			color 0.15s ease,
+			background 0.15s ease;
+	}
+
+	.clear-btn:hover {
+		border-color: var(--danger);
+		color: var(--danger);
+	}
+
+	.clear-btn.confirm {
+		border-color: var(--danger);
+		background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+		color: var(--danger);
 	}
 </style>
