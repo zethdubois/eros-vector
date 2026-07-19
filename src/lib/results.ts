@@ -1,4 +1,4 @@
-import { resolveArchetype, type Archetype } from './labels';
+import { resolveArchetype, resolveNeighbors, type Archetype, type Neighbor } from './labels';
 import { scoreAnswers } from './scoring';
 import type { Answers, Coordinates, Question, SurveyState } from './types';
 
@@ -9,6 +9,7 @@ export type ResultPass = {
 	profileLabel: string;
 	archetype: Archetype;
 	coordinates: Coordinates;
+	neighbors: Neighbor[];
 	shadow?: boolean;
 };
 
@@ -38,11 +39,13 @@ function toPass(
 ): ResultPass {
 	const coordinates = scoreAnswers(answers, questions);
 	const archetype = resolveArchetype(coordinates);
+	const neighbors = resolveNeighbors(coordinates);
 	return {
 		mode,
 		profileLabel: archetype.name,
 		archetype,
 		coordinates,
+		neighbors,
 		shadow
 	};
 }

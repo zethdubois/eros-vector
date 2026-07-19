@@ -2,6 +2,7 @@
 	import { buildResultSections, type QuestionBanks } from '$lib/results';
 	import { navigateToSection, resetSurvey, type SurveyState } from '$lib/store';
 	import { canAddHorizon, canAddPastEras } from '$lib/surveyNav';
+	import type { Neighbor } from '$lib/labels';
 
 	let {
 		state: surveyState,
@@ -24,6 +25,18 @@
 	function togglePass(sectionId: string, mode: string) {
 		const key = passKey(sectionId, mode);
 		expanded = { ...expanded, [key]: !expanded[key] };
+	}
+
+	/** Template sentence describing a neighbour's pull, scaled by proximity. */
+	function neighborSentence(nb: Neighbor): string {
+		const { domain, approachingPole, distanceToBoundary, archetype } = nb;
+		if (distanceToBoundary < 0.3) {
+			return `Your ${domain} score sits right on the ${approachingPole} boundary — you may strongly recognise yourself in ${archetype.name}.`;
+		} else if (distanceToBoundary < 1.0) {
+			return `You have a pull toward ${approachingPole} on ${domain} — ${archetype.name} may also resonate.`;
+		} else {
+			return `There is a mild pull toward ${approachingPole} on ${domain} — you may occasionally recognise ${archetype.name} in yourself.`;
+		}
 	}
 </script>
 
@@ -70,6 +83,22 @@
 							<p class="tagline">{pass.archetype.tagline}</p>
 							{#if open}
 								<p class="description">{pass.archetype.description}</p>
+								{#if pass.neighbors.length > 0}
+									<div class="nb-section">
+										<p class="nb-label">Neighbouring influences</p>
+										<div class="nb-list">
+											{#each pass.neighbors as nb}
+												<div class="nb-item">
+													<span class="nb-chip" style="--c:{nb.axisColor}">{nb.axisLabel}</span>
+													<div class="nb-text">
+														<p class="nb-sentence">{neighborSentence(nb)}</p>
+														<p class="nb-sig">{nb.archetype.name} — {nb.archetype.signature}</p>
+													</div>
+												</div>
+											{/each}
+										</div>
+									</div>
+								{/if}
 							{/if}
 						</button>
 					{/each}
@@ -244,6 +273,73 @@
 		line-height: 1.55;
 		color: var(--text);
 		max-width: 40rem;
+	}
+
+	/* ── Neighbouring influences ── */
+
+	.nb-section {
+		margin-top: 1.25rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.nb-label {
+		margin: 0 0 0.65rem;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+		opacity: 0.75;
+	}
+
+	.nb-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.nb-item {
+		display: flex;
+		gap: 0.65rem;
+		align-items: flex-start;
+	}
+
+	.nb-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 1.45rem;
+		height: 1.45rem;
+		margin-top: 0.05rem;
+		border-radius: 4px;
+		background: color-mix(in srgb, var(--c) 15%, transparent);
+		border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+		color: var(--c);
+		font-size: 0.72rem;
+		font-weight: 700;
+		font-family: 'Fraunces', Georgia, serif;
+	}
+
+	.nb-text {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.nb-sentence {
+		margin: 0 0 0.15rem;
+		font-size: 0.83rem;
+		line-height: 1.5;
+		color: var(--muted);
+	}
+
+	.nb-sig {
+		margin: 0;
+		font-size: 0.76rem;
+		font-style: italic;
+		color: var(--muted);
+		opacity: 0.65;
 	}
 
 	.extras {
