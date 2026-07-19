@@ -10,8 +10,11 @@ export type Archetype = {
 	description: string;
 	/** One-line character summary from archetypes.md */
 	signature: string;
-	/** Signs in W / X / Y / Z order (axes.md locked key). */
-	signs: { w: OctantSign; x: OctantSign; y: OctantSign; z: OctantSign };
+	/**
+	 * Signs in W / X / Y / Z order (axes.md locked key).
+	 * Absent for the origin-point special case (Schrödinger's Partner).
+	 */
+	signs?: { w: OctantSign; x: OctantSign; y: OctantSign; z: OctantSign };
 };
 
 /**
@@ -181,12 +184,30 @@ export const ARCHETYPES: Archetype[] = [
 	}
 ];
 
+/**
+ * Special case: the exact mathematical origin (all four axes = 0).
+ * Not an orthant — equidistant from all 16 archetypes.
+ */
+export const SCHRODINGERS_PARTNER: Archetype = {
+	id: 'schrodingers-partner',
+	name: "Schrödinger's Partner",
+	tagline: 'The Origin Point · All Poles · None of Them · Pure Potential',
+	description:
+		"You have somehow managed to plot the exact mathematical origin point of the Eros Vector. You exist in a state of perfect relational quantum superposition.\n\nYou are simultaneously craving a merged, interdependent home base and fiercely protecting your total autonomy. You seek the physical thrill of casual, recreational play, yet you are equally drawn to the profound depths of romantic integration. You want strict, compartmentalized boundaries around your core life, but you also want a porous, cross-pollinating tribe where friends and lovers freely blur together. You love a deliberate, app-driven blueprint, but you prefer to just let things erupt organically when the vibe is right.\n\nBecause you sit at the absolute dead center of the 4D map, you are equidistant from all 16 archetypes. You are a walking \"It depends.\" Until someone actually opens the box and interacts with you, you are every relationship style and none of them — a singularity of pure, uncommitted potential energy.",
+	signature: 'A singularity of pure, uncommitted potential energy.'
+	// No `signs` — this archetype has no orthant; it is the origin itself.
+};
+
 function axisSign(value: number): OctantSign {
 	return value >= 0 ? '+' : '-';
 }
 
-/** Resolve coordinates to one of the 16 Eros Vector orthant archetypes (V2, WXYZ). */
+/** Resolve coordinates to one of the 16 Eros Vector orthant archetypes (V2, WXYZ).
+ *  Returns Schrödinger's Partner when all four axes are exactly 0. */
 export function resolveArchetype(coords: Coordinates): Archetype {
+	if (coords.w === 0 && coords.x === 0 && coords.y === 0 && coords.z === 0) {
+		return SCHRODINGERS_PARTNER;
+	}
 	const signs = {
 		w: axisSign(coords.w),
 		x: axisSign(coords.x),
@@ -195,6 +216,7 @@ export function resolveArchetype(coords: Coordinates): Archetype {
 	};
 	const match = ARCHETYPES.find(
 		(a) =>
+			a.signs &&
 			a.signs.w === signs.w &&
 			a.signs.x === signs.x &&
 			a.signs.y === signs.y &&

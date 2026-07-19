@@ -14,7 +14,7 @@ description: The locked W/X/Y/Z axis key from docs/wiki/axes.md. Critical to get
 
 **Why:** `archetypes.md` has a "v2.1 axis remap" changelog entry that swapped W and Y relative to `axes.md`. `axes.md` is labeled "Locked axis key" and is the source of truth. Any discrepancy in `archetypes.md` is a doc bug, not the spec.
 
-**How to apply:** Whenever writing axis labels, pole names, diagnostic questions, SVG annotations, survey seeds, or archetype resolver logic — always derive from this table, not from `archetypes.md` pole descriptions or session notes.
+**How to apply:** Whenever writing axis labels, pole names, diagnostic questions, SVG annotations, survey seeds, or archetype resolver logic — always derive from this table, not from session notes.
 
 ## Diagnostic questions
 
@@ -30,6 +30,14 @@ description: The locked W/X/Y/Z axis key from docs/wiki/axes.md. Critical to get
 - Y: gold `#c4a574`
 - Z: teal `#7a9e9a`
 
-## labels.ts status
+## labels.ts status (V2 — current)
 
-As of the current codebase, `src/lib/labels.ts` is still V1 — 8 archetypes over XYZ only, using old pole names ("Erotic/Emotional"). The `resolveArchetype()` function ignores `w`. The V2 16-archetype engine has not been built yet.
+`src/lib/labels.ts` is V2: 16 archetypes over WXYZ with correct V2 pole names, descriptions, and signatures from archetypes.md. `resolveArchetype()` matches on all four axes. Special case: coords (0,0,0,0) returns `SCHRODINGERS_PARTNER` before sign resolution.
+
+`src/lib/scoring.ts` includes `w` in sums, counts, and return value — all four axes scored.
+
+`src/lib/types.ts` has `w` in both `Axis` union and `Coordinates` type.
+
+## Schrödinger's Partner (origin special case)
+
+When all four coordinates are exactly 0, `resolveArchetype` returns `SCHRODINGERS_PARTNER` — a comical archetype with no `signs` field. The `signs` field on `Archetype` is optional for this reason. This triggers on the Simulate page "Reset to zero" button and is theoretically possible (but rare) in real survey data.

@@ -46,6 +46,24 @@ A **relational core** is a bonded group of two or more people around which signi
 
 ---
 
+## The origin point
+
+### Schrödinger's Partner `0 0 0 0`
+
+_The exact mathematical centre of the 4D map — equidistant from all 16 archetypes_
+
+You have somehow managed to plot the exact mathematical origin point of the Eros Vector. You exist in a state of perfect relational quantum superposition.
+
+You are simultaneously craving a merged, interdependent home base and fiercely protecting your total autonomy. You seek the physical thrill of casual, recreational play, yet you are equally drawn to the profound depths of romantic integration. You want strict, compartmentalized boundaries around your core life, but you also want a porous, cross-pollinating tribe where friends and lovers freely blur together. You love a deliberate, app-driven blueprint, but you prefer to just let things erupt organically when the vibe is right.
+
+Because you sit at the absolute dead center of the 4D map, you are equidistant from all 16 archetypes. You are a walking "It depends." Until someone actually opens the box and interacts with you, you are every relationship style and none of them — a singularity of pure, uncommitted potential energy.
+
+**Signature:** a singularity of pure, uncommitted potential energy.
+
+> **Note:** This is not an orthant. It is the origin — a degenerate case that has no sign vector and resolves to no single archetype. In practice it appears when all four axis scores average to exactly zero, or when a user resets the simulator to dead centre.
+
+---
+
 ## Interdependent + Recreational
 
 These patterns organize life around a merged relational core while seeking play and erotic variety.
@@ -229,5 +247,6 @@ Opposites are not enemies and one is not healthier than the other. The pairing s
 ## Change log
 
 - **v2 archetype draft:** Rebuilt as 16 complete W/X/Y/Z orthants.
-- **v2 description pass:** Adopted collaborator structural prose; scrubbed “outside connections” / couple-default wording in favor of relational core and relational system.
+- **v2 description pass:** Adopted collaborator structural prose; scrubbed "outside connections" / couple-default wording in favor of relational core and relational system.
 - **v2.1 axis remap:** Reordered axes to W(Architecture), X(Drive), Y(Permeability), Z(Method). Regrouped archetypes by W/X poles.
+- **v2.2 origin case:** Added Schrödinger's Partner — the degenerate 0,0,0,0 origin point, equidistant from all 16 archetypes. Not an orthant; handled as a special case in the resolver.
