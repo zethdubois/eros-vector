@@ -33,9 +33,9 @@ const axes = [
 	},
 	{
 		id: 'w',
-		label: 'W',
-		positivePole: 'W+',
-		negativePole: 'W−',
+		label: 'Permeability',
+		positivePole: 'Contained',
+		negativePole: 'Permeable',
 		displayOrder: 4
 	}
 ] as const;

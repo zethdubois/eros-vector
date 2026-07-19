@@ -79,9 +79,9 @@ const FALLBACK_AXES: AxisContent[] = [
 	},
 	{
 		axis: 'w',
-		label: 'W',
-		positivePole: 'W+',
-		negativePole: 'W−',
+		label: 'Permeability',
+		positivePole: 'Contained',
+		negativePole: 'Permeable',
 		displayOrder: 4
 	}
 ];
