@@ -1,0 +1,19 @@
+id,axis_id,bank,text,position,active
+qv-x,x,quick_vibe,"I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.",1,true
+qv-y,y,quick_vibe,"I envision my ideal life having a central ""home base"" partner or anchor, rather than keeping my living and financial life entirely my own.",1,true
+qv-z,z,quick_vibe,"I prefer my relationships to operate with explicitly negotiated rules and boundaries (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.",1,true
+dd-x1,x,deep_dive,"I want the freedom to pursue sexual variety and erotic energy with others, rather than keeping all sexual energy contained exclusively within one core bond.",1,true
+dd-x2,x,deep_dive,"I view sexual play with others primarily as a recreational enhancement to life, rather than a path to building deeply intertwined emotional lives.",2,true
+dd-x3,x,deep_dive,"I am drawn to the idea of group or ""moresome"" energy primarily for the physical/erotic thrill, rather than for the emotional intimacy of a chosen family.",3,true
+dd-x4,x,deep_dive,"I believe relationships are best when they serve the purpose of mutual pleasure and play, rather than needing to serve the practical realities of life (co-parenting, shared resources).",4,true
+dd-x5,x,deep_dive,I imagine I would be more fulfilled by a wide variety of casual/playful sexual connections than by a few deeply emotionally integrated ones.,5,true
+dd-y1,y,deep_dive,"I envision my ideal life having a central ""home base"" partner or anchor, rather than keeping my living and financial life entirely my own.",1,true
+dd-y2,y,deep_dive,I believe it is natural and ethical for one relationship to hold clear priority in my life decisions over others.,2,true
+dd-y3,y,deep_dive,"I imagine wanting to deeply merge my logistics (finances, housing, family building) with a partner, rather than maintaining strict logistical independence.",3,true
+dd-y4,y,deep_dive,"I envision my ideal relationship architecture having a central, prioritized partnership, with other connections playing more peripheral roles.",4,true
+dd-y5,y,deep_dive,"I see the ""couple"" as the fundamental unit of my relational life, rather than the ""individual.""",5,true
+dd-z1,z,deep_dive,"I prefer to find and manage connections through directed design (apps, explicit boundaries, scheduled quests), rather than letting them erupt organically from permissive social circles.",1,true
+dd-z2,z,deep_dive,"I prefer to rely on explicitly negotiated rules and boundaries regarding outside interactions (even if the rule is strict exclusivity), rather than fluid, unspoken social vibes.",2,true
+dd-z3,z,deep_dive,"I believe relational structures work best as a scheduled, defined activity, rather than something that spontaneously happens when the vibe is right.",3,true
+dd-z4,z,deep_dive,"I prefer relationships to stay true to their original intent (e.g., a play partner stays a play partner; a monogamous bond stays monogamous), rather than letting them organically evolve far beyond their starting point.",4,true
+dd-z5,z,deep_dive,"I am someone who designs my relationship structure from a blueprint, rather than letting it grow like a garden based on who we meet and what the situation requires.",5,true
