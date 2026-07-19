@@ -20,6 +20,7 @@
 		</div>
 		<nav class="nav">
 			<a href="/backstage">Debug</a>
+			<a href="/backstage/simulate">Simulate</a>
 			<a href="/backstage/wiki">Wiki</a>
 			<a href="/backstage/content">Content</a>
 			<form method="POST" action="/access?/logout">
