@@ -7,21 +7,26 @@
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
 
 	const path = $derived(page.url.pathname);
-	const showSaveKey = $derived(!path.startsWith('/access') && !path.startsWith('/legal'));
-	const onDarkSplash = $derived(path === '/');
+	const hiddenRoute = $derived(path.startsWith('/access') || path.startsWith('/legal'));
 
 	/** Staff get backstage; viewers get the beta account link in the same corner.
 	 *  On backstage pages, mirror that with a home escape hatch. */
 	const cornerLink = $derived.by(() => {
-		if (path.startsWith('/access') || path.startsWith('/account') || path.startsWith('/legal')) {
-			return null;
-		}
-		if (path.startsWith('/backstage')) {
-			return { href: '/', label: 'home' } as const;
-		}
+		if (hiddenRoute || path.startsWith('/account')) return null;
+		if (path.startsWith('/backstage')) return { href: '/', label: 'home' } as const;
 		if (data.canAccessBackstage) return { href: '/backstage', label: 'backstage' } as const;
 		if (data.accessRole === 'beta') return { href: '/account', label: 'beta user' } as const;
 		return null;
+	});
+
+	/** Show the coloured role banner whenever the user is authenticated. */
+	const showBanner = $derived(!!data.accessRole && !hiddenRoute);
+
+	const bannerBg = $derived.by(() => {
+		if (data.accessRole === 'developer') return '#c4b5fd'; // violet
+		if (data.accessRole === 'reviewer') return '#fdba74'; // orange
+		if (data.accessRole === 'beta') return '#fef08a'; // yellow
+		return 'transparent';
 	});
 </script>
 
@@ -39,38 +44,44 @@
 	/>
 </svelte:head>
 
-{#if cornerLink}
-	<a class="corner-link" class:on-dark={onDarkSplash} href={cornerLink.href}>{cornerLink.label}</a>
+{#if showBanner}
+	<div class="role-banner" style="background: {bannerBg}">
+		{#if cornerLink}
+			<a class="corner-link" href={cornerLink.href}>{cornerLink.label}</a>
+		{:else}
+			<span></span>
+		{/if}
+		<SaveKeyPanel floating={false} />
+	</div>
 {/if}
 
 {@render children()}
 
-{#if showSaveKey}
-	<SaveKeyPanel />
-{/if}
-
 <style>
-	.corner-link {
+	.role-banner {
 		position: fixed;
-		top: 1rem;
-		left: 1rem;
+		top: 0;
+		left: 0;
+		right: 0;
 		z-index: 40;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 0.875rem;
+		min-height: 2.75rem;
+	}
+
+	.corner-link {
 		font-size: 0.85rem;
 		font-weight: 500;
-		color: var(--muted);
+		color: var(--text);
 		text-decoration: underline;
 		text-underline-offset: 0.15em;
+		opacity: 0.75;
 	}
 
 	.corner-link:hover {
+		opacity: 1;
 		color: var(--accent);
-	}
-
-	.corner-link.on-dark {
-		color: color-mix(in srgb, var(--cream) 72%, transparent);
-	}
-
-	.corner-link.on-dark:hover {
-		color: var(--cream);
 	}
 </style>

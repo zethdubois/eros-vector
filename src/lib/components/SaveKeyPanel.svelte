@@ -4,6 +4,9 @@
 	import { exportSurveyKey, importSurveyKey, survey } from '$lib/store';
 	import { SAVE_KEY_TOOLTIP } from '$lib/saveKey';
 
+	/** When false the trigger sits inline (inside a banner); the panel still drops absolutely below. */
+	let { floating = true }: { floating?: boolean } = $props();
+
 	let open = $state(false);
 	let mode = $state<'save' | 'restore'>('save');
 	let inputKey = $state('');
@@ -48,7 +51,7 @@
 	}
 </script>
 
-<div class="save-key-root">
+<div class="save-key-root" class:inline={!floating}>
 	<button
 		type="button"
 		class="toggle"
@@ -137,6 +140,7 @@
 </div>
 
 <style>
+	/* Floating (default): fixed to the viewport top-right corner */
 	.save-key-root {
 		position: fixed;
 		top: 0.75rem;
@@ -155,6 +159,25 @@
 			right: 1rem;
 			max-width: min(22rem, calc(100vw - 2rem));
 		}
+	}
+
+	/* Inline: lives inside the role banner, panel drops below it */
+	.save-key-root.inline {
+		position: relative;
+		top: auto;
+		right: auto;
+		height: 100%;
+		flex-direction: row;
+		align-items: center;
+		max-width: none;
+	}
+
+	.save-key-root.inline .panel {
+		position: absolute;
+		top: 100%;
+		right: 0;
+		width: min(22rem, calc(100vw - 2rem));
+		margin-top: 0.25rem;
 	}
 
 	.toggle {
