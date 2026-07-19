@@ -423,6 +423,7 @@
 								<option value="y">y</option>
 								<option value="x">x</option>
 								<option value="z">z</option>
+								<option value="w">w</option>
 							</select>
 						</td>
 						<td class="col-meta">
