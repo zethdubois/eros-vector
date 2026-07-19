@@ -41,22 +41,39 @@
 	let showShadow = $state(false);
 	let locked = $state(false);
 	let started = $state(false);
+	let highWaterLinear = $state(0);
+
+	/** Map {qi, mode} → linear index: scouting[i]=i*2, bound[i]=i*2+1, shadow=len*2. */
+	function posLinear(qi: number, m: 'scouting' | 'bound'): number {
+		return qi * 2 + (m === 'bound' ? 1 : 0);
+	}
 
 	$effect(() => {
 		if (!started) {
 			const open = firstOpen();
 			if (open.kind === 'shadow') {
 				showShadow = true;
+				highWaterLinear = questions.length * 2;
 			} else {
 				questionIndex = open.qi;
 				mode = open.mode;
+				highWaterLinear = posLinear(open.qi, open.mode);
 			}
 			started = true;
 		}
 	});
 
+	$effect(() => {
+		const cur = showShadow ? questions.length * 2 : posLinear(questionIndex, mode);
+		if (cur > highWaterLinear) highWaterLinear = cur;
+	});
+
 	const q = $derived(questions[questionIndex]);
 	const canBack = $derived(showShadow || questionIndex > 0);
+	const currentLinear = $derived(
+		showShadow ? questions.length * 2 : posLinear(questionIndex, mode)
+	);
+	const canForward = $derived(!showShadow && currentLinear < highWaterLinear);
 	const stepLabel = $derived(
 		showShadow
 			? 'Wrap-up · Bound'
@@ -80,6 +97,18 @@
 		if (questionIndex > 0) {
 			questionIndex -= 1;
 			mode = 'scouting';
+		}
+	}
+
+	function goForward() {
+		if (locked || !canForward) return;
+		if (mode === 'scouting') {
+			mode = 'bound';
+		} else if (questionIndex < questions.length - 1) {
+			questionIndex += 1;
+			mode = 'scouting';
+		} else {
+			showShadow = true;
 		}
 	}
 
@@ -125,6 +154,8 @@
 		onModeChange={onModeChange}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
+		onForward={canForward ? goForward : undefined}
+		forwardDisabled={locked}
 		animKey={q.id}
 	>
 		<LikertQuestion

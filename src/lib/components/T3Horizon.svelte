@@ -27,20 +27,33 @@
 	let stepIndex = $state(0);
 	let locked = $state(false);
 	let started = $state(false);
+	let highWaterMark = $state(0);
 
 	$effect(() => {
 		if (!started) {
 			stepIndex = firstOpen();
+			highWaterMark = stepIndex;
 			started = true;
 		}
 	});
 
+	$effect(() => {
+		if (stepIndex > highWaterMark) highWaterMark = stepIndex;
+	});
+
 	const q = $derived(questions[stepIndex]);
 	const canBack = $derived(stepIndex > 0);
+	const canForward = $derived(stepIndex < highWaterMark);
 
 	function goBack() {
 		if (locked || !canBack) return;
 		stepIndex -= 1;
+		locked = false;
+	}
+
+	function goForward() {
+		if (locked || !canForward) return;
+		stepIndex += 1;
 		locked = false;
 	}
 
@@ -67,6 +80,8 @@
 	modePrompt={MODE_PROMPTS.bound}
 	onBack={canBack ? goBack : undefined}
 	backDisabled={locked}
+	onForward={canForward ? goForward : undefined}
+	forwardDisabled={locked}
 	animKey={q.id}
 >
 	<LikertQuestion

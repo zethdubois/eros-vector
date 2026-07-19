@@ -72,6 +72,7 @@
 	let nameDraft = $state('');
 	let started = $state(false);
 	let pendingNewEra = $state(false);
+	let highWaterMark = $state(0);
 
 	const steps = $derived(buildSteps(eras, questions));
 	const step = $derived(steps[Math.min(stepIndex, steps.length - 1)]);
@@ -82,8 +83,13 @@
 	$effect(() => {
 		if (!started && eras.length) {
 			stepIndex = firstOpen(eras, buildSteps(eras, questions), questions);
+			highWaterMark = stepIndex;
 			started = true;
 		}
+	});
+
+	$effect(() => {
+		if (stepIndex > highWaterMark) highWaterMark = stepIndex;
 	});
 
 	$effect(() => {
@@ -126,6 +132,13 @@
 	}
 
 	const canBack = $derived(stepIndex > 0);
+	const canForward = $derived(stepIndex < highWaterMark);
+
+	function goForward() {
+		if (locked || !canForward) return;
+		stepIndex += 1;
+		locked = false;
+	}
 
 	function submitName() {
 		if (locked || step.kind !== 'name' || !era) return;
@@ -186,6 +199,8 @@
 		{stepLabel}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
+		onForward={canForward ? goForward : undefined}
+		forwardDisabled={locked}
 		animKey={`name-${era.id}`}
 	>
 		<div class="name-step">
@@ -231,6 +246,8 @@
 		modePrompt={MODE_PROMPTS[step.mode]}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
+		onForward={canForward ? goForward : undefined}
+		forwardDisabled={locked}
 		animKey={`${era.id}-${step.mode}-${q.id}`}
 	>
 		<div class="likert-stack">
@@ -255,6 +272,8 @@
 		modePrompt={MODE_PROMPTS.bound}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
+		onForward={canForward ? goForward : undefined}
+		forwardDisabled={locked}
 		animKey={`shadow-${era.id}`}
 	>
 		{#if era.name}
@@ -279,6 +298,8 @@
 		{stepLabel}
 		onBack={canBack ? goBack : undefined}
 		backDisabled={locked}
+		onForward={canForward ? goForward : undefined}
+		forwardDisabled={locked}
 		animKey="gate"
 	>
 		<div class="gate">

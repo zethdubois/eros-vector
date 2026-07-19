@@ -14,6 +14,8 @@
 		onModeChange,
 		onBack,
 		backDisabled = false,
+		onForward,
+		forwardDisabled = false,
 		animKey,
 		children
 	}: {
@@ -27,6 +29,8 @@
 		onModeChange?: (mode: 'scouting' | 'bound') => void;
 		onBack?: () => void;
 		backDisabled?: boolean;
+		onForward?: () => void;
+		forwardDisabled?: boolean;
 		animKey: string | number;
 		children: Snippet;
 	} = $props();
@@ -44,11 +48,18 @@
 		<div class="question-block">
 			<div class="step-row">
 				<p class="step-label">{stepLabel}</p>
-				{#if onBack}
-					<button type="button" class="back" disabled={backDisabled} onclick={onBack}>
-						← Back
-					</button>
-				{/if}
+				<div class="nav-btns">
+					{#if onBack}
+						<button type="button" class="nav-btn" disabled={backDisabled} onclick={onBack}>
+							← Back
+						</button>
+					{/if}
+					{#if onForward}
+						<button type="button" class="nav-btn" disabled={forwardDisabled} onclick={onForward}>
+							Forward →
+						</button>
+					{/if}
+				</div>
 			</div>
 
 			<div
@@ -139,7 +150,12 @@
 		color: var(--muted);
 	}
 
-	.back {
+	.nav-btns {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.nav-btn {
 		flex-shrink: 0;
 		padding: 0.35rem 0.75rem;
 		border: 1px solid var(--border);
@@ -151,12 +167,12 @@
 		cursor: pointer;
 	}
 
-	.back:hover:not(:disabled) {
+	.nav-btn:hover:not(:disabled) {
 		border-color: var(--accent);
 		color: var(--accent);
 	}
 
-	.back:disabled {
+	.nav-btn:disabled {
 		opacity: 0.45;
 		cursor: not-allowed;
 	}
