@@ -17,9 +17,9 @@
 		return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1);
 	}
 
-	/** Orthant sign character. */
+	/** Orthant sign character — shows 0 at the exact centre. */
 	function sign(v: number) {
-		return v >= 0 ? '+' : '−';
+		return v === 0 ? '0' : v > 0 ? '+' : '−';
 	}
 
 	/** Pole name for a given score. */
