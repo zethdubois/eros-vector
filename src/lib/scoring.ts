@@ -10,8 +10,8 @@ export function likertToCoord(value: LikertValue): number {
  * Missing answers are skipped; an axis with no answers scores 0.
  */
 export function scoreAnswers(answers: Answers, questions: Question[]): Coordinates {
-	const sums: Record<Axis, number> = { x: 0, y: 0, z: 0 };
-	const counts: Record<Axis, number> = { x: 0, y: 0, z: 0 };
+	const sums: Record<Axis, number> = { w: 0, x: 0, y: 0, z: 0 };
+	const counts: Record<Axis, number> = { w: 0, x: 0, y: 0, z: 0 };
 
 	for (const q of questions) {
 		const raw = answers[q.id];
@@ -23,6 +23,7 @@ export function scoreAnswers(answers: Answers, questions: Question[]): Coordinat
 	const avg = (axis: Axis) => (counts[axis] === 0 ? 0 : sums[axis] / counts[axis]);
 
 	return {
+		w: avg('w'),
 		x: avg('x'),
 		y: avg('y'),
 		z: avg('z')
