@@ -6,7 +6,8 @@
 
 	const wide = $derived(
 		page.url.pathname.startsWith('/backstage/wiki') ||
-			page.url.pathname.startsWith('/backstage/content')
+			page.url.pathname.startsWith('/backstage/content') ||
+			page.url.pathname.startsWith('/backstage/results')
 	);
 </script>
 
@@ -23,6 +24,7 @@
 			<a href="/backstage/simulate">Simulate</a>
 			<a href="/backstage/wiki">Wiki</a>
 			<a href="/backstage/content">Content</a>
+			<a href="/backstage/results">Results</a>
 			<form method="POST" action="/access?/logout">
 				<button type="submit" class="logout">Log out</button>
 			</form>
