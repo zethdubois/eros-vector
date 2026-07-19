@@ -45,7 +45,7 @@
 		switch (surveyState.phase) {
 			case 'intake':
 				doneThrough = -1;
-				currentId = 'intake';
+				currentId = ids[0] ?? null;
 				break;
 			case 't0':
 			case 'pause-t0':

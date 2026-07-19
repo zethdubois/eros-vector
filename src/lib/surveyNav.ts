@@ -1,11 +1,11 @@
 import type { Phase, SurveyState } from './types';
 
-export type SectionId = 'intake' | 't0' | 't1' | 't2' | 't3';
+export type SectionId = 't0' | 't1' | 't2' | 't3';
 
 export function activeSection(phase: Phase): SectionId | null {
 	switch (phase) {
 		case 'intake':
-			return 'intake';
+			return null;
 		case 't0':
 		case 'pause-t0':
 			return 't0';
@@ -25,7 +25,7 @@ export function activeSection(phase: Phase): SectionId | null {
 
 /** Breadcrumb order for the current routing. */
 export function sectionOrder(state: SurveyState): SectionId[] {
-	const order: SectionId[] = ['intake'];
+	const order: SectionId[] = [];
 	if (state.routing?.t0) order.push('t0');
 	order.push('t1');
 	if (state.routing?.finalForm) {
@@ -62,6 +62,7 @@ export function isPastSkipped(state: SurveyState): boolean {
 	);
 }
 
+
 export function isHorizonSkipped(state: SurveyState): boolean {
 	return !!state.routing?.t3 && state.horizonIncluded === false;
 }
@@ -94,8 +95,6 @@ export function canNavigateToSection(state: SurveyState, target: SectionId): boo
 
 export function sectionNavLabel(id: SectionId, state: SurveyState): string {
 	switch (id) {
-		case 'intake':
-			return 'Intake';
 		case 't0':
 			return 'Past';
 		case 't1':
